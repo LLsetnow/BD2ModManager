@@ -258,6 +258,14 @@ export const useModsStore = defineStore('mods', () => {
         return mod
     }
 
+    async function migrateModId(modName: string, targetId: string): Promise<BD2Mod> {
+        const copiedPath = await invoke<string>("migrate_mod_id", { modName, targetId })
+        const discoveredMods = await discoverMods()
+        const copiedMod = discoveredMods.find(mod => mod.path === copiedPath)
+        if (!copiedMod) throw new Error("The copied mod could not be discovered")
+        return copiedMod
+    }
+
     async function syncMods(removeUnmanagedMods: boolean = false): Promise<SyncResult | undefined> {
         if (isInstallingAppUpdate.value) return
         if (isSyncing.value) {
@@ -372,6 +380,7 @@ export const useModsStore = defineStore('mods', () => {
         setModAuthor,
         checkIsSyncNeeded,
         deleteMods,
-        renameMod
+        renameMod,
+        migrateModId
     }
 })

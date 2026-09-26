@@ -1,8 +1,9 @@
 use serde::Serializer;
 
 use crate::{
-    migrate::migrate::MigrateError, mods::{
-        delete::ModDeleteError, install::ModInstallError, metadata::MetadataError,
+    migrate::migrate::MigrateError,
+    mods::{
+        delete::ModDeleteError, id_migration::ModIdMigrationError, install::ModInstallError, metadata::MetadataError,
         preview::PreviewError, rename::ModRenameError, sync::ModSyncError,
     }, profiles::types::ProfileError, themes::commands::ThemesError,
 };
@@ -57,6 +58,8 @@ pub enum AppError {
     #[error(transparent)]
     Rename(#[from] ModRenameError),
     #[error(transparent)]
+    ModIdMigration(#[from] ModIdMigrationError),
+    #[error(transparent)]
     Profile(#[from] ProfileError),
     #[error(transparent)]
     Metadata(#[from] MetadataError),
@@ -82,6 +85,7 @@ impl serde::Serialize for AppError {
             AppError::Delete(_) => get_type_name::<ModDeleteError>(),
             AppError::Sync(_) => get_type_name::<ModSyncError>(),
             AppError::Rename(_) => get_type_name::<ModRenameError>(),
+            AppError::ModIdMigration(_) => get_type_name::<ModIdMigrationError>(),
             AppError::Profile(_) => get_type_name::<ProfileError>(),
             AppError::Metadata(_) => get_type_name::<MetadataError>(),
             AppError::Preview(_) => get_type_name::<PreviewError>(),
@@ -98,6 +102,7 @@ impl serde::Serialize for AppError {
             AppError::Delete(err) => get_error_type(err),
             AppError::Sync(err) => get_error_type(err),
             AppError::Rename(err) => get_error_type(err),
+            AppError::ModIdMigration(err) => get_error_type(err),
             AppError::Profile(err) => get_error_type(err),
             AppError::Metadata(err) => get_error_type(err),
             AppError::Preview(err) => get_error_type(err),
@@ -114,6 +119,7 @@ impl serde::Serialize for AppError {
             AppError::Delete(err) => get_error_details(err),
             AppError::Sync(err) => get_error_details(err),
             AppError::Rename(err) => get_error_details(err),
+            AppError::ModIdMigration(err) => get_error_details(err),
             AppError::Profile(err) => get_error_details(err),
             AppError::Metadata(err) => get_error_details(err),
             AppError::Preview(err) => get_error_details(err),

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X, Calendar, Eye, Tag, Columns3 } from '@lucide/vue';
+import { X, Calendar, Eye, Tag, Columns3, Trash2 } from '@lucide/vue';
 
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -14,6 +14,7 @@ import { useLoggingStore } from '../../../stores/logging';
 
 import { getErrorMessage } from '../../../utils/errors';
 import { getCharName, useLang } from '../../../utils/formatCharName.ts';
+import { useModDelete } from '../../../composables/useModDelete.ts';
 
 import Modal from '../../../components/common/Modal.vue';
 import Image from '../../../components/common/Image.vue';
@@ -35,6 +36,7 @@ const props = defineProps<{
 }>();
 
 const modsStore = useModsStore();
+const { deleteMods } = useModDelete();
 const isOpeningPreview = ref(false);
 
 const costumeIds = computed((): string[] => {
@@ -217,6 +219,17 @@ const charName = computed(() => {
                                                 <p class="text-sm truncate" :class="mod.enabled ? 'text-text-primary' : 'text-text-secondary'">{{ mod.name }}</p>
                                                 <p v-if="mod.author" class="text-xs text-text-secondary mt-0.5">{{ mod.author }}</p>
                                             </div>
+                                            <Button
+                                                variant="text"
+                                                size="sm"
+                                                :icon="Trash2"
+                                                icon-class="text-error"
+                                                class="shrink-0"
+                                                :disabled="modsStore.isSyncing"
+                                                :aria-label="$t('charactersTab.characterModal.deleteFromLibrary')"
+                                                :title="$t('charactersTab.characterModal.deleteFromLibrary')"
+                                                @click.stop.prevent="deleteMods(mod)"
+                                            />
                                         </div>
                                 </template>
                             </div>

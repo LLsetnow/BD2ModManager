@@ -695,7 +695,8 @@
                 "description": "該角色在索引中沒有可用的模組。"
             },
             "compareAll": "比較全部",
-            "previewMod": "預覽模組"
+            "previewMod": "預覽模組",
+            "deleteFromLibrary": "刪除模組庫中的來源檔案"
         }
     },
     "profilesTab": {

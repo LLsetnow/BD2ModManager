@@ -695,7 +695,8 @@
                 "description": "このキャラクターのインデックスに利用可能なModはありません。"
             },
             "compareAll": "すべて比較",
-            "previewMod": "MODをプレビュー"
+            "previewMod": "MODをプレビュー",
+            "deleteFromLibrary": "MODライブラリから元ファイルを削除"
         }
     },
     "profilesTab": {

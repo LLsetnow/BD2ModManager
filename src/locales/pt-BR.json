@@ -695,7 +695,8 @@
                 "description": "Não há mods disponíveis no índice para este personagem."
             },
             "compareAll": "Comparar todos",
-            "previewMod": "Visualizar Mod"
+            "previewMod": "Visualizar Mod",
+            "deleteFromLibrary": "Excluir arquivo original da biblioteca de mods"
         }
     },
     "profilesTab": {
