@@ -59,6 +59,7 @@ const emit = defineEmits([
     "refresh-mods",
     "change-mod-author",
     "rename-mod",
+    "migrate-mod-id",
     "delete-mods",
     "preview-mod",
     "open-mod-folder",
@@ -461,6 +462,11 @@ const contextMenuItems = computed<ContextMenuItem[]>(() => {
             show: !props.isSyncing && isSingleSelection
         } as ContextMenuItem,
         {
+            label: t('modsTab.modlist.contextMenu.migrateModId'),
+            key: 'migrate-id',
+            show: !props.isSyncing && isSingleSelection && ['Standing', 'Cutscene'].includes(selectedMods.value[0]?.modType?.type ?? '')
+        } as ContextMenuItem,
+        {
             label: isSingleSelection ? t('modsTab.modlist.contextMenu.deleteMod') : t('modsTab.modlist.contextMenu.deleteSelectedMods'),
             key: 'delete',
             show: !props.isSyncing && hasSelection
@@ -539,6 +545,9 @@ function handleSelect(key: string) {
         // },
         'rename': () => {
             emit('rename-mod', selectedMods.value[0])
+        },
+        'migrate-id': () => {
+            emit('migrate-mod-id', selectedMods.value[0])
         },
         'delete': () => {
             emit('delete-mods', selectedMods.value)

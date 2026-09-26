@@ -555,7 +555,8 @@
                 "title": "Modが見つかりません",
                 "description": "このキャラクターのインデックスに利用可能なModはありません。"
             },
-            "previewMod": "MODをプレビュー"
+            "previewMod": "MODをプレビュー",
+            "deleteFromLibrary": "MODライブラリから元ファイルを削除"
         }
     },
     "profilesTab": {

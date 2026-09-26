@@ -260,6 +260,7 @@
                 "changeModAuthor": "更改模组作者",
                 "changeSelectedModsAuthor": "更改所选模组作者",
                 "renameMod": "重命名模组",
+                "migrateModId": "复制并迁移角色 ID…",
                 "deleteMod": "删除模组",
                 "deleteSelectedMods": "删除所选模组",
                 "openModFolder": "打开模组文件夹",
@@ -324,6 +325,15 @@
                 },
                 "error": {
                     "title": "重命名模组失败"
+                }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "已创建迁移副本",
+                    "message": "已创建“{modName}”，目标角色 ID 为 {targetId}；原模组保持不变。"
+                },
+                "error": {
+                    "title": "创建迁移副本失败"
                 }
             },
             "installMod": {
@@ -467,6 +477,17 @@
                 "labels": {
                     "modName": "模组名称"
                 }
+            },
+            "migrateModId": {
+                "title": "复制模组并迁移角色 ID",
+                "description": "从“{modName}”创建副本。原模组和文件不会被修改。",
+                "resourceType": "资源类型",
+                "sourceId": "来源 ID",
+                "targetId": "目标 ID",
+                "targetIdPlaceholder": "输入 6 位角色 ID",
+                "copyNote": "将在相同分类下创建副本。贴图文件名保持原样，并按 atlas 中的页面名加载。",
+                "invalidTargetId": "请输入与来源不同的 6 位数字 ID。",
+                "createCopy": "创建副本"
             }
         }
     },
@@ -555,7 +576,8 @@
                 "title": "未找到模组",
                 "description": "该角色在索引中没有可用的模组。"
             },
-            "previewMod": "预览模组"
+            "previewMod": "预览模组",
+            "deleteFromLibrary": "删除库中的源文件"
         }
     },
     "profilesTab": {
@@ -977,6 +999,15 @@
         }
     },
     "errors": {
+        "ModIdMigrationError": {
+            "ModNotFound": "未找到来源模组：{mod_name}",
+            "InvalidTargetId": "目标 ID 必须是 6 位数字。",
+            "UnsupportedModType": "此操作只支持立绘和技能动画模组。",
+            "SameId": "目标 ID 与来源 ID 相同。",
+            "InvalidModfile": "模组目录必须包含且仅包含一个与当前资源 ID 匹配的 .modfile。",
+            "DestinationAlreadyExists": "目标副本或资源文件已存在：{path}",
+            "ModContainsSymlink": "模组包含符号链接或目录联接：“{path}”。请先将其替换为实际文件。"
+        },
         "ModInstallError": {
             "ModContainsSymlink": "此模组包含符号链接或目录联接：“{path}”。请先将其替换为实际文件，再进行安装。"
         },

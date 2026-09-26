@@ -555,7 +555,8 @@
                 "title": "모드 없음",
                 "description": "이 캐릭터에 대한 인덱스에 사용 가능한 모드가 없습니다."
             },
-            "previewMod": "모드 미리보기"
+            "previewMod": "모드 미리보기",
+            "deleteFromLibrary": "모드 라이브러리에서 원본 파일 삭제"
         }
     },
     "profilesTab": {

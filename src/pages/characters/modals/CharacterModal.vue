@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X, Calendar, Eye, BadgeDollarSign, ExternalLink, Info, Tag } from '@lucide/vue';
+import { X, Calendar, Eye, BadgeDollarSign, ExternalLink, Info, Tag, Trash2 } from '@lucide/vue';
 import { Character } from '../../../stores/characters';
 import { BD2Mod, useModsStore } from '../../../stores/mods';
 import { computed, ref } from 'vue';
@@ -20,6 +20,7 @@ import AfDianIcon from '../../../components/icons/AfDianIcon.vue';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useNotificationStore } from '../../../stores/notification.ts';
 import { getCharName, useLang } from '../../../utils/formatCharName.ts';
+import { useModDelete } from '../../../composables/useModDelete.ts';
 
 const loggingStore = useLoggingStore();
 const notificationStore = useNotificationStore();
@@ -37,6 +38,7 @@ const props = defineProps<{
 }>();
 
 const modsStore = useModsStore();
+const { deleteMods } = useModDelete();
 
 const costumeIds = computed((): string[] => {
     const id = props.selectedCostume?.id;
@@ -247,6 +249,17 @@ const charName = computed(() => {
                                                 <p class="text-sm truncate" :class="mod.enabled ? 'text-text-primary' : 'text-text-secondary'">{{ mod.name }}</p>
                                                 <p v-if="mod.author" class="text-xs text-text-secondary mt-0.5">{{ mod.author }}</p>
                                             </div>
+                                            <Button
+                                                variant="text"
+                                                size="sm"
+                                                :icon="Trash2"
+                                                icon-class="text-error"
+                                                class="shrink-0"
+                                                :disabled="modsStore.isSyncing"
+                                                :aria-label="$t('charactersTab.characterModal.deleteFromLibrary')"
+                                                :title="$t('charactersTab.characterModal.deleteFromLibrary')"
+                                                @click.stop.prevent="deleteMods(mod)"
+                                            />
                                         </label>
                                     </div>
                                 </template>

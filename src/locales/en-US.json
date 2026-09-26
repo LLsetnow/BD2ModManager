@@ -271,6 +271,7 @@
                 "changeModAuthor": "Change Mod Author",
                 "changeSelectedModsAuthor": "Change Selected Mods Author",
                 "renameMod": "Rename Mod",
+                "migrateModId": "Copy and Migrate Character ID…",
                 "deleteMod": "Delete Mod",
                 "deleteSelectedMods": "Delete Selected Mods",
                 "openModFolder": "Open Mod Folder",
@@ -335,6 +336,15 @@
                 },
                 "error": {
                     "title": "Failed to Rename Mod"
+                }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "Migrated Copy Created",
+                    "message": "Created '{modName}' for character ID {targetId}. The source mod was left unchanged."
+                },
+                "error": {
+                    "title": "Failed to Create Migrated Copy"
                 }
             },
             "installMod": {
@@ -478,6 +488,17 @@
                 "labels": {
                     "modName": "Mod Name"
                 }
+            },
+            "migrateModId": {
+                "title": "Copy Mod and Migrate Character ID",
+                "description": "Create a copy of '{modName}'. The original mod and its files will not be changed.",
+                "resourceType": "Resource Type",
+                "sourceId": "Source ID",
+                "targetId": "Target ID",
+                "targetIdPlaceholder": "Enter a six-digit character ID",
+                "copyNote": "The copy will be created in the same category. Texture page filenames stay unchanged and are loaded by the names listed in the atlas.",
+                "invalidTargetId": "Enter a different six-digit numeric ID.",
+                "createCopy": "Create Copy"
             }
         }
     },
@@ -566,7 +587,8 @@
                 "title": "No Mods Found",
                 "description": "There are no mods available in the index for this character."
             },
-            "previewMod": "Preview Mod"
+            "previewMod": "Preview Mod",
+            "deleteFromLibrary": "Delete source from mod library"
         }
     },
     "profilesTab": {
@@ -1029,6 +1051,15 @@
             "PathNotFound": "Path is missing or has been deleted",
             "InvalidName": "Invalid mod name \"{name}\" ({reason})",
             "ModAlreadyExists": "A mod named \"{mod_name}\" already exists"
+        },
+        "ModIdMigrationError": {
+            "ModNotFound": "Source mod was not found: {mod_name}",
+            "InvalidTargetId": "Target ID must contain exactly six digits.",
+            "UnsupportedModType": "Only standing and cutscene mods can be migrated.",
+            "SameId": "The target ID is the same as the source ID.",
+            "InvalidModfile": "The mod folder must contain exactly one .modfile matching its resource ID.",
+            "DestinationAlreadyExists": "The destination copy or resource file already exists: {path}",
+            "ModContainsSymlink": "This mod contains a symbolic link or junction: “{path}”. Replace it with an actual file first."
         },
         "ModSyncError": {
             "ModContainsSymlink": "This mod contains a symbolic link or junction: “{path}”. Replace it with the actual files before syncing.",

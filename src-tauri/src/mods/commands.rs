@@ -321,6 +321,34 @@ pub async fn rename_mod(
         .map_err(AppError::from)
 }
 
+#[tauri::command]
+pub async fn migrate_mod_id(
+    state: tauri::State<'_, AppState>,
+    mod_name: String,
+    target_id: String,
+) -> Result<String, AppError> {
+    let mod_manager_handle = state.mod_manager.clone();
+    let result = tauri::async_runtime::spawn_blocking(move || -> Result<String, AppError> {
+        let mod_manager = mod_manager_handle.lock().unwrap();
+        let source_mod = mod_manager
+            .get_mod_by_name(&mod_name)
+            .ok_or_else(|| crate::mods::id_migration::ModIdMigrationError::ModNotFound {
+                mod_name: mod_name.clone(),
+            })?;
+
+        let copied_path =
+            crate::mods::id_migration::duplicate_mod_with_id(&source_mod, &target_id)?;
+        Ok(copied_path.to_string_lossy().into_owned())
+    })
+    .await;
+
+    result
+        .map_err(|error| {
+            error!("Migrate mod ID task panicked: {:?}", error);
+            AppError::Unknown(format!("{:?}", error))
+        })?
+}
+
 
 
 

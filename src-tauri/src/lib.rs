@@ -183,6 +183,7 @@ pub fn run() {
             mods::commands::disable_mods,
             mods::commands::delete_mods,
             mods::commands::rename_mod,
+            mods::commands::migrate_mod_id,
             mods::commands::set_mod_author,
             mods::commands::install_mod_from_zip,
             mods::commands::install_mod_from_folder,

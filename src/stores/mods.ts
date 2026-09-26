@@ -248,6 +248,14 @@ export const useModsStore = defineStore('mods', () => {
         return mod
     }
 
+    async function migrateModId(modName: string, targetId: string): Promise<BD2Mod> {
+        const copiedPath = await invoke<string>("migrate_mod_id", { modName, targetId })
+        const discoveredMods = await discoverMods()
+        const copiedMod = discoveredMods.find(mod => mod.path === copiedPath)
+        if (!copiedMod) throw new Error("The copied mod could not be discovered")
+        return copiedMod
+    }
+
     async function syncMods(): Promise<SyncResult | undefined> {
         if (isSyncing.value) {
             // add to queue or just log?
@@ -321,6 +329,7 @@ export const useModsStore = defineStore('mods', () => {
         setModAuthor,
         isSyncNeeded,
         deleteMods,
-        renameMod
+        renameMod,
+        migrateModId
     }
 })

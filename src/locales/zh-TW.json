@@ -555,7 +555,8 @@
                 "title": "未找到模組",
                 "description": "該角色在索引中沒有可用的模組。"
             },
-            "previewMod": "預覽模組"
+            "previewMod": "預覽模組",
+            "deleteFromLibrary": "刪除模組庫中的來源檔案"
         }
     },
     "profilesTab": {

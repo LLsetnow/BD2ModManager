@@ -23,6 +23,7 @@ import Popover from "../../components/common/Popover.vue";
 
 import UpdateAuthorModal from "./modals/UpdateAuthorModal.vue";
 import RenameModModal from "./modals/RenameModModal.vue";
+import MigrateModIdModal from "./modals/MigrateModIdModal.vue";
 
 import ModsHeader from "./ModsHeader.vue";
 import Modlist from "./Modlist.vue";
@@ -32,11 +33,13 @@ import { useModActions } from "../../composables/useModActions.ts";
 import { useModDelete } from "../../composables/useModDelete.ts";
 import { useModInstall } from "../../composables/useModInstall.ts";
 import { useModSync } from "../../composables/useModSync.ts";
+import { getErrorMessage } from "../../utils/errors";
 
 let unlistenFns: Array<() => void> = []
 
 const updateAuthorModal = useTemplateRef("updateAuthorModal")
 const renameModModal = useTemplateRef("renameModModal")
+const migrateModIdModal = useTemplateRef("migrateModIdModal")
 
 const { t } = useI18n();
 const loggingStore = useLoggingStore()
@@ -177,6 +180,41 @@ function handleRenameMod(mod: BD2Mod) {
       renameMod(mod, newName);
     }
   });
+}
+
+function handleMigrateModId(mod: BD2Mod) {
+  const modType = mod.modType?.type
+  if ((modType !== "Standing" && modType !== "Cutscene") || !mod.modType || !("id" in mod.modType)) return
+
+  migrateModIdModal.value?.open({
+    modName: mod.name,
+    sourceId: mod.modType.id,
+    modType,
+    onSave: async (targetId: string) => {
+      try {
+        const migratedMod = await modsStore.migrateModId(mod.name, targetId)
+        notificationStore.add({
+          type: "success",
+          closable: true,
+          title: t("modsTab.notifications.migrateModId.success.title"),
+          message: t("modsTab.notifications.migrateModId.success.message", {
+            modName: migratedMod.displayName,
+            targetId
+          }),
+          duration: 5000
+        })
+      } catch (error) {
+        loggingStore.logError(`Failed to create an ID-migrated copy of mod "${mod.name}":`, error)
+        notificationStore.add({
+          type: "error",
+          closable: true,
+          title: t("modsTab.notifications.migrateModId.error.title"),
+          message: getErrorMessage(t, error),
+          duration: 7000
+        })
+      }
+    }
+  })
 }
 
 function handleShowModConflicts(mod: BD2Mod) {
@@ -489,6 +527,7 @@ useHeader({
   <div class="flex flex-col h-full gap-0 select-none p-4 py-0 pb-2">
     <UpdateAuthorModal ref="updateAuthorModal" />
     <RenameModModal ref="renameModModal" />
+    <MigrateModIdModal ref="migrateModIdModal" />
 
     <div class="shrink-0 mb-2">
       <ModsHeader v-model:filters="filters" />
@@ -497,7 +536,8 @@ useHeader({
     <div class="flex-1 overflow-hidden min-h-0 mb-2">
       <Modlist :mods="filteredMods" :isSyncing="modsStore.isSyncing" @refresh-mods="handleRefreshMods" @enable-mods="enableMods"
         @disable-mods="disableMods" @change-mod-author="handleUpdateModAuthor" @delete-mods="deleteMods"
-        @open-mod-folder="handleOpenModFolder" @preview-mod="previewMod" @rename-mod="handleRenameMod" @show-mod-conflicts="handleShowModConflicts" />
+        @open-mod-folder="handleOpenModFolder" @preview-mod="previewMod" @rename-mod="handleRenameMod"
+        @migrate-mod-id="handleMigrateModId" @show-mod-conflicts="handleShowModConflicts" />
     </div>
 
     <div class="flex justify-between items-center shrink-0">
