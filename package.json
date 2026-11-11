@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run type-check && vite build",
+    "build": "npm run build:game-plugin && npm run type-check && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "type-check": "vue-tsc --noEmit",
     "download:modpreview": "node scripts/download_modpreview.mjs",
-    "i18n:check": "i18n-check --locales src/locales -s en-US"
+    "i18n:check": "i18n-check --locales src/locales -s en-US",
+    "build:game-plugin": "node scripts/build_interactions.mjs"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.1.11",

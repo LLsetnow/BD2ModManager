@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { X, Calendar, Eye, Tag, Columns3, Trash2 } from '@lucide/vue';
+import { X, Calendar, Eye, Tag, Columns3, Trash2, Shirt } from '@lucide/vue';
+import { useRouter } from 'vue-router';
 
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -38,6 +39,12 @@ const props = defineProps<{
 const modsStore = useModsStore();
 const { deleteMods } = useModDelete();
 const isOpeningPreview = ref(false);
+const router = useRouter();
+function manageSkins() {
+    const source = props.selectedCostume?.costume_id;
+    show.value = false;
+    router.push({ name: 'skins', query: source ? { source } : {} });
+}
 
 const costumeIds = computed((): string[] => {
     const id = props.selectedCostume?.id;
@@ -123,6 +130,7 @@ const charName = computed(() => {
     <Modal v-model:show="show" size="lg" @close="() => show = false">
         <template #footer>
             <div class="flex p-3 justify-end items-center w-full border-t border-border-default">
+                <Button :icon="Shirt" label="管理皮肤映射" class="mr-auto" @click="manageSkins" />
                 <Button variant="default" :label="$t('common.actions.close')" @click="show = false" />
             </div>
         </template>

@@ -5,6 +5,8 @@ use tauri::{http, Manager};
 
 mod state;
 mod ipc;
+mod interactions;
+mod skins;
 
 pub mod config;
 pub mod errors;
@@ -204,6 +206,13 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            interactions::get_local_interactions,
+            interactions::save_local_interactions,
+            interactions::install_local_interactions,
+            skins::get_costume_skins,
+            skins::save_costume_skins,
+            skins::update_costume_skins,
+            skins::install_costume_skins,
             ipc::start_preview_ipc,
             ipc::publish_preview_mods,
             // mods

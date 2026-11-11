@@ -7,7 +7,12 @@ import ModLoaderTab from './pages/mod-loader/ModLoaderTab.vue'
 import ScenesTab from './pages/scenes/ScenesTab.vue'
 import NpcsTab from './pages/npcs/NpcsTab.vue'
 
+import InteractionsTab from './pages/interactions/InteractionsTab.vue'
+import SkinsTab from './pages/skins/SkinsTab.vue'
+
 const routes = [
+    { name: 'skins', path: '/skins', component: SkinsTab },
+    { name: 'interactions', path: '/interactions', component: InteractionsTab },
     {
         path: '/',
         redirect: '/mods'
@@ -55,4 +60,4 @@ const router = createRouter({
     routes
 })
 
-export default router   
+export default router

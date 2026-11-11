@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bolt, ChevronRight, Component, Play, Puzzle, Settings, Users } from '@lucide/vue';
+import { Bolt, ChevronRight, Component, Heart, Play, Puzzle, Settings, Users, Shirt } from '@lucide/vue';
 
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -76,7 +76,9 @@ function onProfileSelected(profile_id: string) {
         <div class="relative">
             <NavigationSection :title="$t('sidebar.sections.navigation')">
                 <NavigationButton :icon="Component" :label="$t('sidebar.tabs.mods')" value="mods" />
+                <NavigationButton :icon="Heart" label="本地互动" value="interactions" />
                 <NavigationButton :icon="Users" :label="$t('sidebar.tabs.characters')" value="characters" />
+                <NavigationButton :icon="Shirt" label="皮肤映射" value="skins" />
             </NavigationSection>
             <NavigationSection :title="$t('sidebar.sections.settings')">
                 <NavigationButton :icon="Bolt" :label="$t('sidebar.tabs.profiles')" value="profiles" />

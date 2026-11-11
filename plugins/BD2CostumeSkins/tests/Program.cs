@@ -1,0 +1,40 @@
+using System;
+using BD2CostumeSkins;
+
+var count = 0;
+void Check(bool ok, string message) { if (!ok) throw new Exception(message); count++; }
+void Reject(SkinSettings s) { try { s.Validate(); } catch (ArgumentException) { count++; return; } throw new Exception("Invalid settings accepted"); }
+var settings = SkinSettings.Defaults();
+settings.Validate();
+Check(settings.Resolve(1207, 1207) == 1207, "Base skin should be the default");
+Check(settings.Next(1207, 1207) == "001297", "First click should choose target");
+settings.SelectedSkins["001207"] = "001297";
+Check(settings.Resolve(1207, 1207) == 1297, "Selected target must change design ID");
+settings.Enabled = false;
+Check(!settings.HasSource(1207), "Master switch must disable the local Skin button");
+Check(settings.Resolve(1207, 1207) == 1207, "Master switch must restore native appearance");
+Check(settings.Resolve(1207, 1298) == 1298, "Master switch must preserve a native server skin");
+Check(settings.Mappings[0].Enabled && settings.SelectedSkins["001207"] == "001297", "Master switch cannot discard per-costume settings");
+settings.Enabled = true;
+Check(settings.Resolve(1207, 1207) == 1297, "Re-enabling must restore the selected skin");
+Check(settings.Next(1207, 1297) == "001207", "Second click should restore base");
+Check(settings.Resolve(202, 299) == 299, "Unmapped costumes must preserve native appearance");
+settings.Mappings[0].Enabled = false;
+Check(settings.Resolve(1207, 1207) == 1207, "Disabled mapping should restore native ID");
+settings.Validate();
+settings.Mappings[0].Enabled = true;
+Check(settings.Resolve(1207, 1207) == 1297, "Re-enabling preserves preference");
+settings.Mappings.Add(new SkinMapping { SourceId = "001207", TargetId = "001206" });
+Check(settings.Next(1207, 1297) == "001206", "Multiple skins should cycle in order");
+Check(settings.Next(1207, 1206) == "001207", "Cycle should include base");
+settings.Mappings[0].Enabled = false;
+Check(settings.Resolve(1207, 1297) == 1207, "Disabled target falls back to base when other skins are enabled");
+Check(settings.SelectedSkins["001207"] == "001297", "Resolving cannot mutate saved selection");
+settings.Mappings.Add(new SkinMapping { SourceId = "001206", TargetId = "001207" }); Reject(settings);
+settings.Mappings.RemoveAt(2);
+settings.Mappings.Add(new SkinMapping { SourceId = "001207", TargetId = "001206" }); Reject(settings);
+settings.Mappings.RemoveAt(2);
+settings.SelectedSkins["001207"] = "001201"; Reject(settings);
+settings = SkinSettings.Defaults(); settings.Mappings[0].SourceId = "1207"; Reject(settings);
+Check(!SkinSettings.ValidId("００１２０７") && !SkinSettings.ValidId("000000"), "IDs must use six ASCII digits");
+Console.WriteLine($"Skin policy: {count} checks passed");

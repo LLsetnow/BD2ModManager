@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><UseAppHost>false</UseAppHost>
+    <UseSharedCompilation>false</UseSharedCompilation><CscToolPath>$(MSBuildProjectDirectory)\..\..\.build-tools\</CscToolPath><CscToolExe>csc.cmd</CscToolExe>
+    <ManagedDir>F:\Neowiz\Browndust2\Browndust2_10000001\BrownDust II_Data\Managed</ManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../ManagedSkeletonLoader.cs" Link="ManagedSkeletonLoader.cs" />
+    <Reference Include="spine-csharp"><HintPath>$(ManagedDir)\spine-csharp.dll</HintPath></Reference>
+    <Reference Include="spine-unity"><HintPath>$(ManagedDir)\spine-unity.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath></Reference>
+    <Reference Include="0Harmony"><HintPath>$(ManagedDir)\..\..\BepInEx\core\0Harmony.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
