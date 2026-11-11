@@ -138,3 +138,7 @@ You can find mods on the BrownDustX Discord server: [https://discord.gg/B3Aqz6tD
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=bruhnn/bd2modmanager&type=date&legend=top-left&sealed_token=VQzqGVDS8aADxliuGNidMHsOzgTt1UN6wielhchPghaRGoXLtIgp5QZVGbMvw2tQ4YaeKFQO7Jqs0gOIFhGoladBRnTqNSQbPrUnfZ8v2HtYHP_vHRZIkNA_zi3ya__awL_ybKHxWvTleXDD5UoC4QhfI0cdfol4BKEppmMlqM6TUCqgec9qcjzkYiZw" />
  </picture>
 </a>
+
+## Local fork releases
+
+Windows x64 builds with local interactions, costume skin mappings and the matching Preview are published at [LLsetnow/BD2ModManager Releases](https://github.com/LLsetnow/BD2ModManager/releases). Versions containing `-local.` check this fork and open its release page for manual updates. The Preview updater also reads [LLsetnow/BD2ModPreview Releases](https://github.com/LLsetnow/BD2ModPreview/releases).

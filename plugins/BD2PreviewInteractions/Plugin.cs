@@ -33,6 +33,7 @@ public sealed class Plugin : BaseUnityPlugin
     internal static string ExportRoot => Settings.ExportDirectory;
 
     private readonly Dictionary<int, LobbySettingItemTable> localRows = new();
+    private readonly HashSet<string> loggedOfficialLists = new(StringComparer.Ordinal);
     private Harmony? harmony;
     private MethodInfo? rowGetter;
     private LocalSceneHost? host;
@@ -140,6 +141,25 @@ public sealed class Plugin : BaseUnityPlugin
         catch { return null; }
     }
 
+    private void LogOfficialList(List<int> ids)
+    {
+        var signature = string.Join(",", ids);
+        if (!loggedOfficialLists.Add(signature)) return;
+
+        Logger.LogInfo($"Official dating list captured ({ids.Count} entries), row IDs: [{signature}]");
+        for (var index = 0; index < ids.Count; index++)
+        {
+            var id = ids[index];
+            var row = GetOriginalRow(id);
+            if (row == null)
+            {
+                Logger.LogInfo($"Official dating list entry {index}: id={id}, lookup=missing");
+                continue;
+            }
+            Logger.LogInfo($"Official dating list entry {index}: id={id}, rowId={row.Id}, costumeId={row.CostumeId}, resource={row.InteractionResourceName}");
+        }
+    }
+
     private void PrepareRows(List<int> existingIds)
     {
         var originals = existingIds.Select(id => (id, row: GetOriginalRow(id)))
@@ -173,6 +193,7 @@ public sealed class Plugin : BaseUnityPlugin
         var previousCostume = Specs.TryGetValue(__0, out var selected) ? selected.CostumeId : 0;
         var previouslyInjected = new HashSet<int>(plugin.localRows.Keys);
         __1 = __1.Where(id => !previouslyInjected.Contains(id)).ToList();
+        plugin.LogOfficialList(__1);
         plugin.ReloadCatalog();
         plugin.PrepareRows(__1);
         foreach (var spec in Specs.Values)

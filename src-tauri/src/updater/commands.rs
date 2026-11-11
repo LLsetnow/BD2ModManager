@@ -12,7 +12,6 @@ use tauri::State;
 use tauri_plugin_updater::Update;
 use tokio::io::AsyncWriteExt;
 
-#[cfg(feature = "portable")]
 mod portable {
     use log::info;
     use semver::Version;
@@ -21,13 +20,14 @@ mod portable {
 
     use crate::updater::commands::get_app_version;
 
-    const RELEASES_URL: &str = "https://shy-waterfall-2797.bruhnn.workers.dev/";
+    const RELEASES_URL: &str = "https://api.github.com/repos/LLsetnow/BD2ModManager/releases/latest";
 
     #[derive(Debug, Deserialize)]
     struct GitHubRelease {
         tag_name: String,
         html_url: String,
         changelog: Option<Vec<String>>,
+        body: Option<String>,
     }
 
     #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -49,6 +49,7 @@ mod portable {
         let release: GitHubRelease = client
             .get(RELEASES_URL)
             .header("Accept", "application/json")
+            .header("User-Agent", "BD2ModManager-Local")
             .header("X-Manager-Version", current_version)
             .header("X-Manager-Platform", std::env::consts::OS)
             .header("X-Manager-Portable", "true")
@@ -65,7 +66,7 @@ mod portable {
         info!("Latest version: {latest_version}, URL: {html_url}");
         let version =
             Version::parse(latest_version).map_err(|e| format!("Invalid remote version: {e}"))?;
-        let changelog = release.changelog.unwrap_or_default();
+        let changelog = release.changelog.unwrap_or_else(|| release.body.unwrap_or_default().lines().map(str::to_owned).collect());
         Ok((version, html_url, changelog))
     }
 }
@@ -111,7 +112,6 @@ pub enum AppUpdateError {
     NoPendingUpdate,
     #[error("update was not downloaded")]
     UpdateNotDownloaded,
-    #[cfg(feature = "portable")]
     #[error("update check failed: {0}")]
     CheckFailed(String),
 }
@@ -341,6 +341,18 @@ pub async fn check_for_app_update(
         Some("beta") => "beta",
         _ => "stable",
     };
+
+    // Unsigned local builds use this fork's release page instead of the upstream signed updater feed.
+    let current_version = get_app_version(&app_handle);
+    if current_version.contains("-local.") {
+        let (latest, page, changelog) = portable::fetch_app_latest_version(&app_handle, channel).await
+            .map_err(AppUpdateError::CheckFailed)?;
+        let current = semver::Version::parse(&current_version).map_err(|e| AppUpdateError::CheckFailed(e.to_string()))?;
+        return Ok((latest > current).then(|| AppUpdateMetadata {
+            version_available: latest.to_string(), current_version, download_url: Some(page),
+            changelog: Some(changelog), is_update_recommended: false,
+        }));
+    }
 
     use reqwest::header::{HeaderMap, HeaderValue};
     use tauri_plugin_updater::UpdaterExt;

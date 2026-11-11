@@ -81,7 +81,7 @@ struct GitHubAsset {
     digest: Option<String>,
 }
 
-const RELEASES_URL: &str = "https://api.github.com/repos/bruhnn/BD2ModPreview/releases/latest";
+const RELEASES_URL: &str = "https://api.github.com/repos/LLsetnow/BD2ModPreview/releases/latest";
 
 pub fn get_mod_preview_version(app_handle: tauri::AppHandle) -> Option<String> {
     let exe_path = get_mod_preview_path(&app_handle)?;
