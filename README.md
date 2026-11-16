@@ -94,6 +94,18 @@ Creates shortcuts instead of copying files.
 |------|---------|
 | <img src="./screenshots/sync_copy_v405.gif" width="260" /> | <img src="./screenshots/sync_symlink_v405.gif" width="260" /> |
 
+## 约会互动：资源来源与目录设置
+
+打开 **设置 → 约会互动**，为以下三个设置项选择对应的本地文件夹，然后点击 **保存设置**。
+
+| 设置项 | 资源来源 | 应选择的本地目录 |
+| --- | --- | --- |
+| **互动 JSON 目录** | [LLsetnow/neowiz：dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | 下载或克隆后选择 `mods/dating-interaction-configs` 文件夹，其中直接包含 `illust_dating1.json` 至 `illust_dating22.json`。 |
+| **约会音频目录** | 本地 Brown-Dust-2-Asset 素材库中的约会音频，需另行准备，详见下方说明。 | 素材库内的 `audio/dating` 子目录，Windows 路径为 `audio\dating`，例如 `F:\Neowiz\Brown-Dust-2-Asset-master\audio\dating`。 |
+| **美术素材库目录** | [myssal/Brown-Dust-2-Asset](https://github.com/myssal/Brown-Dust-2-Asset) | 下载或克隆后的素材库根目录，即包含 `spine`、`ui`、`header` 等目录的文件夹，例如 `F:\Neowiz\Brown-Dust-2-Asset-master`。 |
+
+**约会音频说明：** `audio/dating` 对应本地素材库中的音频目录。上游公开的 [Brown-Dust-2-Asset](https://github.com/myssal/Brown-Dust-2-Asset) 仓库目前未包含该目录，约会音频需另行准备，再将“约会音频目录”指向存放这些音频的本地文件夹。
+
 ---
 
 ## 📸 Screenshots
