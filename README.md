@@ -127,7 +127,7 @@ Install BepInEx first, then exit the game before installing or updating either p
 
 - **Skin mapping `settings.json`** stores the master switch, source-to-target costume mappings, individual mapping switches, and the selected skins. The plugin uses existing game assets and can also use enabled asset replacement mods through BrownDustX.
 - **Dating interaction `settings.json`** stores each scene's P and native entry switches, the interaction JSON, audio, and asset directories, and options such as the left-button hold duration and interaction marker opacity.
-- **External dating resources:** P mode uses `illust_dating*.json` files to describe interaction scenes. Dating audio and artwork are stored in the local directories selected in settings. These resources are separate from the plugin DLL. Download locations are listed in [Dating interaction resources and directory settings](#约会互动资源来源与目录设置) below.
+- **External dating resources:** P mode uses `illust_dating*.json` files to describe interaction scenes. Dating audio and artwork are stored in the local directories selected in settings. These resources are separate from the plugin DLL. Download locations are listed in [Dating interaction resources and directory settings](#dating-interactions-resource-sources-and-directory-settings) below.
 
 Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` files describe interaction content. Manager also saves configuration copies named `costume-skins.json` and `local-interactions.json` in its application data directory.
 
@@ -135,17 +135,17 @@ Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` fi
 
 `npm run build:game-plugin` builds both plugins. Each project's `bin/Release/netstandard2.1/` directory contains its DLL, `.pdb` debug symbols, and `.deps.json` dependency metadata. The build script copies both DLLs to `src-tauri/resources/`, where they are embedded into the Manager executable for the plugin installation feature. The current installation process deploys the DLLs and settings files.
 
-## 约会互动：资源来源与目录设置
+## Dating Interactions: Resource Sources and Directory Settings
 
-打开 **设置 → 约会互动**，为以下三个设置项选择对应的本地文件夹，然后点击 **保存设置**。
+Open **Settings → Dating interactions**, select the appropriate local folder for each of the following settings, then click **Save settings**.
 
-| 设置项 | 资源来源 | 应选择的本地目录 |
+| Setting | Resource source | Local folder to select |
 | --- | --- | --- |
-| **互动 JSON 目录** | [LLsetnow/neowiz：dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | 下载或克隆后选择 `mods/dating-interaction-configs` 文件夹，其中直接包含 `illust_dating1.json` 至 `illust_dating22.json`。 |
-| **约会音频目录** | [bruhnn/Brown-Dust-2-Asset：audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | 素材库内的 `audio/dating` 子目录，Windows 路径为 `audio\dating`，例如 `F:\Neowiz\Brown-Dust-2-Asset-master\audio\dating`。 |
-| **美术素材库目录** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | 下载或克隆后的素材库根目录，即包含 `spine`、`ui`、`header` 等目录的文件夹，例如 `F:\Neowiz\Brown-Dust-2-Asset-master`。 |
+| **Interaction JSON directory** | [LLsetnow/neowiz: dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | After downloading or cloning the repository, select `mods/dating-interaction-configs`, which directly contains `illust_dating1.json` through `illust_dating22.json`. |
+| **Dating audio directory** | [bruhnn/Brown-Dust-2-Asset: audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | Select the asset library's `audio/dating` subdirectory (`audio\dating` on Windows), for example `F:\Neowiz\Brown-Dust-2-Asset-master\audio\dating`. |
+| **Artwork asset library directory** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | Select the root of the downloaded or cloned asset library, containing folders such as `spine`, `ui`, and `header`, for example `F:\Neowiz\Brown-Dust-2-Asset-master`. |
 
-约会音频与美术素材均可从 [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) 获取。下载或克隆同一份素材库后，“约会音频目录”选择其中的 `audio/dating`（Windows 路径为 `audio\dating`）子目录，“美术素材库目录”选择素材库根目录。
+Both dating audio and artwork are available from [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master). After downloading or cloning this asset library, set **Dating audio directory** to its `audio/dating` subdirectory (`audio\dating` on Windows), and set **Artwork asset library directory** to the asset library's root.
 
 ---
 
