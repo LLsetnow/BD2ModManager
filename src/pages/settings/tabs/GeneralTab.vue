@@ -459,7 +459,7 @@ async function onThemeDelete(themeName: string) {
                                 </p>
                             </div>
                             <div class="col-span-2 flex min-w-0 items-center gap-2">
-                                <Slider v-model="autoSyncModsDelay" suffix="s" :min="1" :max="10" :step="0.1"
+                                <Slider v-model="autoSyncModsDelay" :suffix="$t('common.seconds')" :min="1" :max="10" :step="0.1"
                                     :disabled="!settings.autoSyncMods"
                                     :aria-label="$t('settingsTab.general.sections.modManagement.autoSyncMods.delay.label')"
                                     aria-describedby="autoSyncModsDelayDescription"
@@ -470,7 +470,7 @@ async function onThemeDelete(themeName: string) {
                                         aria-describedby="autoSyncModsDelayDescription"
                                         @change="onAutoSyncModsDelayChanged(Number(autoSyncModsDelayInput.replace(',', '.')))" />
                                 </div>
-                                <span class="text-sm text-text-secondary">s</span>
+                                <span class="text-sm text-text-secondary">{{ $t('common.seconds') }}</span>
                             </div>
                         </div>
                     </div>

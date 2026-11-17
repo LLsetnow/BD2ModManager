@@ -93,7 +93,13 @@
             "continue": "계속",
             "browse": "찾아보기",
             "save": "저장",
-            "delete": "삭제"
+            "delete": "삭제",
+            "add": "추가",
+            "enableAll": "모두 활성화",
+            "disableAll": "모두 비활성화",
+            "saveSettings": "설정 저장",
+            "rescan": "다시 검색",
+            "choose": "{label} 선택"
         },
         "modTypes": {
             "cutscene": "컷씬",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "여기에는 아무것도 없습니다..."
         },
-        "error": "오류"
+        "error": "오류",
+        "status": {
+            "enabled": "활성화됨",
+            "disabled": "비활성화됨",
+            "saving": "저장 중…",
+            "autoSaved": "자동 저장됨"
+        },
+        "plugin": {
+            "current": "현재 버전 설치됨",
+            "updateAvailable": "업데이트 가능",
+            "notInstalled": "설치되지 않음",
+            "reinstall": "재설치 / 업데이트",
+            "install": "플러그인 설치"
+        },
+        "editableSelect": {
+            "placeholder": "{label} ID / 이름을 입력하거나 목록에서 선택",
+            "empty": "일치하는 항목이 없습니다. 목록의 ID 또는 이름을 입력하세요."
+        },
+        "seconds": "초"
     },
     "app": {
         "confirmations": {
@@ -150,13 +174,23 @@
             },
             "modPreviewUpdate": {
                 "retry": "다시 시도",
-                "updated": "BD2ModPreview v{version} 업데이트 완료",
-                "failed": "BD2ModPreview 업데이트 실패",
-                "noUpdateAvailable": "BD2ModPreview가 최신 버전입니다"
+                "updated": {
+                    "title": "BD2ModPreview v{version} 업데이트 완료"
+                },
+                "failed": {
+                    "title": "BD2ModPreview 업데이트 실패"
+                },
+                "noUpdateAvailable": {
+                    "title": "BD2ModPreview가 최신 버전입니다"
+                }
             },
             "gameDataUpdate": {
-                "updated": "게임 데이터 업데이트 완료",
-                "failed": "게임 데이터 업데이트 실패"
+                "updated": {
+                    "title": "게임 데이터 업데이트 완료"
+                },
+                "failed": {
+                    "title": "게임 데이터 업데이트 실패"
+                }
             }
         },
         "modals": {
@@ -235,7 +269,8 @@
         "appUpdate": {
             "checking": "업데이트 확인 중...",
             "available": "업데이트 가능: v{version}",
-            "downloaded": "v{version} 준비 완료! 클릭하여 업데이트 적용"
+            "downloaded": "v{version} 준비 완료! 클릭하여 업데이트 적용",
+            "updating": "v{version}(으)로 업데이트 중…"
         },
         "sync": {
             "applying": "적용 중: {modName}",
@@ -247,6 +282,13 @@
             "logs": "로그",
             "kofi": "Ko-Fi로 지원하기",
             "afdian": "Afdian으로 지원하기"
+        },
+        "credits": {
+            "creator": "제작",
+            "thanks": "감사",
+            "creator_tooltip": "{'@'}bruhnn 제작",
+            "supporter_tooltip": "{platform} 후원자",
+            "bug_reports_tooltip": "GitHub에서 버그 제보 및 제안"
         }
     },
     "sidebar": {
@@ -261,7 +303,9 @@
             "characters": "캐릭터",
             "profiles": "프로필",
             "modLoader": "모드 로더",
-            "settings": "설정"
+            "settings": "설정",
+            "interactions": "데이트 상호작용",
+            "skins": "스킨 매핑"
         },
         "notifications": {
             "launchGame": {
@@ -286,7 +330,8 @@
         "actions": {
             "launchGame": "게임 실행",
             "launchGameWithoutMods": "실행 (바닐라)"
-        }
+        },
+        "gameVersion": "게임 v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -365,7 +410,8 @@
                 "deleteSelectedMods": "선택한 모드 삭제",
                 "openModFolder": "모드 폴더 열기",
                 "previewMod": "모드 미리보기",
-                "previewModShortcut": "더블클릭"
+                "previewModShortcut": "더블클릭",
+                "migrateModId": "복사 후 캐릭터 ID 변경…"
             }
         },
         "confirmations": {
@@ -376,8 +422,10 @@
                 "messageWithConflicts": "일부 모드가 서로 충돌합니다. 충돌이 해결되기 전까지 게임이 실행되지 않을 수 있습니다.",
                 "actions": {
                     "sync": "동기화",
-                    "syncAnyway": "그래도 동기화"
-                }
+                    "syncAnyway": "그래도 동기화",
+                    "syncAndRemoveUnmanaged": "동기화 및 관리되지 않는 모드 삭제"
+                },
+                "messageWithRemoveUnmanaged": "게임 폴더의 모드를 동기화하고 BD2MM 내의 관리되지 않는 모드를 삭제합니다. 이 작업은 되돌릴 수 없습니다."
             },
             "unsyncMods": {
                 "title": "모드 동기화를 해제하시겠습니까?",
@@ -387,7 +435,7 @@
                 }
             },
             "deleteMod": {
-                "title": "모드를 삭제하시겠습니까? | 선택한 모드를 삭제하시겠습니까?",
+                "title": "모드를 삭제하시겠습니까? | 모드 {count}개를 삭제하시겠습니까?",
                 "message": "모드 \"{modName}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다. | 선택한 {count}개의 모드를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
                 "actions": {
                     "delete": "삭제"
@@ -407,10 +455,15 @@
                 },
                 "success": {
                     "title": "모드 동기화 완료",
-                    "message": "모드가 게임 폴더와 성공적으로 동기화되었습니다."
+                    "message": "모드가 게임 폴더와 성공적으로 동기화되었습니다.",
+                    "details": "자세히 보기"
                 },
                 "error": {
                     "title": "동기화 실패"
+                },
+                "noChanges": {
+                    "title": "모드 동기화",
+                    "message": "동기화 과정에서 변경된 사항이 없습니다."
                 }
             },
             "unsyncMods": {
@@ -533,6 +586,15 @@
                         "message": "게임 모드 경로 '{gameModsDirectory}'는 디렉토리가 아닙니다."
                     }
                 }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "ID 변경 사본 생성 완료",
+                    "message": "캐릭터 ID {targetId}용 “{modName}”을 생성했습니다. 원본 모드는 변경되지 않았습니다."
+                },
+                "error": {
+                    "title": "ID 변경 사본 생성 실패"
+                }
             }
         },
         "modals": {
@@ -597,6 +659,17 @@
                 "hint": "모드를 클릭하면 그 모드만 유지합니다. 여러 개를 유지하려면 체크박스나 Ctrl+클릭을 사용하세요.",
                 "apply": "변경 사항 적용 | 변경 사항 {count}개 적용 | 변경 사항 {count}개 적용",
                 "applyAndSync": "적용 후 동기화"
+            },
+            "migrateModId": {
+                "title": "모드 복사 및 캐릭터 ID 변경",
+                "description": "“{modName}”의 사본을 생성합니다. 원본 모드와 파일은 변경되지 않습니다.",
+                "resourceType": "리소스 유형",
+                "sourceId": "원본 ID",
+                "targetId": "대상 ID",
+                "targetIdPlaceholder": "6자리 캐릭터 ID 입력",
+                "copyNote": "사본은 같은 분류에 생성됩니다. 텍스처 파일명은 유지되며 atlas에 기록된 이름으로 불러옵니다.",
+                "invalidTargetId": "원본과 다른 6자리 숫자 ID를 입력하세요.",
+                "createCopy": "사본 생성"
             }
         }
     },
@@ -696,7 +769,8 @@
             },
             "compareAll": "모두 비교",
             "previewMod": "모드 미리보기",
-            "deleteFromLibrary": "모드 라이브러리에서 원본 파일 삭제"
+            "deleteFromLibrary": "모드 라이브러리에서 원본 파일 삭제",
+            "manageSkins": "스킨 매핑 관리"
         }
     },
     "profilesTab": {
@@ -720,7 +794,7 @@
             "cleanMissingMods": {
                 "success": {
                     "title": "프로필 정리 완료",
-                    "message": "\"{profileName}\"에서 없는 모드 {count}개를 제거했습니다."
+                    "message": "“{profileName}”에 누락된 모드가 없습니다. | “{profileName}”에서 누락된 모드 {count}개를 제거했습니다. | “{profileName}”에서 누락된 모드 {count}개를 제거했습니다."
                 },
                 "error": {
                     "title": "프로필 정리 실패"
@@ -941,6 +1015,10 @@
                 "gameDirectoryUpdated": {
                     "title": "게임 폴더 업데이트 완료",
                     "message": "게임 폴더가 {path}(으)로 변경되었습니다."
+                },
+                "invalidStagingDirectory": {
+                    "title": "잘못된 스테이징 폴더",
+                    "message": "BrownDustX/mods와 별도의 폴더를 선택하세요. 어느 폴더도 다른 폴더를 포함할 수 없습니다."
                 }
             },
             "sections": {
@@ -1027,7 +1105,11 @@
                     },
                     "autoSyncMods": {
                         "label": "모드 자동 동기화",
-                        "description": "모드를 활성화하거나 비활성화할 때 게임 폴더에 자동으로 동기화합니다."
+                        "description": "모드를 활성화하거나 비활성화할 때 게임 폴더에 자동으로 동기화합니다.",
+                        "delay": {
+                            "label": "자동 동기화 대기 시간",
+                            "description": "모드를 자동으로 동기화하기 전까지 기다리는 시간입니다."
+                        }
                     },
                     "syncMethod": {
                         "label": "동기화 방식",
@@ -1124,6 +1206,16 @@
                         "update": "업데이트"
                     }
                 }
+            },
+            "version": "v{version}",
+            "unknown": "알 수 없음",
+            "downloadAndInstall": "다운로드 및 설치",
+            "status": {
+                "upToDate": "최신 버전",
+                "checking": "업데이트 확인 중…",
+                "downloading": "다운로드 중…",
+                "downloadProgress": "다운로드 중 {percent}%",
+                "installing": "설치 중…"
             }
         },
         "experimental": {
@@ -1179,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "데이트 상호작용",
+            "title": "데이트 상호작용 리소스 및 조작",
+            "description": "다음 설정은 P 추가 항목에 적용됩니다. 캐릭터 및 항목 스위치는 사이드바의 “데이트 상호작용”에서 관리하세요.",
+            "paths": {
+                "exportDirectory": {
+                    "label": "상호작용 JSON 폴더",
+                    "hint": "P 추가 항목에서 사용하는 데이트 장면 JSON 파일입니다."
+                },
+                "audioDirectory": {
+                    "label": "데이트 오디오 폴더",
+                    "hint": "에셋 라이브러리에서 audio / dating 폴더를 선택하세요."
+                },
+                "assetsDirectory": {
+                    "label": "아트 에셋 라이브러리 폴더",
+                    "hint": "캐릭터 아트 에셋이 포함된 라이브러리의 루트 폴더를 선택하세요."
+                }
+            },
+            "dragHold": "드래그 전 마우스 왼쪽 버튼 누르기",
+            "opacity": "상호작용 지점 불투명도",
+            "draftHelp": "두 페이지가 저장되지 않은 데이트 설정을 공유합니다. 페이지를 전환해도 계속 편집할 수 있습니다."
         }
     },
     "errors": {
@@ -1192,7 +1306,15 @@
         },
         "ModInstallError": {
             "ModTooBig": "이 모드는 크기 제한인 100 MB를 초과합니다.",
-            "ModContainsSymlink": "이 모드에는 심볼릭 링크 또는 정션이 포함되어 있습니다: “{path}”. 설치하기 전에 실제 파일로 교체해 주세요."
+            "ModContainsSymlink": "이 모드에는 심볼릭 링크 또는 정션이 포함되어 있습니다: “{path}”. 설치하기 전에 실제 파일로 교체해 주세요.",
+            "ModAlreadyExists": "같은 이름의 모드가 이미 있습니다.",
+            "PathNotFound": "선택한 모드 경로를 찾을 수 없습니다.",
+            "InvalidName": "선택한 경로의 모드 이름이 잘못되었습니다.",
+            "UnsupportedFormat": "지원하지 않는 압축 형식입니다. .zip, .rar, .7z만 지원합니다.",
+            "InvalidArchive": "압축 파일이 손상되었거나 읽을 수 없습니다.",
+            "MissingModFile": "유효한 모드가 아닙니다(.modfile 없음).",
+            "MultipleModsFound": "여러 .modfile 파일이 발견되었습니다. 모드가 하나만 있는지 확인하세요.",
+            "NotAMod": "선택한 파일 또는 폴더는 유효한 BrownDustX 모드가 아닙니다."
         },
         "ModSyncError": {
             "ManifestCorrupt": "동기화 매니페스트가 손상되었습니다. {reason}",
@@ -1244,7 +1366,74 @@
         },
         "invalidMod": "선택한 파일 또는 폴더가 유효한 BrownDustX 모드가 아닙니다.",
         "invalidFormat": "지원되지 않는 모드 형식입니다. 유효한 모드 파일 또는 폴더를 선택해 주세요.",
-        "unsupportedFormat": "지원되지 않는 파일 형식입니다. 유효한 모드 파일 또는 폴더를 선택해 주세요."
+        "unsupportedFormat": "지원되지 않는 파일 형식입니다. 유효한 모드 파일 또는 폴더를 선택해 주세요.",
+        "AppError": {
+            "GameDirectoryNotSet": "게임 폴더가 설정되지 않았습니다. 설정에서 지정하세요.",
+            "SyncMethodInvalid": "잘못된 동기화 방식: {method}",
+            "GameRunning": "게임이 이미 실행 중입니다.",
+            "Unknown": "예기치 않은 오류가 발생했습니다. 자세한 내용은 로그를 확인하세요."
+        },
+        "Io": {
+            "NotFound": "파일 또는 폴더가 없습니다.",
+            "PermissionDenied": "접근이 거부되었습니다.",
+            "AlreadyExists": "파일 또는 폴더가 이미 있습니다.",
+            "DirectoryNotEmpty": "폴더가 비어 있지 않습니다.",
+            "NotADirectory": "폴더가 필요하지만 파일이 발견되었습니다.",
+            "IsADirectory": "파일이 필요하지만 폴더가 발견되었습니다.",
+            "InvalidInput": "이 작업에 대한 입력이 잘못되었습니다.",
+            "InvalidData": "파일에 잘못된 데이터가 포함되어 있습니다.",
+            "TimedOut": "작업 시간이 초과되었습니다.",
+            "WriteZero": "디스크에 데이터를 쓰지 못했습니다.",
+            "UnexpectedEof": "파일이 예기치 않게 끝났습니다. 파일이 손상되었을 수 있습니다.",
+            "OutOfMemory": "메모리가 부족합니다.",
+            "StorageFull": "디스크 공간이 부족합니다."
+        },
+        "ModDeleteError": {
+            "ModNotFound": "모드를 찾을 수 없습니다",
+            "PathNotFound": "경로가 없거나 삭제되었습니다"
+        },
+        "ModRenameError": {
+            "ModNotFound": "“{mod_name}” 모드를 찾을 수 없습니다",
+            "PathNotFound": "경로가 없거나 삭제되었습니다",
+            "InvalidName": "잘못된 모드 이름 “{name}” ({reason})",
+            "ModAlreadyExists": "“{mod_name}” 모드가 이미 있습니다"
+        },
+        "ModIdMigrationError": {
+            "ModNotFound": "원본 모드를 찾을 수 없습니다: {mod_name}",
+            "InvalidTargetId": "대상 ID는 정확히 6자리 숫자여야 합니다.",
+            "UnsupportedModType": "일러스트 및 컷신 모드만 ID를 변경할 수 있습니다.",
+            "SameId": "대상 ID가 원본 ID와 같습니다.",
+            "InvalidModfile": "모드 폴더에는 리소스 ID와 일치하는 .modfile이 정확히 하나 있어야 합니다.",
+            "DestinationAlreadyExists": "대상 사본 또는 리소스 파일이 이미 있습니다: {path}",
+            "ModContainsSymlink": "모드에 심볼릭 링크 또는 정션 “{path}”이 포함되어 있습니다. 실제 파일로 먼저 교체하세요."
+        },
+        "ProfileError": {
+            "ProfileNotFound": "“{profile_id}” 프로필을 찾을 수 없습니다",
+            "ProfileAlreadyExists": "“{profile_name}” 프로필이 이미 있습니다",
+            "InvalidName": "잘못된 프로필 이름 “{profile_name}” ({reason})",
+            "AlreadyActive": "“{profile_name}” 프로필이 이미 활성화되어 있습니다",
+            "CannotDeleteActive": "활성 프로필 “{profile_name}”은 삭제할 수 없습니다",
+            "CannotDeleteDefault": "기본 프로필은 삭제할 수 없습니다",
+            "NoActiveProfile": "활성 프로필이 설정되지 않았습니다",
+            "LoadFailed": "프로필 불러오기 실패: {reason}",
+            "SaveFailed": "“{profile_name}” 프로필 저장 실패: {reason}",
+            "CreateFailed": "“{profile_name}” 프로필 생성 실패: {reason}",
+            "SerializeFailed": "“{profile_name}” 프로필 직렬화 실패",
+            "UpdateFailed": "“{profile_name}” 프로필 업데이트 실패: {reason}",
+            "DeleteFailed": "“{profile_name}” 프로필 삭제 실패: {reason}",
+            "ProfilesDirectoryNotFound": "프로필 폴더 “{path}”을 찾을 수 없습니다"
+        },
+        "MetadataError": {
+            "Load": "모드 메타데이터 불러오기 실패: {reason}",
+            "Save": "모드 메타데이터 저장 실패: {reason}",
+            "Serialize": "모드 메타데이터 직렬화 실패"
+        },
+        "PreviewError": {
+            "ModNotFound": "“{mod_name}” 모드를 찾을 수 없습니다",
+            "ModHasErrors": "“{mod_name}” 모드에 오류가 있어 미리 볼 수 없습니다",
+            "ModPreviewNotFound": "모드 미리보기 도구를 찾을 수 없습니다. 설정의 “업데이트 확인”에서 다시 설치할 수 있습니다.",
+            "PreviewFailed": "모드 미리보기 실패: {reason}"
+        }
     },
     "modErrors": {
         "missingTextures": "모드 폴더 안에 'textures'라는 이름의 폴더를 만들어야 합니다.",
@@ -1253,6 +1442,89 @@
         "shouldBeInFolder": "이 모드는 폴더 안에 있어야 합니다. 모드와 같은 이름의 폴더를 만들고 모드 파일을 그 안으로 이동해 주세요.",
         "missingAtlasFile": "이 모드에 아틀라스 파일이 없습니다.",
         "unmanaged": "이 모드는 게임 폴더에 있지만 BD2MM에서 관리하지 않습니다. 여기서는 활성화하거나 비활성화할 수 없습니다.",
-        "noDescription": "설명이 없습니다."
+        "noDescription": "설명이 없습니다.",
+        "unmanagedButInStaging": "이 모드는 게임 폴더에 있지만 BD2MM으로 설치되지 않아 활성화 후 동기화해도 변경되지 않습니다. “동기화 및 관리되지 않는 모드 삭제”로 교체하세요."
+    },
+    "interactionsTab": {
+        "title": "데이트 상호작용",
+        "description": "캐릭터별로 P 추가 항목과 공식 기본 항목을 설정합니다. 두 방식을 함께 활성화할 수 있습니다.",
+        "management": "데이트 상호작용 관리",
+        "managementHelp": "끄면 게임의 기본 목록으로 돌아가며 두 항목의 설정은 유지됩니다. 저장 후 데이트 화면을 다시 여세요.",
+        "managementToggle": "데이트 상호작용 관리 활성화",
+        "native": "공식 기본 항목",
+        "nativeToggle": "공식 기본 항목 활성화",
+        "nativeHelp": "JSON 내보내기 없이 게임의 기본 초상화, 상호작용, 챕터 확인을 사용합니다. 캐릭터를 끄면 이미 보유한 기본 항목도 숨겨지며 계정 데이터는 변경되지 않습니다.",
+        "extra": "P 추가 항목",
+        "extraToggle": "P 추가 항목 활성화",
+        "extraHelp": "로컬 장면 JSON과 오디오를 사용하는 P 표시 초상화를 추가합니다. 캐릭터 스위치는 기본 항목과 독립적으로 작동합니다.",
+        "configured": "{count} / {total}명 설정됨",
+        "plugin": "데이트 상호작용 플러그인 {version}",
+        "pluginUpdate": "두 항목을 설정하려면 설치된 플러그인을 업데이트하세요",
+        "exitGame": "설치 또는 업데이트 전에 게임을 종료하세요",
+        "characters": "데이트 캐릭터 · {count}개",
+        "search": "캐릭터 또는 코스튬 검색",
+        "searchLabel": "데이트 캐릭터 검색",
+        "disabledHelp": "관리가 꺼져 있습니다. 아래 선택 내용은 유지됩니다.",
+        "exportStatus": {
+            "ready": "P 장면 JSON 사용 가능",
+            "missing": "P 장면 JSON 없음",
+            "expired": "P 장면 JSON 만료됨",
+            "invalid": "P 장면 JSON 유효하지 않음"
+        },
+        "expires": "유효 기간: {time}",
+        "nativeFor": "{name}의 공식 기본 항목",
+        "extraFor": "{name}의 P 추가 항목",
+        "configureMods": "모드 설정",
+        "configureModsFor": "{name}의 데이트 모드 설정",
+        "modsEnabled": "{count} / {total}개 활성화됨",
+        "empty": "일치하는 데이트 캐릭터가 없습니다.",
+        "saveHelp": "항목 설정을 저장한 후 데이트 화면을 다시 여세요. 모드 선택은 현재 프로필에 자동 저장되며 동기화 후 게임에 적용됩니다.",
+        "syncing": "동기화 중…",
+        "syncMods": "모드 동기화",
+        "synced": "모드 동기화됨",
+        "characterMissing": "해당 캐릭터 데이터를 찾을 수 없습니다. 캐릭터 데이터를 새로 고친 후 다시 시도하세요.",
+        "modActionFailed": "모드 작업 실패",
+        "saved": "데이트 상호작용 설정을 저장했습니다. 게임에서 데이트 화면을 다시 열면 적용됩니다.",
+        "installed": "데이트 상호작용 플러그인을 설치했습니다. 게임을 다시 시작하면 불러옵니다.",
+        "legacy": {
+            "description": "로컬 JSON과 오디오를 사용하는 초상화 목록의 P 상호작용을 관리합니다. 공식 데이트와 계정 진행 상황은 유지됩니다.",
+            "toggle": "로컬 상호작용 활성화",
+            "toggleHelp": "끄면 모든 P 상호작용을 숨기고 각 항목의 설정은 유지합니다. 저장 후 데이트 화면을 다시 여세요.",
+            "listTitle": "초상화 목록 상호작용",
+            "enabledCount": "{count}개 활성화됨",
+            "disabled": "로컬 상호작용이 꺼져 있습니다",
+            "entriesHelp": "새 항목은 기본적으로 비활성화됩니다. 활성화할 때 원본 리소스 또는 활성화된 모드를 선택할 수 있습니다. JSON을 내보내는 것만으로 항목이 추가되지는 않습니다.",
+            "modeFor": "{name}의 상호작용 모드",
+            "original": "활성화 · 기본",
+            "modded": "활성화 · 모드 적용",
+            "empty": "추가된 상호작용이 없습니다. 아래에서 선택하세요.",
+            "selectEntry": "추가할 상호작용 선택",
+            "selectEntryPlaceholder": "추가할 상호작용 선택…",
+            "navigationHelp": "마우스 오른쪽 버튼으로 화면을 이동하고 휠로 확대/축소합니다. 기본 Reset으로 초기 포즈와 호감도를 복원합니다."
+        }
+    },
+    "skinsTab": {
+        "title": "스킨 매핑",
+        "description": "게임 캐릭터 위의 Skin을 눌러 일러스트, 배경, 캐릭터 모델 및 스킬 연출을 전환합니다.",
+        "toggle": "스킨 매핑 활성화",
+        "toggleHelp": "끄면 게임의 원래 외형으로 돌아가며 매핑과 스킨 선택은 유지됩니다. 변경 내용은 자동 저장 및 적용됩니다.",
+        "plugin": "스킨 플러그인 {version}",
+        "install": "스킨 플러그인 설치",
+        "installed": "스킨 플러그인을 설치했습니다. 다음 게임 실행 시 불러옵니다.",
+        "addMapping": "매핑 추가",
+        "source": "원본 코스튬",
+        "target": "대상 스킨",
+        "optionalName": "스킨 이름 (선택 사항)",
+        "newName": "새 스킨 이름",
+        "name": "스킨 이름",
+        "mappingHelp": "게임 내 같은 캐릭터의 리소스를 사용합니다. Skin 버튼으로 목록 순서대로 전환하며 원본 코스튬의 레벨과 스킬 수치는 유지됩니다.",
+        "sourceId": "원본 코스튬 ID: {id}",
+        "current": "현재 스킨",
+        "original": "기본 · {id}",
+        "enable": "{name} 활성화",
+        "remove": "{name} 제거",
+        "autoSaveHelp": "추가, 삭제 및 전환은 자동 저장됩니다. 이름은 편집을 마치면 저장됩니다.",
+        "autoSaveFailed": "자동 저장 실패: {reason}",
+        "duplicate": "이 매핑이 이미 있습니다"
     }
 }

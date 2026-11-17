@@ -93,7 +93,13 @@
             "continue": "Continue",
             "browse": "Browse",
             "save": "Save",
-            "delete": "Delete"
+            "delete": "Delete",
+            "add": "Add",
+            "enableAll": "Enable all",
+            "disableAll": "Disable all",
+            "saveSettings": "Save settings",
+            "rescan": "Rescan",
+            "choose": "Choose {label}"
         },
         "modTypes": {
             "cutscene": "Cutscene",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "Nothing found here..."
         },
-        "error": "Error"
+        "error": "Error",
+        "status": {
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "saving": "Saving…",
+            "autoSaved": "Saved automatically"
+        },
+        "plugin": {
+            "current": "Current version installed",
+            "updateAvailable": "Update available",
+            "notInstalled": "Not installed",
+            "reinstall": "Reinstall / Update",
+            "install": "Install plugin"
+        },
+        "editableSelect": {
+            "placeholder": "Enter {label} ID / name, or select from the list",
+            "empty": "No matches. Enter an ID or name from the list."
+        },
+        "seconds": "seconds"
     },
     "app": {
         "confirmations": {
@@ -262,7 +286,7 @@
         "credits": {
             "creator": "by",
             "thanks": "thanks to",
-            "creator_tooltip": "Created by \\@bruhnn",
+            "creator_tooltip": "Created by {'@'}bruhnn",
             "supporter_tooltip": "Supporter on {platform}",
             "bug_reports_tooltip": "Bug reports and suggestions on GitHub"
         }
@@ -279,7 +303,9 @@
             "characters": "Characters",
             "profiles": "Profiles",
             "modLoader": "Mod Loader",
-            "settings": "Settings"
+            "settings": "Settings",
+            "interactions": "Dating interactions",
+            "skins": "Skin mappings"
         },
         "notifications": {
             "launchGame": {
@@ -304,7 +330,8 @@
         "actions": {
             "launchGame": "Launch Game",
             "launchGameWithoutMods": "Launch (Vanilla)"
-        }
+        },
+        "gameVersion": "Game v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -433,6 +460,10 @@
                 },
                 "error": {
                     "title": "Sync Failed"
+                },
+                "noChanges": {
+                    "title": "Sync Mods",
+                    "message": "No changes were made during the sync process."
                 }
             },
             "unsyncMods": {
@@ -738,7 +769,8 @@
             },
             "compareAll": "Compare all",
             "previewMod": "Preview Mod",
-            "deleteFromLibrary": "Delete source from mod library"
+            "deleteFromLibrary": "Delete source from mod library",
+            "manageSkins": "Manage skin mappings"
         }
     },
     "profilesTab": {
@@ -1239,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "Dating interactions",
+            "title": "Dating interaction resources and controls",
+            "description": "These settings apply to P extra entries. Manage characters and entry switches in Dating interactions in the sidebar.",
+            "paths": {
+                "exportDirectory": {
+                    "label": "Interaction JSON folder",
+                    "hint": "Dating scene JSON files used by P extra entries."
+                },
+                "audioDirectory": {
+                    "label": "Dating audio folder",
+                    "hint": "Select the audio / dating folder in the asset library."
+                },
+                "assetsDirectory": {
+                    "label": "Art asset library folder",
+                    "hint": "Select the root folder containing character art assets."
+                }
+            },
+            "dragHold": "Hold left mouse button before dragging",
+            "opacity": "Interaction point opacity",
+            "draftHelp": "Both pages share unsaved dating settings. You can keep editing after switching pages."
         }
     },
     "errors": {
@@ -1368,5 +1422,87 @@
         "unmanaged": "This mod is in the game folder but is not managed by BD2MM. It cannot be enabled or disabled here.",
         "unmanagedButInStaging": "This mod is already in the game folder but not installed by BD2MM, so sync won't change it even if enabled. Use \"Sync and Remove unmanaged mods\" to replace it.",
         "noDescription": "No description provided."
+    },
+    "interactionsTab": {
+        "title": "Dating interactions",
+        "description": "Configure P extra entries and official native entries for each character. Both can be enabled together.",
+        "management": "Dating interaction management",
+        "managementHelp": "Turning this off restores the original game list and keeps both entry configurations. Reopen the dating screen after saving.",
+        "managementToggle": "Enable dating interaction management",
+        "native": "Official native entries",
+        "nativeToggle": "Enable official native entries",
+        "nativeHelp": "Uses the game’s native portraits, interactions and chapter checks without exporting JSON. Disabling a character also hides their owned native entry, without changing account data.",
+        "extra": "P extra entries",
+        "extraToggle": "Enable P extra entries",
+        "extraHelp": "Adds extra portraits marked P, using local scene JSON and audio. Character switches work independently of native entries.",
+        "configured": "Configured {count} / {total} characters",
+        "plugin": "Dating interaction plugin {version}",
+        "pluginUpdate": "Update the installed plugin to support both entry types",
+        "exitGame": "Exit the game before installing or updating",
+        "characters": "Dating characters · {count} entries",
+        "search": "Search characters or costumes",
+        "searchLabel": "Search dating characters",
+        "disabledHelp": "Management is off. Your selections below are preserved.",
+        "exportStatus": {
+            "ready": "P scene JSON available",
+            "missing": "P scene JSON missing",
+            "expired": "P scene JSON expired",
+            "invalid": "P scene JSON invalid"
+        },
+        "expires": "Valid until {time}",
+        "nativeFor": "Official native entry for {name}",
+        "extraFor": "P extra entry for {name}",
+        "configureMods": "Configure mods",
+        "configureModsFor": "Configure dating mods for {name}",
+        "modsEnabled": "{count} / {total} enabled",
+        "empty": "No matching dating characters.",
+        "saveHelp": "Reopen the dating screen after saving entry settings. Mod selections are saved to the current profile automatically and applied to the game after syncing.",
+        "syncing": "Syncing…",
+        "syncMods": "Sync mods",
+        "synced": "Mods synced",
+        "characterMissing": "Character data not found. Refresh character data and try again.",
+        "modActionFailed": "Mod operation failed",
+        "saved": "Dating interaction settings saved. Reopen the dating screen in the game to apply them.",
+        "installed": "Dating interaction plugin installed. Restart the game to load it.",
+        "legacy": {
+            "description": "Manage P interactions in the portrait bar using local JSON and audio, while preserving official dating and account progress.",
+            "toggle": "Enable local interactions",
+            "toggleHelp": "Turning this off hides all P interactions and keeps each entry’s settings. Reopen the dating screen after saving.",
+            "listTitle": "Portrait bar interactions",
+            "enabledCount": "{count} enabled",
+            "disabled": "Local interactions are off",
+            "entriesHelp": "New entries are disabled by default. Choose original assets or enabled mods when turning one on. Exporting JSON does not add entries.",
+            "modeFor": "Interaction mode for {name}",
+            "original": "Enabled · Original",
+            "modded": "Enabled · Apply mods",
+            "empty": "No interactions added. Choose one below.",
+            "selectEntry": "Select an interaction to add",
+            "selectEntryPlaceholder": "Select an interaction to add…",
+            "navigationHelp": "Right-click to move the view and scroll to zoom. The native Reset restores the initial pose and affection."
+        }
+    },
+    "skinsTab": {
+        "title": "Skin mappings",
+        "description": "Click Skin above the in-game character to switch illustrations, backgrounds, character models and skill cutscenes.",
+        "toggle": "Enable skin mappings",
+        "toggleHelp": "Turning this off restores the original appearance and keeps mappings and skin selections. Changes are saved and applied automatically.",
+        "plugin": "Skin plugin {version}",
+        "install": "Install skin plugin",
+        "installed": "Skin plugin installed. It will load the next time you start the game.",
+        "addMapping": "Add mapping",
+        "source": "Source costume",
+        "target": "Target skin",
+        "optionalName": "Skin name (optional)",
+        "newName": "New skin name",
+        "name": "Skin name",
+        "mappingHelp": "Targets use assets for the same character in the game. The Skin button cycles through the list. The original costume’s level and skill values stay unchanged.",
+        "sourceId": "Original costume ID: {id}",
+        "current": "Current skin",
+        "original": "Original · {id}",
+        "enable": "Enable {name}",
+        "remove": "Remove {name}",
+        "autoSaveHelp": "Adding, removing and switching are saved automatically. Names are saved when editing is finished.",
+        "autoSaveFailed": "Auto-save failed: {reason}",
+        "duplicate": "This mapping already exists"
     }
 }

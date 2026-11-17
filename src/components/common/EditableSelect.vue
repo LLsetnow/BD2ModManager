@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue'
 import { Check, ChevronDown } from '@lucide/vue'
 import { autoUpdate, flip, offset, shift, size, useFloating } from '@floating-ui/vue'
+
+const { t } = useI18n()
 
 type Option = { value: string; label: string }
 const props = defineProps<{
@@ -48,11 +51,11 @@ function select(value: unknown) {
   <Combobox :model-value="modelValue" :disabled="disabled" nullable @update:model-value="select">
     <div ref="reference" class="relative">
       <ComboboxInput :id="id" :display-value="display" autocomplete="off"
-        :placeholder="`输入${label} ID / 名称，或从列表选择`"
+        :placeholder="t('common.editableSelect.placeholder', { label })"
         class="w-full rounded-md border border-border-subtle bg-surface-panel px-3 py-2 pr-9 text-sm text-text-primary disabled:opacity-40"
         @change="input" />
       <ComboboxButton class="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-text-secondary cursor-pointer disabled:cursor-not-allowed"
-        :aria-label="`选择${label}`" @click="query = ''">
+        :aria-label="t('common.actions.choose', { label })" @click="query = ''">
         <ChevronDown class="w-4 h-4" />
       </ComboboxButton>
     </div>
@@ -66,7 +69,7 @@ function select(value: unknown) {
               {{ option.label }}
             </li>
           </ComboboxOption>
-          <li v-if="!filtered.length" class="px-3 py-2 text-text-secondary">未找到匹配项，请输入列表中的 ID 或名称。</li>
+          <li v-if="!filtered.length" class="px-3 py-2 text-text-secondary">{{ t('common.editableSelect.empty') }}</li>
         </ul>
       </ComboboxOptions>
     </Teleport>

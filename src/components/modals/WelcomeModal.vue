@@ -170,7 +170,7 @@ const AFDIAN_URL = 'https://afdian.com/a/bruhnn'
                         <p class="text-sm font-medium text-text-primary">
                             {{ $t('app.modals.welcome.selectGameDirectory.labels.foundPaths') }}
                         </p>
-                        <Button variant="text" size="sm" @click="findGamePaths" label="Rescan" :icon="RefreshCcw" />
+                        <Button variant="text" size="sm" @click="findGamePaths" :label="$t('common.actions.rescan')" :icon="RefreshCcw" />
                     </div>
                     <div
                         class="w-full border rounded border-border-default bg-surface-card flex flex-col max-h-48 overflow-y-auto">

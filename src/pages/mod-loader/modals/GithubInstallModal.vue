@@ -119,7 +119,7 @@ function handleVersionSelected(downloadUrl: string) {
         :title="$t('modLoaderTab.modals.installFromGithub.title')">
         <template #footer>
             <div class="flex justify-end gap-2 p-2">
-                <Button label="Cancel" @click="$emit('close')" />
+                <Button :label="$t('common.actions.cancel')" @click="$emit('close')" />
             </div>
         </template>
 

@@ -93,7 +93,13 @@
             "continue": "Continuar",
             "browse": "Procurar",
             "save": "Salvar",
-            "delete": "Excluir"
+            "delete": "Excluir",
+            "add": "Adicionar",
+            "enableAll": "Ativar todos",
+            "disableAll": "Desativar todos",
+            "saveSettings": "Salvar configurações",
+            "rescan": "Verificar novamente",
+            "choose": "Selecionar {label}"
         },
         "modTypes": {
             "cutscene": "Cutscene",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "Nada encontrado aqui..."
         },
-        "error": "Erro"
+        "error": "Erro",
+        "status": {
+            "enabled": "Ativado",
+            "disabled": "Desativado",
+            "saving": "Salvando…",
+            "autoSaved": "Salvo automaticamente"
+        },
+        "plugin": {
+            "current": "Versão atual instalada",
+            "updateAvailable": "Atualização disponível",
+            "notInstalled": "Não instalado",
+            "reinstall": "Reinstalar / Atualizar",
+            "install": "Instalar plugin"
+        },
+        "editableSelect": {
+            "placeholder": "Digite o ID / nome de {label} ou selecione na lista",
+            "empty": "Nenhum resultado. Digite um ID ou nome da lista."
+        },
+        "seconds": "segundos"
     },
     "app": {
         "confirmations": {
@@ -150,13 +174,23 @@
             },
             "modPreviewUpdate": {
                 "retry": "Tentar novamente",
-                "updated": "BD2ModPreview v{version} atualizado",
-                "failed": "Falha ao atualizar o BD2ModPreview",
-                "noUpdateAvailable": "O BD2ModPreview está atualizado"
+                "updated": {
+                    "title": "BD2ModPreview v{version} atualizado"
+                },
+                "failed": {
+                    "title": "Falha ao atualizar o BD2ModPreview"
+                },
+                "noUpdateAvailable": {
+                    "title": "O BD2ModPreview está atualizado"
+                }
             },
             "gameDataUpdate": {
-                "updated": "Dados do jogo atualizados",
-                "failed": "Falha ao atualizar os dados do jogo"
+                "updated": {
+                    "title": "Dados do jogo atualizados"
+                },
+                "failed": {
+                    "title": "Falha ao atualizar os dados do jogo"
+                }
             }
         },
         "modals": {
@@ -235,7 +269,8 @@
         "appUpdate": {
             "checking": "Verificando atualizações...",
             "available": "Atualização disponível: v{version}",
-            "downloaded": "v{version} pronta! Clique para aplicar a atualização"
+            "downloaded": "v{version} pronta! Clique para aplicar a atualização",
+            "updating": "Atualizando para v{version}…"
         },
         "sync": {
             "applying": "Aplicando: {modName}",
@@ -247,6 +282,13 @@
             "logs": "Logs",
             "kofi": "Apoiar no Ko-Fi",
             "afdian": "Apoiar no Afdian"
+        },
+        "credits": {
+            "creator": "por",
+            "thanks": "agradecimentos a",
+            "creator_tooltip": "Criado por {'@'}bruhnn",
+            "supporter_tooltip": "Apoiador no {platform}",
+            "bug_reports_tooltip": "Relatar problemas e sugestões no GitHub"
         }
     },
     "sidebar": {
@@ -261,7 +303,9 @@
             "characters": "Personagens",
             "profiles": "Perfis",
             "modLoader": "Carregador de mods",
-            "settings": "Configurações"
+            "settings": "Configurações",
+            "interactions": "Interações de encontro",
+            "skins": "Mapeamentos de skins"
         },
         "notifications": {
             "launchGame": {
@@ -286,7 +330,8 @@
         "actions": {
             "launchGame": "Iniciar Jogo",
             "launchGameWithoutMods": "Iniciar (Vanilla)"
-        }
+        },
+        "gameVersion": "Jogo v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -365,7 +410,8 @@
                 "deleteSelectedMods": "Excluir Mods Selecionados",
                 "openModFolder": "Abrir Pasta do Mod",
                 "previewMod": "Visualizar Mod",
-                "previewModShortcut": "Duplo Clique"
+                "previewModShortcut": "Duplo Clique",
+                "migrateModId": "Copiar e migrar ID do personagem…"
             }
         },
         "confirmations": {
@@ -376,8 +422,10 @@
                 "messageWithConflicts": "Alguns mods possuem conflitos entre si. O jogo pode falhar ao iniciar até que os conflitos sejam resolvidos.",
                 "actions": {
                     "sync": "Sincronizar",
-                    "syncAnyway": "Sincronizar Mesmo Assim"
-                }
+                    "syncAnyway": "Sincronizar Mesmo Assim",
+                    "syncAndRemoveUnmanaged": "Sincronizar e remover não gerenciados"
+                },
+                "messageWithRemoveUnmanaged": "Isso sincronizará os mods na pasta do jogo e removerá os mods não gerenciados dentro do BD2MM. Esta ação não pode ser desfeita."
             },
             "unsyncMods": {
                 "title": "Dessincronizar Mods?",
@@ -387,7 +435,7 @@
                 }
             },
             "deleteMod": {
-                "title": "Excluir Mod? | Excluir Mods Selecionados?",
+                "title": "Excluir Mod? | Excluir {count} Mods?",
                 "message": "Tem certeza que deseja excluir o mod \"{modName}\"? Esta ação não pode ser desfeita. | Tem certeza que deseja excluir esses {count} mods? Esta ação não pode ser desfeita.",
                 "actions": {
                     "delete": "Excluir"
@@ -407,10 +455,15 @@
                 },
                 "success": {
                     "title": "Mods Sincronizados",
-                    "message": "Seus mods foram sincronizados com sucesso na pasta do jogo."
+                    "message": "Seus mods foram sincronizados com sucesso na pasta do jogo.",
+                    "details": "Ver detalhes"
                 },
                 "error": {
                     "title": "Falha na Sincronização"
+                },
+                "noChanges": {
+                    "title": "Sincronizar mods",
+                    "message": "Nenhuma alteração foi feita durante a sincronização."
                 }
             },
             "unsyncMods": {
@@ -533,6 +586,15 @@
                         "message": "O caminho de mods do jogo em '{gameModsDirectory}' não é um diretório."
                     }
                 }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "Cópia migrada criada",
+                    "message": "“{modName}” foi criado para o ID de personagem {targetId}. O mod original foi mantido."
+                },
+                "error": {
+                    "title": "Falha ao criar cópia migrada"
+                }
             }
         },
         "modals": {
@@ -597,6 +659,17 @@
                 "hint": "Clique em um mod para manter só ele. Use a caixa de seleção ou Ctrl+clique para manter mais de um.",
                 "apply": "Aplicar Alterações | Aplicar {count} Alteração | Aplicar {count} Alterações",
                 "applyAndSync": "Aplicar e Sincronizar"
+            },
+            "migrateModId": {
+                "title": "Copiar mod e migrar ID do personagem",
+                "description": "Cria uma cópia de “{modName}”. O mod original e seus arquivos não serão alterados.",
+                "resourceType": "Tipo de recurso",
+                "sourceId": "ID de origem",
+                "targetId": "ID de destino",
+                "targetIdPlaceholder": "Digite um ID de personagem de seis dígitos",
+                "copyNote": "A cópia será criada na mesma categoria. Os nomes das texturas serão mantidos e carregados conforme o atlas.",
+                "invalidTargetId": "Digite um ID numérico de seis dígitos diferente do original.",
+                "createCopy": "Criar cópia"
             }
         }
     },
@@ -696,7 +769,8 @@
             },
             "compareAll": "Comparar todos",
             "previewMod": "Visualizar Mod",
-            "deleteFromLibrary": "Excluir arquivo original da biblioteca de mods"
+            "deleteFromLibrary": "Excluir arquivo original da biblioteca de mods",
+            "manageSkins": "Gerenciar mapeamentos de skins"
         }
     },
     "profilesTab": {
@@ -941,6 +1015,10 @@
                 "gameDirectoryUpdated": {
                     "title": "Diretório do Jogo Atualizado",
                     "message": "O diretório do jogo foi atualizado para {path}."
+                },
+                "invalidStagingDirectory": {
+                    "title": "Pasta de armazenamento inválida",
+                    "message": "Escolha uma pasta separada de BrownDustX/mods. Nenhuma das pastas pode conter a outra."
                 }
             },
             "sections": {
@@ -1027,7 +1105,11 @@
                     },
                     "autoSyncMods": {
                         "label": "Sincronização Automática de Mods",
-                        "description": "Ative esta opção para sincronizar automaticamente os mods na pasta do jogo ao ativá-los ou desativá-los."
+                        "description": "Ative esta opção para sincronizar automaticamente os mods na pasta do jogo ao ativá-los ou desativá-los.",
+                        "delay": {
+                            "label": "Atraso da sincronização automática",
+                            "description": "Tempo de espera antes de sincronizar os mods automaticamente."
+                        }
                     },
                     "syncMethod": {
                         "label": "Método de Sincronização",
@@ -1124,6 +1206,16 @@
                         "update": "Atualizar"
                     }
                 }
+            },
+            "version": "v{version}",
+            "unknown": "Desconhecido",
+            "downloadAndInstall": "Baixar e instalar",
+            "status": {
+                "upToDate": "Atualizado",
+                "checking": "Verificando atualizações…",
+                "downloading": "Baixando…",
+                "downloadProgress": "Baixando {percent}%",
+                "installing": "Instalando…"
             }
         },
         "experimental": {
@@ -1179,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "Interações de encontro",
+            "title": "Recursos e controles de encontro",
+            "description": "Estas configurações se aplicam às entradas extras P. Gerencie personagens e entradas em Interações de encontro na barra lateral.",
+            "paths": {
+                "exportDirectory": {
+                    "label": "Pasta de JSON de interação",
+                    "hint": "Arquivos JSON de cenas de encontro usados pelas entradas extras P."
+                },
+                "audioDirectory": {
+                    "label": "Pasta de áudio de encontros",
+                    "hint": "Selecione a pasta audio / dating na biblioteca de recursos."
+                },
+                "assetsDirectory": {
+                    "label": "Pasta da biblioteca de recursos visuais",
+                    "hint": "Selecione a pasta raiz da biblioteca com os recursos visuais dos personagens."
+                }
+            },
+            "dragHold": "Segure o botão esquerdo antes de arrastar",
+            "opacity": "Opacidade dos pontos de interação",
+            "draftHelp": "As duas páginas compartilham as configurações não salvas. Você pode continuar editando após trocar de página."
         }
     },
     "errors": {
@@ -1192,7 +1306,15 @@
         },
         "ModInstallError": {
             "ModTooBig": "Este mod excede o limite de tamanho de 100 MB.",
-            "ModContainsSymlink": "Este mod contém um link simbólico ou uma junção: “{path}”. Substitua pelo conteúdo real antes de instalar."
+            "ModContainsSymlink": "Este mod contém um link simbólico ou uma junção: “{path}”. Substitua pelo conteúdo real antes de instalar.",
+            "ModAlreadyExists": "Já existe um mod com este nome.",
+            "PathNotFound": "O caminho do mod selecionado não foi encontrado.",
+            "InvalidName": "O caminho selecionado não tem um nome de mod válido.",
+            "UnsupportedFormat": "Formato de arquivo não suportado. Apenas .zip, .rar e .7z são aceitos.",
+            "InvalidArchive": "O arquivo compactado está corrompido ou ilegível.",
+            "MissingModFile": "Este não parece ser um mod válido (.modfile não encontrado).",
+            "MultipleModsFound": "Foram encontrados vários arquivos .modfile. Certifique-se de que haja apenas um mod.",
+            "NotAMod": "O arquivo ou a pasta selecionada não é um mod válido do BrownDustX."
         },
         "ModSyncError": {
             "ManifestCorrupt": "O manifesto de sincronização está corrompido. {reason}",
@@ -1244,7 +1366,74 @@
         },
         "invalidMod": "O arquivo ou pasta selecionado não é um mod BrownDustX válido.",
         "invalidFormat": "Formato de mod não suportado. Por favor, selecione um arquivo ou pasta de mod válido.",
-        "unsupportedFormat": "Formato de arquivo não suportado. Por favor, selecione um arquivo ou pasta de mod válido."
+        "unsupportedFormat": "Formato de arquivo não suportado. Por favor, selecione um arquivo ou pasta de mod válido.",
+        "AppError": {
+            "GameDirectoryNotSet": "A pasta do jogo não foi definida. Configure-a nas configurações.",
+            "SyncMethodInvalid": "Método de sincronização inválido: {method}",
+            "GameRunning": "O jogo já está em execução.",
+            "Unknown": "Ocorreu um erro inesperado. Consulte os logs para mais detalhes."
+        },
+        "Io": {
+            "NotFound": "O arquivo ou a pasta não existe.",
+            "PermissionDenied": "Acesso negado.",
+            "AlreadyExists": "O arquivo ou a pasta já existe.",
+            "DirectoryNotEmpty": "A pasta não está vazia.",
+            "NotADirectory": "Era esperada uma pasta, mas foi encontrado um arquivo.",
+            "IsADirectory": "Era esperado um arquivo, mas foi encontrada uma pasta.",
+            "InvalidInput": "Entrada inválida para esta operação.",
+            "InvalidData": "O arquivo contém dados inválidos.",
+            "TimedOut": "A operação excedeu o tempo limite.",
+            "WriteZero": "Falha ao gravar dados no disco.",
+            "UnexpectedEof": "O arquivo terminou inesperadamente e pode estar corrompido.",
+            "OutOfMemory": "Memória insuficiente.",
+            "StorageFull": "Espaço em disco insuficiente."
+        },
+        "ModDeleteError": {
+            "ModNotFound": "Mod não encontrado",
+            "PathNotFound": "O caminho não existe ou foi excluído"
+        },
+        "ModRenameError": {
+            "ModNotFound": "Mod “{mod_name}” não encontrado",
+            "PathNotFound": "O caminho não existe ou foi excluído",
+            "InvalidName": "Nome de mod inválido “{name}” ({reason})",
+            "ModAlreadyExists": "Já existe um mod chamado “{mod_name}”"
+        },
+        "ModIdMigrationError": {
+            "ModNotFound": "Mod de origem não encontrado: {mod_name}",
+            "InvalidTargetId": "O ID de destino deve ter exatamente seis dígitos.",
+            "UnsupportedModType": "Somente mods de ilustração e de cena podem ser migrados.",
+            "SameId": "O ID de destino é igual ao ID de origem.",
+            "InvalidModfile": "A pasta do mod deve conter exatamente um .modfile correspondente ao ID do recurso.",
+            "DestinationAlreadyExists": "A cópia ou o arquivo de recurso de destino já existe: {path}",
+            "ModContainsSymlink": "Este mod contém um link simbólico ou junção: “{path}”. Substitua-o por um arquivo real primeiro."
+        },
+        "ProfileError": {
+            "ProfileNotFound": "Perfil “{profile_id}” não encontrado",
+            "ProfileAlreadyExists": "Já existe um perfil chamado “{profile_name}”",
+            "InvalidName": "Nome de perfil inválido “{profile_name}” ({reason})",
+            "AlreadyActive": "O perfil “{profile_name}” já está ativo",
+            "CannotDeleteActive": "O perfil “{profile_name}” está ativo e não pode ser excluído",
+            "CannotDeleteDefault": "O perfil padrão não pode ser excluído",
+            "NoActiveProfile": "Nenhum perfil ativo foi definido",
+            "LoadFailed": "Falha ao carregar perfis: {reason}",
+            "SaveFailed": "Falha ao salvar o perfil “{profile_name}”: {reason}",
+            "CreateFailed": "Falha ao criar o perfil “{profile_name}”: {reason}",
+            "SerializeFailed": "Falha ao serializar o perfil “{profile_name}”",
+            "UpdateFailed": "Falha ao atualizar o perfil “{profile_name}”: {reason}",
+            "DeleteFailed": "Falha ao excluir o perfil “{profile_name}”: {reason}",
+            "ProfilesDirectoryNotFound": "Pasta de perfis “{path}” não encontrada"
+        },
+        "MetadataError": {
+            "Load": "Falha ao carregar os metadados do mod: {reason}",
+            "Save": "Falha ao salvar os metadados do mod: {reason}",
+            "Serialize": "Falha ao serializar os metadados do mod"
+        },
+        "PreviewError": {
+            "ModNotFound": "Mod “{mod_name}” não encontrado",
+            "ModHasErrors": "O mod “{mod_name}” contém erros e não pode ser visualizado",
+            "ModPreviewNotFound": "A ferramenta de prévia não foi encontrada. Clique em “Verificar atualizações” nas configurações para reinstalá-la.",
+            "PreviewFailed": "Falha ao visualizar o mod: {reason}"
+        }
     },
     "modErrors": {
         "missingTextures": "Você precisa criar uma pasta chamada 'textures' dentro da pasta do mod.",
@@ -1253,6 +1442,89 @@
         "shouldBeInFolder": "Este mod deve estar dentro de uma pasta. Por favor, crie uma pasta com o mesmo nome do mod e mova o arquivo do mod para dentro dela.",
         "missingAtlasFile": "Este mod está sem o arquivo de atlas.",
         "unmanaged": "Este mod está na pasta do jogo, mas não é gerenciado pelo BD2MM. Não é possível ativá-lo ou desativá-lo por aqui.",
-        "noDescription": "Nenhuma descrição fornecida."
+        "noDescription": "Nenhuma descrição fornecida.",
+        "unmanagedButInStaging": "Este mod já está na pasta do jogo, mas não foi instalado pelo BD2MM. A sincronização não o altera, mesmo ativado. Use “Sincronizar e remover não gerenciados” para substituí-lo."
+    },
+    "interactionsTab": {
+        "title": "Interações de encontro",
+        "description": "Configure entradas extras P e entradas nativas oficiais para cada personagem. Ambas podem ser ativadas juntas.",
+        "management": "Gerenciar interações de encontro",
+        "managementHelp": "Desativar restaura a lista original do jogo e mantém as duas configurações. Reabra a tela de encontros após salvar.",
+        "managementToggle": "Ativar gerenciamento de encontros",
+        "native": "Entradas nativas oficiais",
+        "nativeToggle": "Ativar entradas nativas oficiais",
+        "nativeHelp": "Usa retratos, interações e verificações de capítulos do jogo, sem exportar JSON. Desativar um personagem oculta sua entrada nativa já obtida, sem alterar dados da conta.",
+        "extra": "Entradas extras P",
+        "extraToggle": "Ativar entradas extras P",
+        "extraHelp": "Adiciona retratos extras com a marca P usando JSON e áudio locais. Os controles de personagem são independentes das entradas nativas.",
+        "configured": "{count} / {total} personagens configurados",
+        "plugin": "Plugin de encontros {version}",
+        "pluginUpdate": "Atualize o plugin instalado para usar os dois tipos de entrada",
+        "exitGame": "Feche o jogo antes de instalar ou atualizar",
+        "characters": "Personagens de encontro · {count} entradas",
+        "search": "Buscar personagens ou trajes",
+        "searchLabel": "Buscar personagens de encontro",
+        "disabledHelp": "O gerenciamento está desativado. Suas seleções abaixo foram mantidas.",
+        "exportStatus": {
+            "ready": "JSON da cena P disponível",
+            "missing": "JSON da cena P ausente",
+            "expired": "JSON da cena P expirado",
+            "invalid": "JSON da cena P inválido"
+        },
+        "expires": "Válido até {time}",
+        "nativeFor": "Entrada nativa oficial de {name}",
+        "extraFor": "Entrada extra P de {name}",
+        "configureMods": "Configurar mods",
+        "configureModsFor": "Configurar mods de encontro de {name}",
+        "modsEnabled": "{count} / {total} ativados",
+        "empty": "Nenhum personagem de encontro encontrado.",
+        "saveHelp": "Reabra a tela de encontros após salvar as entradas. As seleções de mods são salvas automaticamente no perfil atual e aplicadas ao jogo após sincronizar.",
+        "syncing": "Sincronizando…",
+        "syncMods": "Sincronizar mods",
+        "synced": "Mods sincronizados",
+        "characterMissing": "Dados do personagem não encontrados. Atualize os dados e tente novamente.",
+        "modActionFailed": "Falha na operação do mod",
+        "saved": "Configurações de encontro salvas. Reabra a tela de encontros no jogo para aplicá-las.",
+        "installed": "Plugin de encontros instalado. Reinicie o jogo para carregá-lo.",
+        "legacy": {
+            "description": "Gerencie interações P na barra de retratos com JSON e áudio locais, preservando os encontros oficiais e o progresso da conta.",
+            "toggle": "Ativar interações locais",
+            "toggleHelp": "Desativar oculta todas as interações P e mantém as configurações de cada entrada. Reabra a tela de encontros após salvar.",
+            "listTitle": "Interações da barra de retratos",
+            "enabledCount": "{count} ativadas",
+            "disabled": "Interações locais desativadas",
+            "entriesHelp": "Novas entradas ficam desativadas por padrão. Ao ativá-las, escolha recursos originais ou mods ativos. Exportar JSON não adiciona entradas.",
+            "modeFor": "Modo de interação de {name}",
+            "original": "Ativada · Original",
+            "modded": "Ativada · Aplicar mods",
+            "empty": "Nenhuma interação adicionada. Selecione uma abaixo.",
+            "selectEntry": "Selecionar uma interação para adicionar",
+            "selectEntryPlaceholder": "Selecione uma interação para adicionar…",
+            "navigationHelp": "Use o botão direito para mover a visão e a roda para ampliar. O Reset nativo restaura a pose e a afeição iniciais."
+        }
+    },
+    "skinsTab": {
+        "title": "Mapeamentos de skins",
+        "description": "Clique em Skin acima do personagem no jogo para trocar ilustrações, fundos, modelos e cenas de habilidade.",
+        "toggle": "Ativar mapeamentos de skins",
+        "toggleHelp": "Desativar restaura a aparência original e mantém os mapeamentos e seleções de skins. As alterações são salvas e aplicadas automaticamente.",
+        "plugin": "Plugin de skins {version}",
+        "install": "Instalar plugin de skins",
+        "installed": "Plugin de skins instalado. Ele será carregado na próxima inicialização do jogo.",
+        "addMapping": "Adicionar mapeamento",
+        "source": "Traje de origem",
+        "target": "Skin de destino",
+        "optionalName": "Nome da skin (opcional)",
+        "newName": "Nome da nova skin",
+        "name": "Nome da skin",
+        "mappingHelp": "O destino usa recursos do mesmo personagem no jogo. O botão Skin alterna na ordem da lista. O nível e os valores das habilidades do traje original são mantidos.",
+        "sourceId": "ID do traje original: {id}",
+        "current": "Skin atual",
+        "original": "Original · {id}",
+        "enable": "Ativar {name}",
+        "remove": "Remover {name}",
+        "autoSaveHelp": "Adições, remoções e trocas são salvas automaticamente. Os nomes são salvos ao concluir a edição.",
+        "autoSaveFailed": "Falha ao salvar automaticamente: {reason}",
+        "duplicate": "Este mapeamento já existe"
     }
 }

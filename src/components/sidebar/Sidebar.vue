@@ -66,7 +66,7 @@ function onProfileSelected(profile_id: string) {
         <div class="h-32 flex items-center flex-col justify-center gap-1 relative shrink-0 group-hover">
             <span class="font-cinzel font-bold text-xl z-2">BROWNDUST II</span>
             <span v-if="gameStore.gameVersion" class="text-xs font-semibold flex gap-2 items-center justify-center z-2">
-                Game v{{ gameStore.gameVersion }}
+                {{ $t('sidebar.gameVersion', { version: gameStore.gameVersion }) }}
             </span>
             <img :src="headerImage"
                 class="absolute top-0 inset-x-0 w-full h-48 object-cover opacity-60 group-hover:opacity-100 mask-[linear-gradient(to_bottom,black_0%,rgba(0,0,0,.6)_45%,rgba(0,0,0,.2)_75%,transparent_100%)] pointer-events-none select-none" />
@@ -76,9 +76,9 @@ function onProfileSelected(profile_id: string) {
         <div class="relative">
             <NavigationSection :title="$t('sidebar.sections.navigation')">
                 <NavigationButton :icon="Component" :label="$t('sidebar.tabs.mods')" value="mods" />
-                <NavigationButton :icon="Heart" label="本地互动" value="interactions" />
+                <NavigationButton :icon="Heart" :label="$t('sidebar.tabs.interactions')" value="interactions" />
                 <NavigationButton :icon="Users" :label="$t('sidebar.tabs.characters')" value="characters" />
-                <NavigationButton :icon="Shirt" label="皮肤映射" value="skins" />
+                <NavigationButton :icon="Shirt" :label="$t('sidebar.tabs.skins')" value="skins" />
             </NavigationSection>
             <NavigationSection :title="$t('sidebar.sections.settings')">
                 <NavigationButton :icon="Bolt" :label="$t('sidebar.tabs.profiles')" value="profiles" />

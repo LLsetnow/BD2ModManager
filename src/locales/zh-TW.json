@@ -93,7 +93,13 @@
             "continue": "繼續",
             "browse": "瀏覽",
             "save": "儲存",
-            "delete": "刪除"
+            "delete": "刪除",
+            "add": "新增",
+            "enableAll": "全部啟用",
+            "disableAll": "全部停用",
+            "saveSettings": "儲存設定",
+            "rescan": "重新掃描",
+            "choose": "選擇{label}"
         },
         "modTypes": {
             "cutscene": "過場動畫",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "這裡什麼都沒有..."
         },
-        "error": "錯誤"
+        "error": "錯誤",
+        "status": {
+            "enabled": "已啟用",
+            "disabled": "已停用",
+            "saving": "正在儲存…",
+            "autoSaved": "已自動儲存"
+        },
+        "plugin": {
+            "current": "已安裝目前版本",
+            "updateAvailable": "可更新至目前版本",
+            "notInstalled": "尚未安裝",
+            "reinstall": "重新安裝 / 更新",
+            "install": "安裝外掛"
+        },
+        "editableSelect": {
+            "placeholder": "輸入{label} ID / 名稱，或從清單選擇",
+            "empty": "找不到相符項目，請輸入清單中的 ID 或名稱。"
+        },
+        "seconds": "秒"
     },
     "app": {
         "confirmations": {
@@ -150,13 +174,23 @@
             },
             "modPreviewUpdate": {
                 "retry": "重試",
-                "updated": "BD2ModPreview v{version} 已更新",
-                "failed": "BD2ModPreview 更新失敗",
-                "noUpdateAvailable": "BD2ModPreview 已是最新版本"
+                "updated": {
+                    "title": "BD2ModPreview v{version} 已更新"
+                },
+                "failed": {
+                    "title": "BD2ModPreview 更新失敗"
+                },
+                "noUpdateAvailable": {
+                    "title": "BD2ModPreview 已是最新版本"
+                }
             },
             "gameDataUpdate": {
-                "updated": "遊戲資料已更新",
-                "failed": "遊戲資料更新失敗"
+                "updated": {
+                    "title": "遊戲資料已更新"
+                },
+                "failed": {
+                    "title": "遊戲資料更新失敗"
+                }
             }
         },
         "modals": {
@@ -235,7 +269,8 @@
         "appUpdate": {
             "checking": "正在檢查更新...",
             "available": "有可用更新：v{version}",
-            "downloaded": "v{version} 已就緒！點擊以套用更新"
+            "downloaded": "v{version} 已就緒！點擊以套用更新",
+            "updating": "正在更新至 v{version}…"
         },
         "sync": {
             "applying": "正在套用：{modName}",
@@ -247,6 +282,13 @@
             "logs": "日誌",
             "kofi": "在 Ko-Fi 上支持",
             "afdian": "在愛發電上支持"
+        },
+        "credits": {
+            "creator": "作者",
+            "thanks": "感謝",
+            "creator_tooltip": "由 {'@'}bruhnn 製作",
+            "supporter_tooltip": "{platform} 上的贊助者",
+            "bug_reports_tooltip": "在 GitHub 上回報問題或提出建議"
         }
     },
     "sidebar": {
@@ -261,7 +303,9 @@
             "characters": "角色",
             "profiles": "設定檔",
             "modLoader": "模組載入器",
-            "settings": "設定"
+            "settings": "設定",
+            "interactions": "約會互動",
+            "skins": "造型映射"
         },
         "notifications": {
             "launchGame": {
@@ -286,7 +330,8 @@
         "actions": {
             "launchGame": "啟動遊戲",
             "launchGameWithoutMods": "啟動（原版）"
-        }
+        },
+        "gameVersion": "遊戲 v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -365,7 +410,8 @@
                 "deleteSelectedMods": "刪除所選模組",
                 "openModFolder": "開啟模組資料夾",
                 "previewMod": "預覽模組",
-                "previewModShortcut": "雙擊"
+                "previewModShortcut": "雙擊",
+                "migrateModId": "複製並遷移角色 ID…"
             }
         },
         "confirmations": {
@@ -376,8 +422,10 @@
                 "messageWithConflicts": "部分模組之間存在衝突，在解決衝突之前遊戲可能無法啟動。",
                 "actions": {
                     "sync": "同步",
-                    "syncAnyway": "仍要同步"
-                }
+                    "syncAnyway": "仍要同步",
+                    "syncAndRemoveUnmanaged": "同步並刪除非託管模組"
+                },
+                "messageWithRemoveUnmanaged": "將同步遊戲資料夾中的模組，並刪除 BD2MM 內的非託管模組。此操作無法復原。"
             },
             "unsyncMods": {
                 "title": "取消同步模組？",
@@ -387,7 +435,7 @@
                 }
             },
             "deleteMod": {
-                "title": "刪除模組？ | 刪除所選模組？",
+                "title": "刪除模組？ | 刪除 {count} 個模組？",
                 "message": "確定要刪除模組「{modName}」嗎？此操作無法復原。 | 確定要刪除這 {count} 個模組嗎？此操作無法復原。",
                 "actions": {
                     "delete": "刪除"
@@ -407,10 +455,15 @@
                 },
                 "success": {
                     "title": "模組已同步",
-                    "message": "模組已成功與遊戲資料夾同步。"
+                    "message": "模組已成功與遊戲資料夾同步。",
+                    "details": "查看詳情"
                 },
                 "error": {
                     "title": "同步失敗"
+                },
+                "noChanges": {
+                    "title": "同步模組",
+                    "message": "同步過程中未進行任何變更。"
                 }
             },
             "unsyncMods": {
@@ -533,6 +586,15 @@
                         "message": "遊戲模組路徑 '{gameModsDirectory}' 不是一個目錄。"
                     }
                 }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "已建立遷移副本",
+                    "message": "已為角色 ID {targetId} 建立「{modName}」，來源模組保持不變。"
+                },
+                "error": {
+                    "title": "建立遷移副本失敗"
+                }
             }
         },
         "modals": {
@@ -597,6 +659,17 @@
                 "hint": "點擊模組僅保留該模組。使用核取方塊或 Ctrl+點擊可保留多個。",
                 "apply": "套用變更 | 套用 {count} 項變更 | 套用 {count} 項變更",
                 "applyAndSync": "套用並同步"
+            },
+            "migrateModId": {
+                "title": "複製模組並遷移角色 ID",
+                "description": "建立「{modName}」的副本，原模組與檔案不會變更。",
+                "resourceType": "資源類型",
+                "sourceId": "來源 ID",
+                "targetId": "目標 ID",
+                "targetIdPlaceholder": "輸入 6 位角色 ID",
+                "copyNote": "副本將建立在同一分類中。貼圖檔名保持不變，並依 atlas 中記錄的名稱載入。",
+                "invalidTargetId": "請輸入與來源不同的 6 位數字 ID。",
+                "createCopy": "建立副本"
             }
         }
     },
@@ -696,7 +769,8 @@
             },
             "compareAll": "比較全部",
             "previewMod": "預覽模組",
-            "deleteFromLibrary": "刪除模組庫中的來源檔案"
+            "deleteFromLibrary": "刪除模組庫中的來源檔案",
+            "manageSkins": "管理造型映射"
         }
     },
     "profilesTab": {
@@ -720,7 +794,7 @@
             "cleanMissingMods": {
                 "success": {
                     "title": "設定檔清理完成",
-                    "message": "已從「{profileName}」中移除 {count} 個遺失的模組紀錄。"
+                    "message": "「{profileName}」中沒有遺失的模組。 | 已從「{profileName}」中移除 {count} 個遺失的模組紀錄。 | 已從「{profileName}」中移除 {count} 個遺失的模組紀錄。"
                 },
                 "error": {
                     "title": "設定檔清理失敗"
@@ -941,6 +1015,10 @@
                 "gameDirectoryUpdated": {
                     "title": "遊戲目錄已更新",
                     "message": "遊戲目錄已更新為 {path}。"
+                },
+                "invalidStagingDirectory": {
+                    "title": "暫存資料夾無效",
+                    "message": "請選擇與 BrownDustX/mods 分開的資料夾，兩者不能互相包含。"
                 }
             },
             "sections": {
@@ -1027,7 +1105,11 @@
                     },
                     "autoSyncMods": {
                         "label": "自動同步模組",
-                        "description": "啟用此選項，在啟用或停用模組時自動將其同步至遊戲資料夾。"
+                        "description": "啟用此選項，在啟用或停用模組時自動將其同步至遊戲資料夾。",
+                        "delay": {
+                            "label": "自動同步延遲",
+                            "description": "自動同步模組前的等待時間。"
+                        }
                     },
                     "syncMethod": {
                         "label": "同步方式",
@@ -1124,6 +1206,16 @@
                         "update": "更新"
                     }
                 }
+            },
+            "version": "v{version}",
+            "unknown": "未知",
+            "downloadAndInstall": "下載並安裝",
+            "status": {
+                "upToDate": "已是最新版本",
+                "checking": "正在檢查更新…",
+                "downloading": "正在下載…",
+                "downloadProgress": "正在下載 {percent}%",
+                "installing": "正在安裝…"
             }
         },
         "experimental": {
@@ -1179,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "約會互動",
+            "title": "約會互動資源與操作",
+            "description": "以下設定用於 P 額外入口。角色和入口開關可在側欄的「約會互動」中管理。",
+            "paths": {
+                "exportDirectory": {
+                    "label": "互動 JSON 目錄",
+                    "hint": "P 額外入口使用的約會場景 JSON 檔案。"
+                },
+                "audioDirectory": {
+                    "label": "約會音訊目錄",
+                    "hint": "選擇素材庫中的 audio / dating 資料夾。"
+                },
+                "assetsDirectory": {
+                    "label": "美術素材庫目錄",
+                    "hint": "選擇包含角色美術資源的素材庫根目錄。"
+                }
+            },
+            "dragHold": "左鍵長按後可拖曳",
+            "opacity": "觸點透明度",
+            "draftHelp": "兩頁共用尚未儲存的約會設定，切換頁面後仍可繼續編輯。"
         }
     },
     "errors": {
@@ -1192,7 +1306,15 @@
         },
         "ModInstallError": {
             "ModTooBig": "此模組超過了 100 MB 的大小限制。",
-            "ModContainsSymlink": "此模組包含符號連結或目錄接合點：「{path}」。請先將其替換為實際檔案，再進行安裝。"
+            "ModContainsSymlink": "此模組包含符號連結或目錄接合點：「{path}」。請先將其替換為實際檔案，再進行安裝。",
+            "ModAlreadyExists": "同名模組已存在。",
+            "PathNotFound": "找不到所選模組路徑。",
+            "InvalidName": "所選路徑沒有有效的模組名稱。",
+            "UnsupportedFormat": "不支援此壓縮格式，僅支援 .zip、.rar 和 .7z。",
+            "InvalidArchive": "壓縮檔已損毀或無法讀取。",
+            "MissingModFile": "不是有效模組：找不到 .modfile。",
+            "MultipleModsFound": "找到多個 .modfile 檔案，請確保只有一個模組。",
+            "NotAMod": "所選檔案或資料夾不是有效的 BrownDustX 模組。"
         },
         "ModSyncError": {
             "ManifestCorrupt": "同步清單已損毀。{reason}",
@@ -1244,7 +1366,74 @@
         },
         "invalidMod": "所選檔案或資料夾不是有效的 BrownDustX 模組。",
         "invalidFormat": "不支援的模組格式，請選取有效的模組檔案或資料夾。",
-        "unsupportedFormat": "不支援的檔案格式，請選取有效的模組檔案或資料夾。"
+        "unsupportedFormat": "不支援的檔案格式，請選取有效的模組檔案或資料夾。",
+        "AppError": {
+            "GameDirectoryNotSet": "尚未設定遊戲目錄，請至設定中配置。",
+            "SyncMethodInvalid": "無效的同步方式：{method}",
+            "GameRunning": "遊戲已在執行。",
+            "Unknown": "發生非預期錯誤，請查看記錄以了解詳情。"
+        },
+        "Io": {
+            "NotFound": "檔案或資料夾不存在。",
+            "PermissionDenied": "存取遭拒。",
+            "AlreadyExists": "檔案或資料夾已存在。",
+            "DirectoryNotEmpty": "目錄不是空的。",
+            "NotADirectory": "需要資料夾，但找到的是檔案。",
+            "IsADirectory": "需要檔案，但找到的是資料夾。",
+            "InvalidInput": "此操作的輸入無效。",
+            "InvalidData": "檔案包含無效資料。",
+            "TimedOut": "操作逾時。",
+            "WriteZero": "無法將資料寫入磁碟。",
+            "UnexpectedEof": "檔案意外結束，可能已損毀。",
+            "OutOfMemory": "記憶體不足。",
+            "StorageFull": "磁碟空間不足。"
+        },
+        "ModDeleteError": {
+            "ModNotFound": "找不到模組",
+            "PathNotFound": "路徑不存在或已遭刪除"
+        },
+        "ModRenameError": {
+            "ModNotFound": "找不到模組「{mod_name}」",
+            "PathNotFound": "路徑不存在或已遭刪除",
+            "InvalidName": "無效的模組名稱「{name}」（{reason}）",
+            "ModAlreadyExists": "名為「{mod_name}」的模組已存在"
+        },
+        "ModIdMigrationError": {
+            "ModNotFound": "找不到來源模組：{mod_name}",
+            "InvalidTargetId": "目標 ID 必須是 6 位數字。",
+            "UnsupportedModType": "僅支援遷移立繪與技能動畫模組。",
+            "SameId": "目標 ID 與來源 ID 相同。",
+            "InvalidModfile": "模組目錄必須只包含一個與資源 ID 相符的 .modfile。",
+            "DestinationAlreadyExists": "目標副本或資源檔案已存在：{path}",
+            "ModContainsSymlink": "模組包含符號連結或目錄連接：「{path}」。請先替換為實際檔案。"
+        },
+        "ProfileError": {
+            "ProfileNotFound": "找不到設定檔「{profile_id}」",
+            "ProfileAlreadyExists": "名為「{profile_name}」的設定檔已存在",
+            "InvalidName": "無效的設定檔名稱「{profile_name}」（{reason}）",
+            "AlreadyActive": "設定檔「{profile_name}」已啟用",
+            "CannotDeleteActive": "無法刪除目前啟用的設定檔「{profile_name}」",
+            "CannotDeleteDefault": "無法刪除預設設定檔",
+            "NoActiveProfile": "尚未設定啟用的設定檔",
+            "LoadFailed": "載入設定檔失敗：{reason}",
+            "SaveFailed": "儲存設定檔「{profile_name}」失敗：{reason}",
+            "CreateFailed": "建立設定檔「{profile_name}」失敗：{reason}",
+            "SerializeFailed": "序列化設定檔「{profile_name}」失敗",
+            "UpdateFailed": "更新設定檔「{profile_name}」失敗：{reason}",
+            "DeleteFailed": "刪除設定檔「{profile_name}」失敗：{reason}",
+            "ProfilesDirectoryNotFound": "找不到設定檔目錄「{path}」"
+        },
+        "MetadataError": {
+            "Load": "載入模組中繼資料失敗：{reason}",
+            "Save": "儲存模組中繼資料失敗：{reason}",
+            "Serialize": "序列化模組中繼資料失敗"
+        },
+        "PreviewError": {
+            "ModNotFound": "找不到模組「{mod_name}」",
+            "ModHasErrors": "模組「{mod_name}」包含錯誤，無法預覽",
+            "ModPreviewNotFound": "找不到模組預覽工具。可至設定中點選「檢查更新」重新安裝。",
+            "PreviewFailed": "模組預覽失敗：{reason}"
+        }
     },
     "modErrors": {
         "missingTextures": "您需要在模組資料夾內建立一個名為「textures」的資料夾。",
@@ -1253,6 +1442,89 @@
         "shouldBeInFolder": "此模組應放置在一個資料夾內，請建立一個與模組同名的資料夾，並將模組檔案移入其中。",
         "missingAtlasFile": "此模組缺少圖集檔案。",
         "unmanaged": "此模組位於遊戲資料夾中，但未由 BD2MM 管理，無法在此啟用或停用。",
-        "noDescription": "未提供描述。"
+        "noDescription": "未提供描述。",
+        "unmanagedButInStaging": "此模組已在遊戲資料夾中，但非由 BD2MM 安裝，啟用後同步也不會變更它。請使用「同步並刪除非託管模組」進行替換。"
+    },
+    "interactionsTab": {
+        "title": "約會互動",
+        "description": "為每位角色獨立設定 P 額外入口和官方原生入口，兩種方式可以同時啟用。",
+        "management": "約會互動管理",
+        "managementHelp": "停用後恢復遊戲原有清單，保留兩種入口的設定。儲存後重新進入約會介面生效。",
+        "managementToggle": "約會互動管理總開關",
+        "native": "官方原生入口",
+        "nativeToggle": "官方原生入口總開關",
+        "nativeHelp": "使用遊戲原生頭像、互動和章節檢查，無須匯出 JSON。停用角色開關也會隱藏其已擁有的原生入口，不會修改帳號資料。",
+        "extra": "P 額外入口",
+        "extraToggle": "P 額外入口總開關",
+        "extraHelp": "在頭像列新增帶 P 標記的額外對象，使用本機場景 JSON 和音訊。角色開關與原生入口互不影響。",
+        "configured": "已設定 {count} / {total} 位角色",
+        "plugin": "約會互動外掛 {version}",
+        "pluginUpdate": "已有外掛，請更新以支援雙入口設定",
+        "exitGame": "安裝或更新前請結束遊戲",
+        "characters": "約會角色 · {count} 項",
+        "search": "搜尋角色或服裝",
+        "searchLabel": "搜尋約會角色",
+        "disabledHelp": "管理總開關已停用，下方選擇已保留。",
+        "exportStatus": {
+            "ready": "P 場景 JSON 可用",
+            "missing": "P 場景缺少 JSON",
+            "expired": "P 場景 JSON 已過期",
+            "invalid": "P 場景 JSON 無效"
+        },
+        "expires": "有效期限至 {time}",
+        "nativeFor": "{name}的官方原生入口",
+        "extraFor": "{name}的 P 額外入口",
+        "configureMods": "設定模組",
+        "configureModsFor": "設定{name}的約會模組",
+        "modsEnabled": "{count} / {total} 已啟用",
+        "empty": "沒有相符的約會角色。",
+        "saveHelp": "入口設定儲存後請重新進入約會介面。模組選擇會自動儲存至目前設定檔，同步後套用至遊戲。",
+        "syncing": "正在同步…",
+        "syncMods": "同步模組",
+        "synced": "模組已同步",
+        "characterMissing": "找不到對應角色資料，請重新整理角色資料後再試。",
+        "modActionFailed": "模組操作失敗",
+        "saved": "已儲存約會互動設定。重新開啟遊戲中的約會介面後生效。",
+        "installed": "約會互動外掛已安裝。重新啟動遊戲後載入。",
+        "legacy": {
+            "description": "管理頭像列中的 P 互動。使用本機 JSON 和音訊，保留官方約會與帳號進度。",
+            "toggle": "本機互動總開關",
+            "toggleHelp": "停用後隱藏全部 P 互動，保留各項目的設定。儲存後重新進入約會介面生效。",
+            "listTitle": "頭像列互動",
+            "enabledCount": "{count} 項已啟用",
+            "disabled": "總開關已停用",
+            "entriesHelp": "新增的項目預設停用；啟用時可選擇原版資源或套用已啟用的模組。匯出 JSON 本身不會新增項目。",
+            "modeFor": "{name}的互動狀態",
+            "original": "啟用 · 原版",
+            "modded": "啟用 · 套用模組",
+            "empty": "尚未新增互動。可從下方選擇。",
+            "selectEntry": "選擇要新增的互動",
+            "selectEntryPlaceholder": "選擇要新增的互動…",
+            "navigationHelp": "右鍵移動畫面，滾輪縮放；原生 Reset 恢復初始姿勢與好感度。"
+        }
+    },
+    "skinsTab": {
+        "title": "造型映射",
+        "description": "在遊戲角色小人上方點選 Skin，切換立繪、背景、小人與技能演出。",
+        "toggle": "造型映射總開關",
+        "toggleHelp": "停用後恢復遊戲原有外觀，保留映射和造型選擇。修改後自動儲存並生效。",
+        "plugin": "造型外掛 {version}",
+        "install": "安裝造型外掛",
+        "installed": "造型外掛已安裝，下次啟動遊戲時載入。",
+        "addMapping": "新增映射",
+        "source": "來源服裝",
+        "target": "目標造型",
+        "optionalName": "造型名稱（選填）",
+        "newName": "新造型名稱",
+        "name": "造型名稱",
+        "mappingHelp": "目標使用遊戲內同一角色的資源。遊戲中的 Skin 按鈕會依清單順序循環切換，原服裝的等級和技能數值保持不變。",
+        "sourceId": "原服裝 ID：{id}",
+        "current": "目前造型",
+        "original": "原版 · {id}",
+        "enable": "啟用 {name}",
+        "remove": "移除 {name}",
+        "autoSaveHelp": "新增、刪除與切換會自動儲存；名稱編輯完成後自動儲存。",
+        "autoSaveFailed": "自動儲存失敗：{reason}",
+        "duplicate": "此映射已存在"
     }
 }

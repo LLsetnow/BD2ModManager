@@ -93,7 +93,13 @@
             "continue": "続行",
             "browse": "参照",
             "save": "保存",
-            "delete": "削除"
+            "delete": "削除",
+            "add": "追加",
+            "enableAll": "すべて有効化",
+            "disableAll": "すべて無効化",
+            "saveSettings": "設定を保存",
+            "rescan": "再スキャン",
+            "choose": "{label}を選択"
         },
         "modTypes": {
             "cutscene": "カットシーン",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "見つかりませんでした..."
         },
-        "error": "エラー"
+        "error": "エラー",
+        "status": {
+            "enabled": "有効",
+            "disabled": "無効",
+            "saving": "保存中…",
+            "autoSaved": "自動保存しました"
+        },
+        "plugin": {
+            "current": "現行バージョンをインストール済み",
+            "updateAvailable": "更新できます",
+            "notInstalled": "未インストール",
+            "reinstall": "再インストール / 更新",
+            "install": "プラグインをインストール"
+        },
+        "editableSelect": {
+            "placeholder": "{label}の ID・名前を入力するか、一覧から選択",
+            "empty": "一致する項目がありません。一覧内の ID または名前を入力してください。"
+        },
+        "seconds": "秒"
     },
     "app": {
         "confirmations": {
@@ -150,13 +174,23 @@
             },
             "modPreviewUpdate": {
                 "retry": "再試行",
-                "updated": "BD2ModPreview v{version}を更新しました",
-                "failed": "BD2ModPreviewの更新に失敗しました",
-                "noUpdateAvailable": "BD2ModPreviewは最新です"
+                "updated": {
+                    "title": "BD2ModPreview v{version}を更新しました"
+                },
+                "failed": {
+                    "title": "BD2ModPreviewの更新に失敗しました"
+                },
+                "noUpdateAvailable": {
+                    "title": "BD2ModPreviewは最新です"
+                }
             },
             "gameDataUpdate": {
-                "updated": "ゲームデータを更新しました",
-                "failed": "ゲームデータの更新に失敗しました"
+                "updated": {
+                    "title": "ゲームデータを更新しました"
+                },
+                "failed": {
+                    "title": "ゲームデータの更新に失敗しました"
+                }
             }
         },
         "modals": {
@@ -235,7 +269,8 @@
         "appUpdate": {
             "checking": "更新を確認中...",
             "available": "アップデートあり：v{version}",
-            "downloaded": "v{version} の準備ができました！クリックして適用"
+            "downloaded": "v{version} の準備ができました！クリックして適用",
+            "updating": "v{version} に更新中…"
         },
         "sync": {
             "applying": "適用中：{modName}",
@@ -247,6 +282,13 @@
             "logs": "ログ",
             "kofi": "Ko-Fiでサポート",
             "afdian": "Afdianでサポート"
+        },
+        "credits": {
+            "creator": "作者",
+            "thanks": "協力",
+            "creator_tooltip": "{'@'}bruhnn 制作",
+            "supporter_tooltip": "{platform} の支援者",
+            "bug_reports_tooltip": "GitHub で不具合報告・ご提案"
         }
     },
     "sidebar": {
@@ -261,7 +303,9 @@
             "characters": "キャラクター",
             "profiles": "プロファイル",
             "modLoader": "Modローダー",
-            "settings": "設定"
+            "settings": "設定",
+            "interactions": "デート交流",
+            "skins": "スキン割り当て"
         },
         "notifications": {
             "launchGame": {
@@ -286,7 +330,8 @@
         "actions": {
             "launchGame": "ゲームを起動",
             "launchGameWithoutMods": "起動（バニラ）"
-        }
+        },
+        "gameVersion": "ゲーム v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -365,7 +410,8 @@
                 "deleteSelectedMods": "選択したMODを削除",
                 "openModFolder": "MODフォルダを開く",
                 "previewMod": "MODをプレビュー",
-                "previewModShortcut": "ダブルクリック"
+                "previewModShortcut": "ダブルクリック",
+                "migrateModId": "コピーしてキャラクター ID を変更…"
             }
         },
         "confirmations": {
@@ -376,8 +422,10 @@
                 "messageWithConflicts": "一部のMODが互いに競合しています。競合が解決されるまでゲームが起動しない場合があります。",
                 "actions": {
                     "sync": "同期",
-                    "syncAnyway": "このまま同期"
-                }
+                    "syncAnyway": "このまま同期",
+                    "syncAndRemoveUnmanaged": "同期して管理対象外の Mod を削除"
+                },
+                "messageWithRemoveUnmanaged": "ゲームフォルダーの Mod を同期し、BD2MM 内の管理対象外の Mod を削除します。この操作は元に戻せません。"
             },
             "unsyncMods": {
                 "title": "MODの同期を解除しますか？",
@@ -387,7 +435,7 @@
                 }
             },
             "deleteMod": {
-                "title": "MODを削除しますか？ | 選択したMODを削除しますか？",
+                "title": "MODを削除しますか？ | {count} 個の MOD を削除しますか？",
                 "message": "MOD「{modName}」を削除してもよろしいですか？この操作は元に戻せません。 | これら {count} 個のMODを削除してもよろしいですか？この操作は元に戻せません。",
                 "actions": {
                     "delete": "削除"
@@ -407,10 +455,15 @@
                 },
                 "success": {
                     "title": "MODを同期しました",
-                    "message": "MODがゲームフォルダに正常に同期されました。"
+                    "message": "MODがゲームフォルダに正常に同期されました。",
+                    "details": "詳細を表示"
                 },
                 "error": {
                     "title": "同期に失敗しました"
+                },
+                "noChanges": {
+                    "title": "Mod を同期",
+                    "message": "同期処理で変更はありませんでした。"
                 }
             },
             "unsyncMods": {
@@ -533,6 +586,15 @@
                         "message": "ゲームModパス '{gameModsDirectory}' はディレクトリではありません。"
                     }
                 }
+            },
+            "migrateModId": {
+                "success": {
+                    "title": "ID 変更済みコピーを作成しました",
+                    "message": "キャラクター ID {targetId} 用の「{modName}」を作成しました。元の Mod は変更されていません。"
+                },
+                "error": {
+                    "title": "ID 変更済みコピーの作成に失敗しました"
+                }
             }
         },
         "modals": {
@@ -597,6 +659,17 @@
                 "hint": "クリックでそのMODだけを残します。複数残すにはチェックボックスかCtrl+クリックを使用します。",
                 "apply": "変更を適用 | {count}件の変更を適用 | {count}件の変更を適用",
                 "applyAndSync": "適用して同期"
+            },
+            "migrateModId": {
+                "title": "Mod をコピーしてキャラクター ID を変更",
+                "description": "「{modName}」のコピーを作成します。元の Mod とファイルは変更されません。",
+                "resourceType": "リソースの種類",
+                "sourceId": "元の ID",
+                "targetId": "変更先 ID",
+                "targetIdPlaceholder": "6 桁のキャラクター ID を入力",
+                "copyNote": "コピーは同じカテゴリに作成されます。テクスチャのファイル名は変更せず、atlas に記載された名前で読み込みます。",
+                "invalidTargetId": "元の ID と異なる 6 桁の数字を入力してください。",
+                "createCopy": "コピーを作成"
             }
         }
     },
@@ -696,7 +769,8 @@
             },
             "compareAll": "すべて比較",
             "previewMod": "MODをプレビュー",
-            "deleteFromLibrary": "MODライブラリから元ファイルを削除"
+            "deleteFromLibrary": "MODライブラリから元ファイルを削除",
+            "manageSkins": "スキン割り当てを管理"
         }
     },
     "profilesTab": {
@@ -720,7 +794,7 @@
             "cleanMissingMods": {
                 "success": {
                     "title": "プロフィールを整理しました",
-                    "message": "「{profileName}」から存在しないModを{count}件削除しました。"
+                    "message": "「{profileName}」に存在しない Mod はありません。 | 「{profileName}」から存在しない Mod を {count} 件削除しました。 | 「{profileName}」から存在しない Mod を {count} 件削除しました。"
                 },
                 "error": {
                     "title": "プロフィールの整理に失敗しました"
@@ -941,6 +1015,10 @@
                 "gameDirectoryUpdated": {
                     "title": "ゲームフォルダーを更新しました",
                     "message": "ゲームフォルダーを{path}に更新しました。"
+                },
+                "invalidStagingDirectory": {
+                    "title": "無効なステージングフォルダー",
+                    "message": "BrownDustX/mods とは別のフォルダーを選択してください。互いに内包するフォルダーは使用できません。"
                 }
             },
             "sections": {
@@ -1027,7 +1105,11 @@
                     },
                     "autoSyncMods": {
                         "label": "MODを自動同期",
-                        "description": "MODを有効・無効にした際にゲームフォルダへ自動的に同期します。"
+                        "description": "MODを有効・無効にした際にゲームフォルダへ自動的に同期します。",
+                        "delay": {
+                            "label": "自動同期の待機時間",
+                            "description": "Mod を自動同期するまでの待機時間。"
+                        }
                     },
                     "syncMethod": {
                         "label": "同期方式",
@@ -1124,6 +1206,16 @@
                         "update": "更新"
                     }
                 }
+            },
+            "version": "v{version}",
+            "unknown": "不明",
+            "downloadAndInstall": "ダウンロードしてインストール",
+            "status": {
+                "upToDate": "最新です",
+                "checking": "更新を確認中…",
+                "downloading": "ダウンロード中…",
+                "downloadProgress": "ダウンロード中 {percent}%",
+                "installing": "インストール中…"
             }
         },
         "experimental": {
@@ -1179,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "デート交流",
+            "title": "デート交流のリソースと操作",
+            "description": "以下は P 追加入り口用の設定です。キャラクターや入り口の切り替えはサイドバーの「デート交流」で管理できます。",
+            "paths": {
+                "exportDirectory": {
+                    "label": "交流 JSON フォルダー",
+                    "hint": "P 追加入り口で使用するデートシーンの JSON ファイル。"
+                },
+                "audioDirectory": {
+                    "label": "デート音声フォルダー",
+                    "hint": "素材ライブラリ内の audio / dating フォルダーを選択してください。"
+                },
+                "assetsDirectory": {
+                    "label": "画像素材ライブラリフォルダー",
+                    "hint": "キャラクターの画像素材を含むライブラリのルートフォルダーを選択してください。"
+                }
+            },
+            "dragHold": "ドラッグ開始まで左ボタンを長押し",
+            "opacity": "交流ポイントの不透明度",
+            "draftHelp": "両ページで未保存のデート設定を共有します。ページを切り替えても編集を続けられます。"
         }
     },
     "errors": {
@@ -1192,7 +1306,15 @@
         },
         "ModInstallError": {
             "ModTooBig": "このMODはサイズ上限の100 MBを超えています。",
-            "ModContainsSymlink": "このMODにはシンボリックリンクまたはジャンクション「{path}」が含まれています。インストールする前に実際のファイルに置き換えてください。"
+            "ModContainsSymlink": "このMODにはシンボリックリンクまたはジャンクション「{path}」が含まれています。インストールする前に実際のファイルに置き換えてください。",
+            "ModAlreadyExists": "同じ名前の Mod が既に存在します。",
+            "PathNotFound": "選択した Mod のパスが見つかりません。",
+            "InvalidName": "選択したパスの Mod 名が無効です。",
+            "UnsupportedFormat": "未対応の圧縮形式です。.zip、.rar、.7z のみ対応しています。",
+            "InvalidArchive": "圧縮ファイルが破損しているか、読み取れません。",
+            "MissingModFile": "有効な Mod ではありません（.modfile が見つかりません）。",
+            "MultipleModsFound": "複数の .modfile が見つかりました。Mod が 1 つだけ含まれていることを確認してください。",
+            "NotAMod": "選択したファイルまたはフォルダーは有効な BrownDustX Mod ではありません。"
         },
         "ModSyncError": {
             "ManifestCorrupt": "同期マニフェストが破損しています。{reason}",
@@ -1244,7 +1366,74 @@
         },
         "invalidMod": "選択したファイルまたはフォルダは有効なBrownDustX MODではありません。",
         "invalidFormat": "サポートされていないMOD形式です。有効なMODファイルまたはフォルダを選択してください。",
-        "unsupportedFormat": "サポートされていないファイル形式です。有効なMODファイルまたはフォルダを選択してください。"
+        "unsupportedFormat": "サポートされていないファイル形式です。有効なMODファイルまたはフォルダを選択してください。",
+        "AppError": {
+            "GameDirectoryNotSet": "ゲームフォルダーが未設定です。設定画面で指定してください。",
+            "SyncMethodInvalid": "無効な同期方法：{method}",
+            "GameRunning": "ゲームは既に起動しています。",
+            "Unknown": "予期しないエラーが発生しました。詳細はログを確認してください。"
+        },
+        "Io": {
+            "NotFound": "ファイルまたはフォルダーが存在しません。",
+            "PermissionDenied": "アクセスが拒否されました。",
+            "AlreadyExists": "ファイルまたはフォルダーが既に存在します。",
+            "DirectoryNotEmpty": "フォルダーが空ではありません。",
+            "NotADirectory": "フォルダーが必要ですが、ファイルが見つかりました。",
+            "IsADirectory": "ファイルが必要ですが、フォルダーが見つかりました。",
+            "InvalidInput": "操作に対する入力が無効です。",
+            "InvalidData": "ファイルに無効なデータが含まれています。",
+            "TimedOut": "操作がタイムアウトしました。",
+            "WriteZero": "ディスクへの書き込みに失敗しました。",
+            "UnexpectedEof": "ファイルが途中で終了しました。破損している可能性があります。",
+            "OutOfMemory": "メモリが不足しています。",
+            "StorageFull": "ディスクの空き容量が不足しています。"
+        },
+        "ModDeleteError": {
+            "ModNotFound": "Mod が見つかりません",
+            "PathNotFound": "パスが存在しないか、削除されています"
+        },
+        "ModRenameError": {
+            "ModNotFound": "Mod「{mod_name}」が見つかりません",
+            "PathNotFound": "パスが存在しないか、削除されています",
+            "InvalidName": "無効な Mod 名「{name}」（{reason}）",
+            "ModAlreadyExists": "「{mod_name}」という Mod は既に存在します"
+        },
+        "ModIdMigrationError": {
+            "ModNotFound": "元の Mod が見つかりません：{mod_name}",
+            "InvalidTargetId": "変更先 ID は 6 桁の数字で指定してください。",
+            "UnsupportedModType": "立ち絵とカットシーンの Mod のみ ID を変更できます。",
+            "SameId": "変更先 ID が元の ID と同じです。",
+            "InvalidModfile": "Mod フォルダーには、リソース ID と一致する .modfile が 1 つだけ必要です。",
+            "DestinationAlreadyExists": "コピー先またはリソースファイルが既に存在します：{path}",
+            "ModContainsSymlink": "この Mod にはシンボリックリンクまたはジャンクション「{path}」が含まれています。実ファイルに置き換えてください。"
+        },
+        "ProfileError": {
+            "ProfileNotFound": "プロファイル「{profile_id}」が見つかりません",
+            "ProfileAlreadyExists": "「{profile_name}」というプロファイルは既に存在します",
+            "InvalidName": "無効なプロファイル名「{profile_name}」（{reason}）",
+            "AlreadyActive": "プロファイル「{profile_name}」は既に有効です",
+            "CannotDeleteActive": "有効なプロファイル「{profile_name}」は削除できません",
+            "CannotDeleteDefault": "既定のプロファイルは削除できません",
+            "NoActiveProfile": "有効なプロファイルが設定されていません",
+            "LoadFailed": "プロファイルの読み込みに失敗しました：{reason}",
+            "SaveFailed": "プロファイル「{profile_name}」の保存に失敗しました：{reason}",
+            "CreateFailed": "プロファイル「{profile_name}」の作成に失敗しました：{reason}",
+            "SerializeFailed": "プロファイル「{profile_name}」のシリアライズに失敗しました",
+            "UpdateFailed": "プロファイル「{profile_name}」の更新に失敗しました：{reason}",
+            "DeleteFailed": "プロファイル「{profile_name}」の削除に失敗しました：{reason}",
+            "ProfilesDirectoryNotFound": "プロファイルフォルダー「{path}」が見つかりません"
+        },
+        "MetadataError": {
+            "Load": "Mod メタデータの読み込みに失敗しました：{reason}",
+            "Save": "Mod メタデータの保存に失敗しました：{reason}",
+            "Serialize": "Mod メタデータのシリアライズに失敗しました"
+        },
+        "PreviewError": {
+            "ModNotFound": "Mod「{mod_name}」が見つかりません",
+            "ModHasErrors": "Mod「{mod_name}」にエラーがあるためプレビューできません",
+            "ModPreviewNotFound": "Mod プレビューツールが見つかりません。設定の「更新を確認」から再インストールできます。",
+            "PreviewFailed": "Mod のプレビューに失敗しました：{reason}"
+        }
     },
     "modErrors": {
         "missingTextures": "MODフォルダ内に「textures」という名前のフォルダを作成する必要があります。",
@@ -1253,6 +1442,89 @@
         "shouldBeInFolder": "このMODはフォルダ内に配置する必要があります。MODと同じ名前のフォルダを作成し、MODファイルをその中に移動してください。",
         "missingAtlasFile": "このMODにはアトラスファイルがありません。",
         "unmanaged": "このMODはゲームフォルダ内にありますが、BD2MMでは管理されていません。ここでは有効化や無効化はできません。",
-        "noDescription": "説明はありません。"
+        "noDescription": "説明はありません。",
+        "unmanagedButInStaging": "この Mod はゲームフォルダーにありますが、BD2MM でインストールされていないため、有効にして同期しても変更されません。「同期して管理対象外の Mod を削除」で置き換えてください。"
+    },
+    "interactionsTab": {
+        "title": "デート交流",
+        "description": "キャラクターごとに P 追加入り口と公式の標準入り口を設定できます。両方を同時に有効化できます。",
+        "management": "デート交流の管理",
+        "managementHelp": "無効にするとゲーム本来の一覧に戻り、両方の設定は保持されます。保存後、デート画面を開き直してください。",
+        "managementToggle": "デート交流の管理を有効化",
+        "native": "公式の標準入り口",
+        "nativeToggle": "公式の標準入り口を有効化",
+        "nativeHelp": "ゲーム標準のアイコン・交流・章チェックを使用し、JSON の書き出しは不要です。キャラクターを無効にすると所持済みの標準入り口も非表示になります。アカウントデータは変更しません。",
+        "extra": "P 追加入り口",
+        "extraToggle": "P 追加入り口を有効化",
+        "extraHelp": "ローカルのシーン JSON と音声を使う、P マーク付きのアイコンを追加します。キャラクターの切り替えは標準入り口から独立しています。",
+        "configured": "{count} / {total} 人を設定済み",
+        "plugin": "デート交流プラグイン {version}",
+        "pluginUpdate": "両方の入り口を設定するにはプラグインを更新してください",
+        "exitGame": "インストール・更新前にゲームを終了してください",
+        "characters": "デートキャラクター · {count} 件",
+        "search": "キャラクター・衣装を検索",
+        "searchLabel": "デートキャラクターを検索",
+        "disabledHelp": "管理は無効です。以下の選択内容は保持されています。",
+        "exportStatus": {
+            "ready": "P シーン JSON 使用可能",
+            "missing": "P シーン JSON なし",
+            "expired": "P シーン JSON 期限切れ",
+            "invalid": "P シーン JSON 無効"
+        },
+        "expires": "有効期限：{time}",
+        "nativeFor": "{name}の公式の標準入り口",
+        "extraFor": "{name}の P 追加入り口",
+        "configureMods": "Mod を設定",
+        "configureModsFor": "{name}のデート Mod を設定",
+        "modsEnabled": "{count} / {total} 有効",
+        "empty": "一致するデートキャラクターがありません。",
+        "saveHelp": "入り口の設定を保存したら、デート画面を開き直してください。Mod の選択は現在のプロファイルに自動保存され、同期後にゲームへ反映されます。",
+        "syncing": "同期中…",
+        "syncMods": "Mod を同期",
+        "synced": "Mod 同期済み",
+        "characterMissing": "キャラクターデータが見つかりません。データを更新して再試行してください。",
+        "modActionFailed": "Mod の操作に失敗しました",
+        "saved": "デート交流の設定を保存しました。ゲームのデート画面を開き直すと反映されます。",
+        "installed": "デート交流プラグインをインストールしました。ゲームを再起動してください。",
+        "legacy": {
+            "description": "ローカルの JSON と音声を使う、アイコン欄の P 交流を管理します。公式のデートとアカウントの進行状況は保持されます。",
+            "toggle": "ローカル交流を有効化",
+            "toggleHelp": "無効にするとすべての P 交流が非表示になり、各項目の設定は保持されます。保存後、デート画面を開き直してください。",
+            "listTitle": "アイコン欄の交流",
+            "enabledCount": "{count} 件有効",
+            "disabled": "ローカル交流は無効です",
+            "entriesHelp": "追加した項目は初期状態では無効です。有効にする際は元のリソースか有効な Mod を選べます。JSON の書き出しだけでは項目は追加されません。",
+            "modeFor": "{name}の交流モード",
+            "original": "有効 · オリジナル",
+            "modded": "有効 · Mod を適用",
+            "empty": "交流が追加されていません。下の一覧から選択してください。",
+            "selectEntry": "追加する交流を選択",
+            "selectEntryPlaceholder": "追加する交流を選択…",
+            "navigationHelp": "右クリックで移動、ホイールで拡大縮小できます。標準の Reset でポーズと好感度を初期状態に戻せます。"
+        }
+    },
+    "skinsTab": {
+        "title": "スキン割り当て",
+        "description": "ゲーム内のキャラクター上部の Skin を押すと、立ち絵・背景・キャラクターモデル・スキル演出を切り替えられます。",
+        "toggle": "スキン割り当てを有効化",
+        "toggleHelp": "無効にすると本来の外見に戻り、割り当てとスキン選択は保持されます。変更は自動で保存・反映されます。",
+        "plugin": "スキンプラグイン {version}",
+        "install": "スキンプラグインをインストール",
+        "installed": "スキンプラグインをインストールしました。次回のゲーム起動時に読み込まれます。",
+        "addMapping": "割り当てを追加",
+        "source": "元の衣装",
+        "target": "割り当て先スキン",
+        "optionalName": "スキン名（任意）",
+        "newName": "新しいスキン名",
+        "name": "スキン名",
+        "mappingHelp": "同じキャラクターのゲーム内リソースを使用します。Skin ボタンで一覧の順に切り替わります。元の衣装のレベルやスキル値は変わりません。",
+        "sourceId": "元の衣装 ID：{id}",
+        "current": "現在のスキン",
+        "original": "オリジナル · {id}",
+        "enable": "{name}を有効化",
+        "remove": "{name}を削除",
+        "autoSaveHelp": "追加・削除・切り替えは自動保存されます。名前は編集完了時に保存されます。",
+        "autoSaveFailed": "自動保存に失敗しました：{reason}",
+        "duplicate": "この割り当ては既に存在します"
     }
 }

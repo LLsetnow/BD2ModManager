@@ -93,7 +93,13 @@
             "continue": "继续",
             "browse": "浏览",
             "save": "保存",
-            "delete": "删除"
+            "delete": "删除",
+            "add": "添加",
+            "enableAll": "全部开启",
+            "disableAll": "全部关闭",
+            "saveSettings": "保存设置",
+            "rescan": "重新扫描",
+            "choose": "选择{label}"
         },
         "modTypes": {
             "cutscene": "过场动画",
@@ -106,7 +112,25 @@
         "messages": {
             "selectEmptyState": "这里什么都没有..."
         },
-        "error": "错误"
+        "error": "错误",
+        "status": {
+            "enabled": "已开启",
+            "disabled": "已关闭",
+            "saving": "正在保存…",
+            "autoSaved": "已自动保存"
+        },
+        "plugin": {
+            "current": "已安装当前版本",
+            "updateAvailable": "可更新至当前版本",
+            "notInstalled": "尚未安装",
+            "reinstall": "重新安装 / 更新",
+            "install": "安装插件"
+        },
+        "editableSelect": {
+            "placeholder": "输入{label} ID / 名称，或从列表选择",
+            "empty": "未找到匹配项，请输入列表中的 ID 或名称。"
+        },
+        "seconds": "秒"
     },
     "app": {
         "confirmations": {
@@ -150,13 +174,23 @@
             },
             "modPreviewUpdate": {
                 "retry": "重试",
-                "updated": "BD2ModPreview v{version} 已更新",
-                "failed": "BD2ModPreview 更新失败",
-                "noUpdateAvailable": "BD2ModPreview 已是最新版本"
+                "updated": {
+                    "title": "BD2ModPreview v{version} 已更新"
+                },
+                "failed": {
+                    "title": "BD2ModPreview 更新失败"
+                },
+                "noUpdateAvailable": {
+                    "title": "BD2ModPreview 已是最新版本"
+                }
             },
             "gameDataUpdate": {
-                "updated": "游戏数据已更新",
-                "failed": "游戏数据更新失败"
+                "updated": {
+                    "title": "游戏数据已更新"
+                },
+                "failed": {
+                    "title": "游戏数据更新失败"
+                }
             }
         },
         "modals": {
@@ -235,7 +269,8 @@
         "appUpdate": {
             "checking": "正在检查更新...",
             "available": "发现新版本：v{version}",
-            "downloaded": "v{version} 已就绪！点击以应用更新"
+            "downloaded": "v{version} 已就绪！点击以应用更新",
+            "updating": "正在更新至 v{version}…"
         },
         "sync": {
             "applying": "正在应用：{modName}",
@@ -247,6 +282,13 @@
             "logs": "日志",
             "kofi": "在 Ko-Fi 上支持",
             "afdian": "在爱发电上支持"
+        },
+        "credits": {
+            "creator": "作者",
+            "thanks": "感谢",
+            "creator_tooltip": "由 {'@'}bruhnn 制作",
+            "supporter_tooltip": "{platform} 上的支持者",
+            "bug_reports_tooltip": "在 GitHub 上报告问题或提出建议"
         }
     },
     "sidebar": {
@@ -261,7 +303,9 @@
             "characters": "角色",
             "profiles": "配置文件",
             "modLoader": "模组加载器",
-            "settings": "设置"
+            "settings": "设置",
+            "interactions": "约会互动",
+            "skins": "皮肤映射"
         },
         "notifications": {
             "launchGame": {
@@ -286,7 +330,8 @@
         "actions": {
             "launchGame": "启动游戏",
             "launchGameWithoutMods": "启动（原版）"
-        }
+        },
+        "gameVersion": "游戏 v{version}"
     },
     "modsTab": {
         "unmanagedNotice": {
@@ -377,8 +422,10 @@
                 "messageWithConflicts": "部分模组之间存在冲突，解决冲突前游戏可能无法正常启动。",
                 "actions": {
                     "sync": "同步",
-                    "syncAnyway": "仍然同步"
-                }
+                    "syncAnyway": "仍然同步",
+                    "syncAndRemoveUnmanaged": "同步并删除未托管模组"
+                },
+                "messageWithRemoveUnmanaged": "将同步游戏文件夹中的模组，并删除 BD2MM 内的未托管模组。此操作无法撤销。"
             },
             "unsyncMods": {
                 "title": "取消同步？",
@@ -388,7 +435,7 @@
                 }
             },
             "deleteMod": {
-                "title": "删除模组？ | 删除所选模组？",
+                "title": "删除模组？ | 删除 {count} 个模组？",
                 "message": "确定要删除模组\"{modName}\"吗？此操作无法撤销。 | 确定要删除这 {count} 个模组吗？此操作无法撤销。",
                 "actions": {
                     "delete": "删除"
@@ -408,10 +455,15 @@
                 },
                 "success": {
                     "title": "模组已同步",
-                    "message": "您的模组已成功同步到游戏文件夹。"
+                    "message": "您的模组已成功同步到游戏文件夹。",
+                    "details": "查看详情"
                 },
                 "error": {
                     "title": "同步失败"
+                },
+                "noChanges": {
+                    "title": "同步模组",
+                    "message": "同步过程中没有进行任何更改。"
                 }
             },
             "unsyncMods": {
@@ -717,7 +769,8 @@
             },
             "compareAll": "比较全部",
             "previewMod": "预览模组",
-            "deleteFromLibrary": "删除库中的源文件"
+            "deleteFromLibrary": "删除库中的源文件",
+            "manageSkins": "管理皮肤映射"
         }
     },
     "profilesTab": {
@@ -741,7 +794,7 @@
             "cleanMissingMods": {
                 "success": {
                     "title": "配置清理完成",
-                    "message": "已从“{profileName}”中移除 {count} 个缺失的模组记录。"
+                    "message": "“{profileName}”中没有缺失的模组。 | 已从“{profileName}”中移除 {count} 个缺失的模组记录。 | 已从“{profileName}”中移除 {count} 个缺失的模组记录。"
                 },
                 "error": {
                     "title": "配置清理失败"
@@ -962,6 +1015,10 @@
                 "gameDirectoryUpdated": {
                     "title": "游戏目录已更新",
                     "message": "游戏目录已更新为 {path}。"
+                },
+                "invalidStagingDirectory": {
+                    "title": "暂存文件夹无效",
+                    "message": "请选择与 BrownDustX/mods 分开的文件夹，两者不能互相包含。"
                 }
             },
             "sections": {
@@ -1048,7 +1105,11 @@
                     },
                     "autoSyncMods": {
                         "label": "自动同步模组",
-                        "description": "启用此选项后，启用或禁用模组时将自动同步到游戏文件夹。"
+                        "description": "启用此选项后，启用或禁用模组时将自动同步到游戏文件夹。",
+                        "delay": {
+                            "label": "自动同步延迟",
+                            "description": "自动同步模组前的等待时间。"
+                        }
                     },
                     "syncMethod": {
                         "label": "同步方式",
@@ -1145,6 +1206,16 @@
                         "update": "更新"
                     }
                 }
+            },
+            "version": "v{version}",
+            "unknown": "未知",
+            "downloadAndInstall": "下载并安装",
+            "status": {
+                "upToDate": "已是最新版本",
+                "checking": "正在检查更新…",
+                "downloading": "正在下载…",
+                "downloadProgress": "正在下载 {percent}%",
+                "installing": "正在安装…"
             }
         },
         "experimental": {
@@ -1200,6 +1271,28 @@
                     }
                 }
             }
+        },
+        "dating": {
+            "label": "约会互动",
+            "title": "约会互动资源与操作",
+            "description": "以下设置用于 P 额外入口。角色和入口开关在侧栏的「约会互动」中管理。",
+            "paths": {
+                "exportDirectory": {
+                    "label": "互动 JSON 目录",
+                    "hint": "P 额外入口使用的约会场景 JSON 文件。"
+                },
+                "audioDirectory": {
+                    "label": "约会音频目录",
+                    "hint": "选择素材库中的 audio / dating 文件夹。"
+                },
+                "assetsDirectory": {
+                    "label": "美术素材库目录",
+                    "hint": "选择包含角色美术资源的素材库根目录。"
+                }
+            },
+            "dragHold": "左键长按后可拖动",
+            "opacity": "触点透明度",
+            "draftHelp": "两页共用未保存的约会配置，切换页面后仍可继续编辑。"
         }
     },
     "errors": {
@@ -1222,7 +1315,15 @@
         },
         "ModInstallError": {
             "ModTooBig": "此模组超过了 100 MB 的大小限制。",
-            "ModContainsSymlink": "此模组包含符号链接或目录联接：“{path}”。请先将其替换为实际文件，再进行安装。"
+            "ModContainsSymlink": "此模组包含符号链接或目录联接：“{path}”。请先将其替换为实际文件，再进行安装。",
+            "ModAlreadyExists": "同名模组已存在。",
+            "PathNotFound": "未找到所选模组路径。",
+            "InvalidName": "所选路径没有有效的模组名称。",
+            "UnsupportedFormat": "不支持此压缩格式，仅支持 .zip、.rar 和 .7z。",
+            "InvalidArchive": "压缩包已损坏或无法读取。",
+            "MissingModFile": "不是有效模组：未找到 .modfile。",
+            "MultipleModsFound": "找到多个 .modfile 文件，请确保只有一个模组。",
+            "NotAMod": "所选文件或文件夹不是有效的 BrownDustX 模组。"
         },
         "ModSyncError": {
             "ManifestCorrupt": "同步清单已损坏。{reason}",
@@ -1274,7 +1375,65 @@
         },
         "invalidMod": "所选文件或文件夹不是有效的 BrownDustX 模组。",
         "invalidFormat": "不支持的模组格式，请选择有效的模组文件或文件夹。",
-        "unsupportedFormat": "不支持的文件格式，请选择有效的模组文件或文件夹。"
+        "unsupportedFormat": "不支持的文件格式，请选择有效的模组文件或文件夹。",
+        "AppError": {
+            "GameDirectoryNotSet": "未设置游戏目录，请在设置中配置。",
+            "SyncMethodInvalid": "无效的同步方式：{method}",
+            "GameRunning": "游戏已在运行。",
+            "Unknown": "发生意外错误，请查看日志了解详情。"
+        },
+        "Io": {
+            "NotFound": "文件或文件夹不存在。",
+            "PermissionDenied": "访问被拒绝。",
+            "AlreadyExists": "文件或文件夹已存在。",
+            "DirectoryNotEmpty": "目录不为空。",
+            "NotADirectory": "需要文件夹，但找到的是文件。",
+            "IsADirectory": "需要文件，但找到的是文件夹。",
+            "InvalidInput": "此操作的输入无效。",
+            "InvalidData": "文件包含无效数据。",
+            "TimedOut": "操作超时。",
+            "WriteZero": "无法将数据写入磁盘。",
+            "UnexpectedEof": "文件意外结束，可能已损坏。",
+            "OutOfMemory": "内存不足。",
+            "StorageFull": "磁盘空间不足。"
+        },
+        "ModDeleteError": {
+            "ModNotFound": "未找到模组",
+            "PathNotFound": "路径不存在或已被删除"
+        },
+        "ModRenameError": {
+            "ModNotFound": "未找到模组“{mod_name}”",
+            "PathNotFound": "路径不存在或已被删除",
+            "InvalidName": "无效的模组名称“{name}”（{reason}）",
+            "ModAlreadyExists": "名为“{mod_name}”的模组已存在"
+        },
+        "ProfileError": {
+            "ProfileNotFound": "未找到配置“{profile_id}”",
+            "ProfileAlreadyExists": "名为“{profile_name}”的配置已存在",
+            "InvalidName": "无效的配置名称“{profile_name}”（{reason}）",
+            "AlreadyActive": "配置“{profile_name}”已启用",
+            "CannotDeleteActive": "无法删除当前启用的配置“{profile_name}”",
+            "CannotDeleteDefault": "无法删除默认配置",
+            "NoActiveProfile": "未设置启用的配置",
+            "LoadFailed": "加载配置失败：{reason}",
+            "SaveFailed": "保存配置“{profile_name}”失败：{reason}",
+            "CreateFailed": "创建配置“{profile_name}”失败：{reason}",
+            "SerializeFailed": "序列化配置“{profile_name}”失败",
+            "UpdateFailed": "更新配置“{profile_name}”失败：{reason}",
+            "DeleteFailed": "删除配置“{profile_name}”失败：{reason}",
+            "ProfilesDirectoryNotFound": "未找到配置目录“{path}”"
+        },
+        "MetadataError": {
+            "Load": "加载模组元数据失败：{reason}",
+            "Save": "保存模组元数据失败：{reason}",
+            "Serialize": "序列化模组元数据失败"
+        },
+        "PreviewError": {
+            "ModNotFound": "未找到模组“{mod_name}”",
+            "ModHasErrors": "模组“{mod_name}”包含错误，无法预览",
+            "ModPreviewNotFound": "未找到模组预览工具。可在设置中点击“检查更新”重新安装。",
+            "PreviewFailed": "模组预览失败：{reason}"
+        }
     },
     "modErrors": {
         "missingTextures": "需要在模组文件夹内创建名为\"textures\"的子文件夹。",
@@ -1283,6 +1442,89 @@
         "shouldBeInFolder": "此模组应放置在文件夹中，请创建一个与模组同名的文件夹并将模组文件移入其中。",
         "missingAtlasFile": "此模组缺少图集文件。",
         "unmanaged": "此模组位于游戏文件夹中，但未由 BD2MM 管理，无法在此启用或禁用。",
-        "noDescription": "暂无描述。"
+        "noDescription": "暂无描述。",
+        "unmanagedButInStaging": "此模组已在游戏文件夹中，但未由 BD2MM 安装，启用后同步也不会修改它。请使用“同步并删除未托管模组”进行替换。"
+    },
+    "interactionsTab": {
+        "title": "约会互动",
+        "description": "为每位角色独立设置 P 额外入口和官方原生入口，两种方式可以同时开启。",
+        "management": "约会互动管理",
+        "managementHelp": "关闭后恢复游戏原有列表，保留两种入口的配置。保存后重新进入约会界面生效。",
+        "managementToggle": "约会互动管理总开关",
+        "native": "官方原生入口",
+        "nativeToggle": "官方原生入口总开关",
+        "nativeHelp": "使用游戏原生头像、互动和章节检查，无需导出 JSON。关闭角色开关也会隐藏其已拥有的原生入口，不修改账号数据。",
+        "extra": "P 额外入口",
+        "extraToggle": "P 额外入口总开关",
+        "extraHelp": "在头像栏添加带 P 标记的额外对象，使用本地场景 JSON 和音频。角色开关与原生入口互不影响。",
+        "configured": "已配置 {count} / {total} 位角色",
+        "plugin": "约会互动插件 {version}",
+        "pluginUpdate": "已有插件，请更新以支持双入口设置",
+        "exitGame": "安装或更新前请退出游戏",
+        "characters": "约会角色 · {count} 项",
+        "search": "搜索角色或服装",
+        "searchLabel": "搜索约会角色",
+        "disabledHelp": "管理总开关已关闭，下方选择已保留。",
+        "exportStatus": {
+            "ready": "P 场景 JSON 可用",
+            "missing": "P 场景缺少 JSON",
+            "expired": "P 场景 JSON 已过期",
+            "invalid": "P 场景 JSON 无效"
+        },
+        "expires": "有效期至 {time}",
+        "nativeFor": "{name}的官方原生入口",
+        "extraFor": "{name}的 P 额外入口",
+        "configureMods": "配置模组",
+        "configureModsFor": "配置{name}的约会模组",
+        "modsEnabled": "{count} / {total} 已启用",
+        "empty": "没有匹配的约会角色。",
+        "saveHelp": "入口设置保存后重新进入约会界面。模组选择自动保存到当前配置，同步后应用到游戏。",
+        "syncing": "正在同步…",
+        "syncMods": "同步模组",
+        "synced": "模组已同步",
+        "characterMissing": "未找到对应角色数据，请刷新角色数据后重试。",
+        "modActionFailed": "模组操作失败",
+        "saved": "已保存约会互动设置。重新打开游戏中的约会界面后生效。",
+        "installed": "约会互动插件已安装。重启游戏后加载。",
+        "legacy": {
+            "description": "管理头像栏中的 P 互动。使用本地 JSON 和音频，保留官方约会与账号进度。",
+            "toggle": "本地互动总开关",
+            "toggleHelp": "关闭后隐藏全部 P 互动，保留各条目的配置。保存后重新进入约会界面生效。",
+            "listTitle": "头像栏互动",
+            "enabledCount": "{count} 项已启用",
+            "disabled": "总开关已关闭",
+            "entriesHelp": "新添加的条目默认关闭；启用时可选择原版资源或应用已启用的模组。导出 JSON 本身不会新增条目。",
+            "modeFor": "{name}的互动状态",
+            "original": "启用 · 原版",
+            "modded": "启用 · 应用模组",
+            "empty": "尚未添加互动。可从下方选择。",
+            "selectEntry": "选择要添加的互动",
+            "selectEntryPlaceholder": "选择要添加的互动…",
+            "navigationHelp": "右键移动画面，滚轮缩放；原生 Reset 恢复初始 pose 和好感度。"
+        }
+    },
+    "skinsTab": {
+        "title": "皮肤映射",
+        "description": "在游戏角色小人上方点击 Skin，切换立绘、背景、小人及技能演出。",
+        "toggle": "皮肤映射总开关",
+        "toggleHelp": "关闭后恢复游戏原有外观，保留映射和皮肤选择。修改后自动保存并生效。",
+        "plugin": "皮肤插件 {version}",
+        "install": "安装皮肤插件",
+        "installed": "皮肤插件已安装，下次启动游戏时加载。",
+        "addMapping": "添加映射",
+        "source": "来源服装",
+        "target": "目标皮肤",
+        "optionalName": "皮肤名称（可选）",
+        "newName": "新皮肤名称",
+        "name": "皮肤名称",
+        "mappingHelp": "目标使用游戏内同一角色的资源。游戏中的 Skin 按钮按列表顺序循环切换，原服装的等级和技能数值保持不变。",
+        "sourceId": "原服装 ID：{id}",
+        "current": "当前皮肤",
+        "original": "原版 · {id}",
+        "enable": "启用 {name}",
+        "remove": "移除 {name}",
+        "autoSaveHelp": "添加、删除和切换会自动保存；名称编辑完成后自动保存。",
+        "autoSaveFailed": "自动保存失败：{reason}",
+        "duplicate": "该映射已存在"
     }
 }

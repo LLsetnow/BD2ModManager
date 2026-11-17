@@ -130,7 +130,7 @@ const charName = computed(() => {
     <Modal v-model:show="show" size="lg" @close="() => show = false">
         <template #footer>
             <div class="flex p-3 justify-end items-center w-full border-t border-border-default">
-                <Button :icon="Shirt" label="管理皮肤映射" class="mr-auto" @click="manageSkins" />
+                <Button :icon="Shirt" :label="$t('charactersTab.characterModal.manageSkins')" class="mr-auto" @click="manageSkins" />
                 <Button variant="default" :label="$t('common.actions.close')" @click="show = false" />
             </div>
         </template>
