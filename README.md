@@ -94,6 +94,47 @@ Creates shortcuts instead of copying files.
 |------|---------|
 | <img src="./screenshots/sync_copy_v405.gif" width="260" /> | <img src="./screenshots/sync_symlink_v405.gif" width="260" /> |
 
+## 皮肤映射与约会互动插件：文件产物
+
+两个插件均由游戏内的 BepInEx 加载执行。Manager 负责编辑配置、安装和更新插件；安装时会将内置的 DLL 和对应配置写入所选游戏目录。
+
+| 插件 | 核心 DLL | 配置文件 | 作用 |
+| --- | --- | --- | --- |
+| **皮肤映射** | `BD2CostumeSkins.dll` | `BepInEx/plugins/BD2CostumeSkins/settings.json` | 在游戏运行时应用来源服装到目标皮肤的外观映射，并处理游戏内的 Skin 按钮。 |
+| **约会互动** | `BD2PreviewInteractions.dll` | `BepInEx/plugins/BD2PreviewInteractions/settings.json` | 管理 P／原生约会入口，并为 P 模式加载互动场景、触点、音频和界面。 |
+
+### 安装后的目录结构
+
+以下路径以包含 `BrownDust II.exe` 的游戏目录为起点：
+
+```text
+游戏目录/
+└── BepInEx/
+    ├── plugins/
+    │   ├── BD2CostumeSkins/
+    │   │   ├── BD2CostumeSkins.dll
+    │   │   └── settings.json
+    │   └── BD2PreviewInteractions/
+    │       ├── BD2PreviewInteractions.dll
+    │       └── settings.json
+    └── config/
+        └── local.bd2.previewinteractions.cfg
+```
+
+请先安装 BepInEx，并在退出游戏后通过 Manager 对应页面安装或更新插件。游戏启动后由 BepInEx 加载 DLL；约会互动的 `.cfg` 文件由 BepInEx 在加载插件时生成，用于部分插件选项和诊断设置。
+
+### 配置文件与外部资源
+
+- **皮肤映射 `settings.json`**：保存总开关、来源服装与目标皮肤的映射、单项启停和当前皮肤选择。插件使用游戏已有的美术资源，也可配合 BrownDustX 使用已启用的资源替换模组。
+- **约会互动 `settings.json`**：保存各场景的 P／原生入口开关、互动 JSON／音频／美术素材目录，以及左键长按时间、触点透明度等设置。
+- **约会互动的外部资源**：P 模式使用的 `illust_dating*.json` 描述互动场景；约会音频和美术素材放在设置指定的本地目录中。这些内容独立于插件 DLL，获取位置见下方“约会互动：资源来源与目录设置”。
+
+两个插件目录里的 `settings.json` 分别控制各自的插件，与描述互动内容的 `illust_dating*.json` 用途不同。Manager 还会在自己的应用数据目录保存 `costume-skins.json` 和 `local-interactions.json` 配置副本。
+
+### 开发构建产物
+
+`npm run build:game-plugin` 同时构建两个插件。各项目的 `bin/Release/netstandard2.1/` 下会生成 DLL，以及 `.pdb` 调试符号和 `.deps.json` 依赖说明。构建脚本将两个 DLL 复制到 `src-tauri/resources/`，随后嵌入 Manager 可执行文件，供“安装插件”功能使用；当前安装流程部署 DLL 和配置文件。
+
 ## 约会互动：资源来源与目录设置
 
 打开 **设置 → 约会互动**，为以下三个设置项选择对应的本地文件夹，然后点击 **保存设置**。
