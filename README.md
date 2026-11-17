@@ -1,114 +1,113 @@
-
 # Brown Dust 2 Mod Manager
 
-[![GitHub License](https://img.shields.io/github/license/bruhnn/BD2ModManager)](https://github.com/bruhnn/BD2ModManager/blob/main/LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/bruhnn/BD2ModManager)](https://github.com/bruhnn/BD2ModManager/releases)
-[![Total Downloads](https://img.shields.io/endpoint?url=https://shy-waterfall-2797.bruhnn.workers.dev/downloads)](https://github.com/bruhnn/BD2ModManager/releases)
+**简体中文** | [English](README.en.md)
 
+[![GitHub License](https://img.shields.io/github/license/LLsetnow/BD2ModManager)](https://github.com/LLsetnow/BD2ModManager/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/LLsetnow/BD2ModManager)](https://github.com/LLsetnow/BD2ModManager/releases)
 
-> 🛠 Easily manage, preview, and sync mods for Brown Dust 2.
-> 
-> 🎉 **Download the latest version:** [GitHub Releases](https://github.com/bruhnn/BD2ModManager/releases)
+> 🛠 轻松管理、预览和同步《棕色尘埃 2》的 Mod。
+>
+> 🎉 **下载最新版本：** [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases)
 >
 
-If you have suggestions or run into any problems with the app, feel free to open an issue or contact me.
+作者：[@LLsetnow](https://github.com/LLsetnow)
+
+如果您有改进建议或遇到问题，欢迎提交 Issue 或联系作者。
 
 > [!WARNING]
-> **Before Uninstalling Brown Dust II !!!**
+> **卸载《棕色尘埃 2》前请注意**
 >
-> If you use the **Symlink** sync method, unsync all mods before uninstalling the game. Otherwise, the uninstaller may delete your mods from the staging folder.
+> 如果使用**符号链接（Symlink）**同步方式，请先取消所有 Mod 的同步，再卸载游戏。否则，游戏卸载程序可能会删除暂存目录中的 Mod。
 
 ---
 
-## 🛠️ How to Use
-1. **Download** the app from [GitHub Releases](https://github.com/bruhnn/BD2ModManager/releases).
-2. **Select your Brown Dust 2 directory** (where `BrownDust II.exe` is located)
-   - Example: F:\Neowiz\Browndust2\Browndust2_10000001
-3. **Install BepInEx and BrownDustX**
-   - Download both from the BrownDustX Discord:
-     [discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
+## 🛠️ 使用方法
 
-   - Manual Steps:
-        
-      **Install BepInEx**
-      
-      Extract the contents of the BepInEx archive into the **game folder** (you can open the game folder from the mod manager)
-      (**NOT** the launcher folder).
-     
-      Your folder should look like this:
-      ```text
-         Browndust2_10000001/
-         ├─ BepInEx/
-         ├─ winhttp.dll
-         └─ BrownDust II.exe
-      ```
-  
-      > The BepInEx archive from the BrownDustX Discord already includes ConfigurationManager.
-   
-      **Install BrownDustX**
-     
-      Extract the `BepInEx` folder from `BrownDustX-[VERSION].zip`
-      into the same game folder.
-     
-      Your folder should look like this:
-      ```text
-         Browndust2_10000001/
-         ├─ BepInEx/
-         │  └─ plugins/
-         │     └─ BrownDustX/
-         └─ BrownDust II.exe
-      ```
-4. **Verify the installation**
-   - Launch the game.
-   - On the loading screen, the game version and BrownDustX version should appear in red at the top-right corner.
-5. **Add your mods** by:
-   - Moving them into the `mods/` folder  
-     ⚠️ **Note:** This is *not* the BrownDustX `mods` directory. It's a separate folder used by this manager
-6. **Enable or disable mods**.
-7. **Sync your mods** to apply changes:
-   - This will create a folder named `BD2MM` inside the `BrownDustX` mods folder with all your enabled mods.
+1. 从 [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases) 下载应用。
+2. 选择《棕色尘埃 2》的游戏目录（其中包含 `BrownDust II.exe`）。
+   - 示例：`F:/Neowiz/Browndust2/Browndust2_10000001`
+3. 安装 BepInEx 和 BrownDustX。
+   - 可从 BrownDustX Discord 下载：[discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
 
-> ⚠️ After making any changes (enable, disable, delete, rename), you **must sync** your mods to update the game folder.
+   - 手动安装步骤：
 
-### Sync Method: Copy vs Symlink
+     **安装 BepInEx**
 
-Choose how mods are synced to your BrownDust X `mods` folder:
+     将 BepInEx 压缩包解压到**游戏目录**（可在 Mod Manager 中打开），**不要**解压到启动器目录。
 
-#### 📁 Copy
-Copies all enabled mods into the folder.  
+     解压后目录结构应类似：
+     ```text
+     Browndust2_10000001/
+     ├─ BepInEx/
+     ├─ winhttp.dll
+     └─ BrownDust II.exe
+     ```
 
-- ✅ No admin rights needed
-- ❌ Slower
-- ❌ Uses more disk space
+     > BrownDustX Discord 提供的 BepInEx 压缩包已包含 ConfigurationManager。
 
-#### 🔗 Symlink  
-Creates shortcuts instead of copying files.  
+     **安装 BrownDustX**
 
-- ✅ Much faster
-- ✅ Saves disk space
-- ❌ Requires admin rights
+     将 `BrownDustX-[VERSION].zip` 中的 `BepInEx` 文件夹解压到同一个游戏目录。
 
-#### Example Comparison (383 mods)
+     解压后目录结构应类似：
+     ```text
+     Browndust2_10000001/
+     ├─ BepInEx/
+     │  └─ plugins/
+     │     └─ BrownDustX/
+     └─ BrownDust II.exe
+     ```
+4. 验证安装。
+   - 启动游戏。在加载界面右上角应能看到红色的游戏版本和 BrownDustX 版本。
+5. 添加 Mod：将 Mod 放入 `mods/` 文件夹。
+   - ⚠️ 这不是 BrownDustX 的 `mods` 文件夹，而是 Mod Manager 单独使用的目录。
+6. 启用或禁用 Mod。
+7. 同步 Mod 以应用更改。
+   - 同步后，Mod Manager 会在 BrownDustX 的 mods 目录中创建 `BD2MM` 文件夹，并放入所有已启用的 Mod。
 
-| Copy | Symlink |
+> ⚠️ 启用、禁用、删除或重命名 Mod 后，都必须重新同步，才能将更改应用到游戏目录。
+
+### 同步方式：复制或符号链接
+
+选择将 Mod 同步到 BrownDustX `mods` 目录的方式：
+
+#### 📁 复制
+
+将所有已启用的 Mod 复制到目标目录。
+
+- ✅ 无需管理员权限
+- ❌ 速度较慢
+- ❌ 占用更多磁盘空间
+
+#### 🔗 符号链接
+
+创建指向 Mod 文件的链接，而不是复制文件。
+
+- ✅ 速度更快
+- ✅ 节省磁盘空间
+- ❌ 需要管理员权限
+
+#### 示例对比（383 个 Mod）
+
+| 复制 | 符号链接 |
 |------|---------|
 | <img src="./screenshots/sync_copy_v405.gif" width="260" /> | <img src="./screenshots/sync_symlink_v405.gif" width="260" /> |
 
-## Skin Mapping and Dating Interaction Plugins: Files and Installation
+## 服装外观映射与约会互动插件：文件和安装
 
-Both plugins run inside the game and are loaded by BepInEx. Manager handles configuration, installation, and updates. During installation, it writes the bundled DLL and the corresponding settings file to the selected game directory.
+两个插件都在游戏中运行，并由 BepInEx 加载。Mod Manager 负责配置、安装和更新。安装时，Manager 会将内置 DLL 及对应的设置文件写入所选游戏目录。
 
-| Plugin | Main DLL | Settings file | Purpose |
+| 插件 | 主 DLL | 设置文件 | 用途 |
 | --- | --- | --- | --- |
-| **Skin mapping** | `BD2CostumeSkins.dll` | `BepInEx/plugins/BD2CostumeSkins/settings.json` | Applies appearance mappings from source costumes to target skins at runtime and handles the in-game Skin button. |
-| **Dating interactions** | `BD2PreviewInteractions.dll` | `BepInEx/plugins/BD2PreviewInteractions/settings.json` | Manages P and native dating entries, and loads scenes, interaction points, audio, and UI for P mode. |
+| **服装外观映射** | `BD2CostumeSkins.dll` | `BepInEx/plugins/BD2CostumeSkins/settings.json` | 运行时将源服装的外观映射到目标皮肤，并处理游戏内的 Skin 按钮。 |
+| **约会互动** | `BD2PreviewInteractions.dll` | `BepInEx/plugins/BD2PreviewInteractions/settings.json` | 管理 P 额外入口和游戏原生约会入口，并为 P 模式加载场景、互动点、音频和界面。 |
 
-### Installed directory structure
+### 安装后的目录结构
 
-The paths below start at the game directory containing `BrownDust II.exe`:
+以下路径均相对于包含 `BrownDust II.exe` 的游戏目录：
 
 ```text
-Game directory/
+游戏目录/
 └── BepInEx/
     ├── plugins/
     │   ├── BD2CostumeSkins/
@@ -121,66 +120,60 @@ Game directory/
         └── local.bd2.previewinteractions.cfg
 ```
 
-Install BepInEx first, then exit the game before installing or updating either plugin through its Manager page. BepInEx loads the DLLs when the game starts. It also generates the dating interaction plugin's `.cfg` file when loading the plugin; this file stores additional plugin options and diagnostic settings.
+请先安装 BepInEx。通过 Mod Manager 安装或更新任一插件前，请退出游戏。游戏启动时，BepInEx 会加载这些 DLL。约会互动插件加载时也会生成 `.cfg` 文件，用于保存额外的插件选项和诊断设置。
 
-### Settings files and external resources
+### 设置文件与外部资源
 
-- **Skin mapping `settings.json`** stores the master switch, source-to-target costume mappings, individual mapping switches, and the selected skins. The plugin uses existing game assets and can also use enabled asset replacement mods through BrownDustX.
-- **Dating interaction `settings.json`** stores each scene's P and native entry switches, the interaction JSON, audio, and asset directories, and options such as the left-button hold duration and interaction marker opacity.
-- **External dating resources:** P mode uses `illust_dating*.json` files to describe interaction scenes. Dating audio and artwork are stored in the local directories selected in settings. These resources are separate from the plugin DLL. Download locations are listed in [Dating interaction resources and directory settings](#dating-interactions-resource-sources-and-directory-settings) below.
+- **服装外观映射 `settings.json`**：保存总开关、源服装到目标服装的映射、各项映射开关和选中的皮肤。插件使用游戏现有资源，也可以通过 BrownDustX 使用已启用的资源替换 Mod。
+- **约会互动 `settings.json`**：保存各场景的 P 入口和原生入口开关、互动 JSON、音频和资源目录，以及鼠标左键按住时长、互动标记不透明度等选项。
+- **外部约会资源**：P 模式使用 `illust_dating*.json` 文件描述互动场景。约会音频和美术资源位于设置中指定的本地目录，与插件 DLL 分开存放。下载位置见下方[约会互动资源来源与目录设置](#dating-interactions-resource-sources-and-directory-settings)。
 
-Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` files describe interaction content. Manager also saves configuration copies named `costume-skins.json` and `local-interactions.json` in its application data directory.
+每个插件的 `settings.json` 用于配置对应插件；`illust_dating*.json` 文件描述互动内容。Mod Manager 还会在应用数据目录保存名为 `costume-skins.json` 和 `local-interactions.json` 的配置副本。
 
-### Build outputs
+### 构建产物
 
-`npm run build:game-plugin` builds both plugins. Each project's `bin/Release/netstandard2.1/` directory contains its DLL, `.pdb` debug symbols, and `.deps.json` dependency metadata. The build script copies both DLLs to `src-tauri/resources/`, where they are embedded into the Manager executable for the plugin installation feature. The current installation process deploys the DLLs and settings files.
+`npm run build:game-plugin` 会构建两个插件。每个项目的 `bin/Release/netstandard2.1/` 目录包含 DLL、`.pdb` 调试符号和 `.deps.json` 依赖元数据。构建脚本会将两个 DLL 复制到 `src-tauri/resources/`，并嵌入 Mod Manager 可执行文件，以供插件安装功能使用。当前安装流程会部署 DLL 和设置文件。
 
-## Dating Interactions: Resource Sources and Directory Settings
+<a id="dating-interactions-resource-sources-and-directory-settings"></a>
 
-Open **Settings → Dating interactions**, select the appropriate local folder for each of the following settings, then click **Save settings**.
+## 约会互动：资源来源与目录设置
 
-| Setting | Resource source | Local folder to select |
+打开 **设置 → 约会互动**，为下列设置选择对应的本地目录，然后点击**保存设置**。
+
+| 设置项 | 资源来源 | 应选择的本地目录 |
 | --- | --- | --- |
-| **Interaction JSON directory** | [LLsetnow/neowiz: dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | After downloading or cloning the repository, select `mods/dating-interaction-configs`, which directly contains `illust_dating1.json` through `illust_dating22.json`. |
-| **Dating audio directory** | [bruhnn/Brown-Dust-2-Asset: audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | Select the asset library's `audio/dating` subdirectory (`audio\dating` on Windows), for example `F:\Neowiz\Brown-Dust-2-Asset-master\audio\dating`. |
-| **Artwork asset library directory** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | Select the root of the downloaded or cloned asset library, containing folders such as `spine`, `ui`, and `header`, for example `F:\Neowiz\Brown-Dust-2-Asset-master`. |
+| **互动 JSON 目录** | [LLsetnow/neowiz：dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | 下载或克隆仓库后，选择 `mods/dating-interaction-configs`。该目录中直接包含 `illust_dating1.json` 至 `illust_dating22.json`。 |
+| **约会音频目录** | [bruhnn/Brown-Dust-2-Asset：audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | 选择资源库中的 `audio/dating` 子目录，例如 `F:/Neowiz/Brown-Dust-2-Asset-master/audio/dating`。 |
+| **美术资源库目录** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | 选择下载或克隆后的资源库根目录，其中包含 `spine`、`ui` 和 `header` 等文件夹，例如 `F:/Neowiz/Brown-Dust-2-Asset-master`。 |
 
-Both dating audio and artwork are available from [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master). After downloading or cloning this asset library, set **Dating audio directory** to its `audio/dating` subdirectory (`audio\dating` on Windows), and set **Artwork asset library directory** to the asset library's root.
-
----
-
-## 📸 Screenshots
-
-### Mods Page (v4.0.1)
-![Mods Page](./screenshots/mods_page_v401.png)
-
-### Characters Page (v4.0.1)
-![Characters Page](./screenshots/characters_page_v401.png)
-
-### Mod Preview (BD2ModPreview v1.0.0)
-![Mod Preview](./screenshots/bd2modpreview_v100v2.png)
+约会音频和美术资源都可以从 [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) 获取。该资源库基于 [myssal](https://github.com/myssal/Brown-Dust-2-Asset) 的资源。下载或克隆后，将**约会音频目录**设置为其中的 `audio/dating` 子目录，将**美术资源库目录**设置为资源库根目录。
 
 ---
 
-## ❤️ Support the Project
+## 📸 截图
 
-If you enjoy the mod manager and want to support development, you can support me here:
+### Mod 页面（v4.0.1）
+![Mod 页面](./screenshots/mods_page_v401.png)
 
-- Ko-Fi: https://ko-fi.com/bruhnn
-- Afdian (🇨🇳): https://afdian.com/a/bruhnn
+### 角色页面（v4.0.1）
+![角色页面](./screenshots/characters_page_v401.png)
 
-## ❓ FAQ
+### Mod 预览（BD2ModPreview v1.0.0）
+![Mod 预览](./screenshots/bd2modpreview_v100v2.png)
 
-### Where can I get mods?
-You can find mods on the BrownDustX Discord server: [https://discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
+---
 
-## 🤝 Credits & Thanks
+## ❤️ 支持项目
 
-- Character assets by [myssal/Brown-Dust-2-Asset](https://github.com/myssal/Brown-Dust-2-Asset)
-- Thanks to **Synae** for *BrownDustX*
-- Thanks to everyone who contributed by reporting bugs and suggesting features.  
-   ![Alt](https://repobeats.axiom.co/api/embed/ed16651a70e0b4d1937e8e346f394c6b78c9a231.svg "Repobeats analytics image")
+如果您喜欢这款 Mod 管理器并希望支持后续开发，可以通过以下方式支持：
 
+- Ko-fi：https://ko-fi.com/bruhnn
+
+## ❓ 常见问题
+
+### 从哪里获取 Mod？
+
+可以在 BrownDustX Discord 社区获取 Mod：[https://discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
 
 ## ✨ Star History
 
@@ -192,6 +185,6 @@ You can find mods on the BrownDustX Discord server: [https://discord.gg/B3Aqz6tD
  </picture>
 </a>
 
-## Local fork releases
+## 本地 Fork 版本
 
-Windows x64 builds with local interactions, costume skin mappings and the matching Preview are published at [LLsetnow/BD2ModManager Releases](https://github.com/LLsetnow/BD2ModManager/releases). Versions containing `-local.` check this fork and open its release page for manual updates. The Preview updater also reads [LLsetnow/BD2ModPreview Releases](https://github.com/LLsetnow/BD2ModPreview/releases).
+包含本地约会互动、服装外观映射以及对应 Preview 的 Windows x64 版本发布在 [LLsetnow/BD2ModManager Releases](https://github.com/LLsetnow/BD2ModManager/releases)。版本号中包含 `-local.` 的构建会检查此 Fork，并打开其 Releases 页面供手动更新。Preview 更新器也会读取 [LLsetnow/BD2ModPreview Releases](https://github.com/LLsetnow/BD2ModPreview/releases)。
