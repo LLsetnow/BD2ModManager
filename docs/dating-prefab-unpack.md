@@ -179,6 +179,29 @@ dating18 prefab 中有 13 个动画字段引用无法在对应 `.skel` 找到：
 
 若要补场景 JSON 的 `audio` 段，从开源 `audio/dating/index.json` 读取相应 `illust_datingN` 条目。该数据不在 prefab 实例字段中；音频点按 `group:id` 索引。
 
+## 官方入口记录与表级 InteractionId（2026-11-12 本机核对）
+
+数据库页解码参数、只读导出示例和原生插件实现的完整说明见[约会数据解包与原生入口插件实现](./dating-native-entries-unpack-and-plugin.md)。
+
+`SpineInteractionPoint._spineInteractionId` 是点编号。约会入口需要的 `LobbySettingItemTable.Id` 和关联 `InteractionId` 应读取设计数据库；不能从点编号或 prefab 后缀推算。
+
+本机构建的 common 设计缓存位于 `%USERPROFILE%/AppData/LocalLow/Gamfs/BrownDust II/Data/t/9F251C63BC72551C681EE75D328FA090D56E444B`。文件名对应 `SHA1("common_v1")` 的大写十六进制值。沿游戏 DLL 的数据库代码复现页级 AES-CBC 解码后，以内存 SQLite 只读查询；两个表的 `ProtoBuf` 列分别使用游戏自带 `LobbySettingItemTable.Parser` 和 `SpineInteractionTable.Parser` 解析。源缓存未修改，数据库 `quick_check` 为 `ok`。
+
+本次缓存包含 563 条 Lobby 行和 22 条 Interaction 行。其中 27 条 Lobby 行引用 dating 资源，22 条有有效互动关联，另外 5 条的 `InteractionId` 为 0。解析结果与运行时日志中的 16 项 ID、服装和资源名全部一致，也与原生复制实验捕获的完整源行 32 一致。
+
+| 场景 | 官方 Lobby 行 ID | InteractionId | CostumeId | PrestigeSkinId | 解锁章节组 / 章节 ID |
+|---|---:|---:|---:|---:|---|
+| dating7 | 77 | 1000296 | 296 | 296 | 0 / 0 |
+| dating9 | 99 | 1001197 | 1197 | 1197 | 0 / 0 |
+| dating12 | 121 | 1061492 | 61402 | 61492 | 0 / 0 |
+| dating18 | 207 | 1000396 | 396 | 396 | 0 / 0 |
+| dating19 | 225 | 14 | 67104 | 0 | 14 / 10 |
+| dating21 | 274 | 1065193 | 65193 | 65193 | 0 / 0 |
+
+dating12 的官方 `CostumeId` 是 61402；此前本地 P 目录中的 61492 对应它的 `PrestigeSkinId`。同资源且 `InteractionId=0` 的行分别为 dating7=218、dating9=217、dating12=161、dating18=208、dating21=275；这些行没有对应的有效互动表记录，选择入口时应区分。
+
+完整六项数据保存在仓库外 `F:/Neowiz/releases/official-dating-six-20261112.json`，包含显式默认字段、原始 protobuf、缓存及解析 DLL 的 SHA256、运行时交叉校验结果。0.3.0 已使用这六项官方记录，用户确认六项均出现并能进入；日志也确认各项原生控制器初始化。输入、音频和 Reset 的各项行为未单独验收，详见上述实现文档。
+
 ## 使用边界
 
 原始 prefab 适合确认 Unity 中的组件实例、分组、点身份、动画字符串、引用关系和原始 RectTransform。要把这些数据转换成 Mod Preview 的 `corners`、`collider`、`zone`、`destinations`、`radius`，还需独立实现并验证 Unity Transform 到 Spine bone-local 坐标的换算。

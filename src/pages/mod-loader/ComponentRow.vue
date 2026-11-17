@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TriangleAlert, Upload,Trash2 } from '@lucide/vue'
+import { TriangleAlert, Upload, Trash2, BookOpen } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 import Button from '../../components/common/Button.vue'
 import Tooltip from '../../components/common/Tooltip.vue'
@@ -83,6 +83,8 @@ const cantRemoveReason = computed(() =>
 
         <div class="flex gap-1 justify-end items-center">
             <template v-if="label == 'BrownDustX'">
+                <Button variant="text" label="Wiki" :icon="BookOpen" label-class="hidden lg:inline"
+                    @click="openUrl('https://www.gamekee.com/zsca2/727450.html')" />
                 <Button variant="text" label="Discord" :icon="DiscordIcon" label-class="hidden lg:inline" @click="openUrl('https://discord.gg/B3Aqz6tDG2')"></Button>
             </template>
             <template v-if="canInstall">

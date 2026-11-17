@@ -342,7 +342,7 @@ pub async fn check_for_app_update(
         _ => "stable",
     };
 
-    // Unsigned local builds use this fork's release page instead of the upstream signed updater feed.
+    // Local-version builds use the fork's Releases page because they are unsigned.
     let current_version = get_app_version(&app_handle);
     if current_version.contains("-local.") {
         let (latest, page, changelog) = portable::fetch_app_latest_version(&app_handle, channel).await

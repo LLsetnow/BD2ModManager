@@ -2,10 +2,9 @@
 import { Minus, Square, SquareStop, X, Check, AlertTriangle, RotateCw, ScrollText, Heart, Sparkles } from '@lucide/vue';
 import GithubIcon from './icons/GithubIcon.vue';
 import KofiIcon from './icons/KofiIcon.vue';
-import AfDianIcon from './icons/AfDianIcon.vue';
 import ActiveDownloads from './ActiveDownloads.vue';
 
-import { computed, ref, watch, onUnmounted, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { refThrottled } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
@@ -23,8 +22,6 @@ import { useAppVersion } from '../composables/useAppVersion.ts';
 import { usePortable } from '../composables/usePortable';
 import { useLocale } from '../composables/useLocale.ts';
 import { getErrorMessage } from '../utils/errors';
-
-import Tooltip from './common/Tooltip.vue';
 
 const { appVersion } = useAppVersion()
 const { isChineseLanguage } = useLocale()
@@ -56,7 +53,7 @@ async function handleAppUpdateClick() {
     if (appUpdate.value?.status === UpdateStatus.CheckingForUpdates) return
 
     if (isUpdating.value) return
-    if (isPortable.value) {
+    if (isPortable.value || (appUpdate.value?.status === UpdateStatus.UpdateAvailable && appUpdate.value.update.downloadUrl)) {
         // open modal
         if (appUpdate.value?.status === UpdateStatus.UpdateAvailable) {
             globalModals.updateAvailable.showModal(appUpdate.value.update as AppUpdateAvailable)
@@ -87,11 +84,10 @@ async function handleAppUpdateClick() {
 }
 
 function handleSyncClick() { globalModals.sync.showModal() }
-function handleGithubClick() { openUrl("https://github.com/bruhnn/BD2ModManager") }
+function handleGithubClick() { openUrl("https://github.com/LLsetnow/BD2ModManager") }
 function handleLogsClick() { globalModals.logs.showModal() }
-function handleAfdianClick() { openUrl("https://afdian.com/a/Bruhnn") }
 function handleKofiClick() { openUrl("https://ko-fi.com/bruhnn") }
-function handleOpenGithubUser() { openUrl("https://github.com/bruhnn") }
+function handleOpenGithubUser() { openUrl("https://github.com/LLsetnow") }
 
 const rawSyncProgress = computed(() =>
     syncStateStore.progress.total > 0
@@ -104,96 +100,6 @@ watch(() => syncStateStore.status, () => {
     if (!showSyncBar.value) showSyncBar.value = true
 })
 
-let creditsInterval: ReturnType<typeof setInterval>
-const credits = ref<any[]>([])
-const creditIndex = ref(0)
-const creditPosition = ref(1)
-const creditsSinceZero = ref(0)
-
-const allCredits = computed(() => [
-    { type: "creator", name: "@bruhnn", platform: "github" },
-    ...credits.value
-])
-
-function shuffle<T>(items: T[]) {
-    const shuffled = [...items]
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-
-            ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-
-    return shuffled
-}
-
-async function fetchCredits() {
-    try {
-        const response = await fetch(
-            "https://shy-waterfall-2797.bruhnn.workers.dev/credits"
-        )
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch credits: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        const supporters = shuffle(
-            data.sponsors.filter((item: any) => item.type === 'supporter')
-        )
-
-        const contributors = shuffle(
-            data.sponsors.filter((item: any) => item.type === 'contributor')
-        )
-
-        const mixed: any[] = []
-
-        while (supporters.length || contributors.length) {
-            mixed.push(...supporters.splice(0, 2))
-
-            if (contributors.length) {
-                mixed.push(contributors.shift())
-            }
-        }
-
-        credits.value = mixed
-
-    } catch (error) {
-        loggingStore.logError("Failed to fetch credits", error)
-    }
-}
-
-function rotateCredits() {
-    const delay = creditIndex.value === 0 ? 32000 : 8000
-
-    creditsInterval = setTimeout(() => {
-        if (creditsSinceZero.value === 3) {
-            creditIndex.value = 0
-            creditsSinceZero.value = 0
-        } else {
-            creditIndex.value = creditPosition.value
-            creditPosition.value++
-            creditsSinceZero.value++
-
-            if (creditPosition.value >= allCredits.value.length) {
-                creditPosition.value = 1
-                creditsSinceZero.value = 3
-            }
-        }
-
-        rotateCredits()
-    }, delay)
-}
-
-onMounted(async () => {
-    await fetchCredits()
-    if (credits.value.length > 0) rotateCredits()
-})
-
-onUnmounted(() => {
-    clearTimeout(creditsInterval)
-})
 </script>
 
 <template>
@@ -206,46 +112,11 @@ onUnmounted(() => {
             <span class="text-xs font-semibold flex min-w-0 gap-1 items-center whitespace-nowrap">
                 <Heart class="w-3.5 h-3.5 shrink-0 mr-1 text-accent" />
                 <span class="shrink-0">v{{ appVersion }}</span>
-                <transition name="credits" mode="out-in">
-                    <span :key="creditIndex" class="inline-flex items-center min-w-0">
-                        <Tooltip class="min-w-0" placement="bottom"
-                            :text="allCredits[creditIndex]?.type === 'creator' ? $t('titlebar.credits.creator_tooltip') : allCredits[creditIndex]?.type === 'supporter' ? $t('titlebar.credits.supporter_tooltip', { platform: ({
-                                afdian: 'AfDian',
-                                kofi: 'Ko-fi',
-                                github: 'GitHub',
-                            } as Record<string, string>)[allCredits[creditIndex]?.platform]}) : $t('titlebar.credits.bug_reports_tooltip')"
-                            :background-color="allCredits[creditIndex]?.platform === 'afdian' ? '#946CE6' : allCredits[creditIndex]?.platform === 'kofi' ? '#FF6433' : '#24292f'"
-                            text-color="#ffffff">
-                            <template #icon>
-                                <AfDianIcon v-if="allCredits[creditIndex]?.platform === 'afdian'"
-                                    class="w-5 h-5 shrink-0" color="currentColor" />
-                                <KofiIcon v-else-if="allCredits[creditIndex]?.platform === 'kofi'"
-                                    class="w-5 h-5 shrink-0" />
-                                <GithubIcon v-else class="w-4 h-4 shrink-0" />
-                            </template>
-                            <span tabindex="0" class="truncate max-w-64"
-                                :class="{ 'cursor-pointer': allCredits[creditIndex]?.type === 'creator' }"
-                                @click="allCredits[creditIndex]?.type === 'creator' && handleOpenGithubUser()">
-                                <span class="shrink-0 text-text-primary">
-                                    {{ allCredits[creditIndex]?.type === 'creator' ? $t('titlebar.credits.creator') : $t('titlebar.credits.thanks') }}
-                                </span>
-                                {{ ' ' }}
-                                <span class="shrink-0
-                                bg-linear-to-r
-                                bg-size-[200%_100%]
-                                bg-clip-text text-transparent
-                                animate-sweep
-                                transition-colors" :class="[
-                                    allCredits[creditIndex]?.platform === 'afdian'
-                                        ? 'from-[#946CE6] via-[#B79AF5] to-[#946CE6] hover:via-[#C8B2F8]'
-                                    : allCredits[creditIndex]?.platform === 'kofi'
-                                        ? 'from-[#FF6433] via-[#FFA05A] to-[#FF6433] hover:via-[#FFD96E]'
-                                        : 'from-accent via-accent/60 to-accent hover:via-accent/80'
-                                ]"> {{ allCredits[creditIndex]?.name }}</span>
-                            </span>
-                        </Tooltip>
-                    </span>
-                </transition>
+                <button type="button" class="inline-flex items-center gap-1 text-text-secondary hover:text-accent transition-colors"
+                    aria-label="Author on GitHub: LLsetnow" @click="handleOpenGithubUser">
+                    <GithubIcon class="w-3.5 h-3.5 shrink-0" />
+                    <span>@LLsetnow</span>
+                </button>
             </span>
         </div>
 
@@ -350,15 +221,7 @@ onUnmounted(() => {
                         {{ $t('titlebar.actions.logs') }}
                     </span>
                 </button>
-                <button v-if="isChineseLanguage"
-                    class="flex items-center gap-1 md:gap-2 cursor-pointer hover:bg-accent-hover hover:text-text-on-accent rounded-sm px-2 py-1 transition-colors duration-200"
-                    @click="handleAfdianClick">
-                    <AfDianIcon class="w-[1.5em] h-[1.5em]" />
-                    <span class="hidden min-[1152px]:inline font-semibold text-sm">
-                        {{ $t('titlebar.actions.afdian') }}
-                    </span>
-                </button>
-                <button v-else
+                <button v-if="!isChineseLanguage"
                     class="flex items-center gap-1 md:gap-2 cursor-pointer hover:bg-accent-hover hover:text-text-on-accent rounded-sm px-2.5 py-1 transition-colors duration-200"
                     @click="handleKofiClick">
                     <KofiIcon class="w-[1.25em] h-[1.25em]" />
@@ -393,28 +256,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.credits-enter-active,
-.credits-leave-active {
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-}
-
-.credits-enter-from {
-    opacity: 0;
-    transform: translateY(4px);
-}
-
-.credits-leave-to {
-    opacity: 0;
-    transform: translateY(-4px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .credits-enter-active,
-    .credits-leave-active {
-        transition: none;
-    }
-}
-
 .slide-fade-enter-active {
     transition: all 0.2s ease-out;
 }

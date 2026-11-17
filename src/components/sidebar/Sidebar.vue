@@ -76,9 +76,9 @@ function onProfileSelected(profile_id: string) {
         <div class="relative">
             <NavigationSection :title="$t('sidebar.sections.navigation')">
                 <NavigationButton :icon="Component" :label="$t('sidebar.tabs.mods')" value="mods" />
-                <NavigationButton :icon="Heart" :label="$t('sidebar.tabs.interactions')" value="interactions" />
                 <NavigationButton :icon="Users" :label="$t('sidebar.tabs.characters')" value="characters" />
                 <NavigationButton :icon="Shirt" :label="$t('sidebar.tabs.skins')" value="skins" />
+                <NavigationButton :icon="Heart" :label="$t('sidebar.tabs.interactions')" value="interactions" />
             </NavigationSection>
             <NavigationSection :title="$t('sidebar.sections.settings')">
                 <NavigationButton :icon="Bolt" :label="$t('sidebar.tabs.profiles')" value="profiles" />

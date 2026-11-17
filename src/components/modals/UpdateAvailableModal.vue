@@ -79,8 +79,8 @@ async function handleAction() {
     isUpdating.value = true
 
     try {
-        if (isPortable.value) {
-            await openUrl(params.value?.downloadUrl ?? '')
+        if (params.value?.downloadUrl) {
+            await openUrl(params.value.downloadUrl)
         } else {
             await downloadAppUpdate()
         }
@@ -136,7 +136,7 @@ async function handleAction() {
                 <Button variant="default" @click="closeModal">
                     {{ $t('app.modals.updateAvailable.actions.later') }}
                 </Button>
-                <Button v-if="isPortable" variant="primary" @click="handleAction"
+                <Button v-if="isPortable || params?.downloadUrl" variant="primary" @click="handleAction"
                     :disabled="isUpdating || appUpdate?.status === UpdateStatus.Downloading || appUpdate?.status === UpdateStatus.Installing">
                     {{ $t('app.modals.updateAvailable.actions.goToReleases') }}
                 </Button>

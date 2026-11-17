@@ -10,6 +10,7 @@ interface Settings {
     language?: Language,
     gameDirectory?: string | null,
     stagingDirectory?: string | null,
+    assetLibraryDirectory?: string | null,
     searchModsRecursively: boolean,
     syncMethod?: string,
     checkForAppUpdates: boolean,

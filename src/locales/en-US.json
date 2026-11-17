@@ -24,7 +24,6 @@
             "removeMissingProfileMods": "Added \"Remove Missing\" button to clean missing mod entries from the selected profile (issue #91, contributed by {'@'}SuuKomura)",
             "activeDownloads": "Added Active Downloads panel to view download progress",
             "diskSpaceCheck": "Added available disk space check before syncing",
-            "titlebarCredits": "Added supporter and contributor credits to the titlebar",
             "modLoaderDiscord": "Added a Discord button for BrownDustX in the Mod Loader tab",
             "notificationActions": "Added notification action buttons and improved notification sizing",
             "themeTransitions": "Added animations when switching themes",
@@ -280,15 +279,7 @@
         "actions": {
             "logs": "Logs",
             "github": "GitHub",
-            "kofi": "Support on Ko-Fi",
-            "afdian": "Support on Afdian"
-        },
-        "credits": {
-            "creator": "by",
-            "thanks": "thanks to",
-            "creator_tooltip": "Created by {'@'}bruhnn",
-            "supporter_tooltip": "Supporter on {platform}",
-            "bug_reports_tooltip": "Bug reports and suggestions on GitHub"
+            "kofi": "Support on Ko-Fi"
         }
     },
     "sidebar": {
@@ -1095,6 +1086,10 @@
                     "modsDirectory": {
                         "label": "Staging Mods Directory",
                         "placeholder": "Select a directory to store your mods before syncing"
+                    },
+                    "assetLibraryDirectory": {
+                        "label": "Art Asset Library Directory",
+                        "description": "Dating configs, audio and preview assets are downloaded from the repository here on demand."
                     }
                 },
                 "modManagement": {
@@ -1276,20 +1271,6 @@
             "label": "Dating interactions",
             "title": "Dating interaction resources and controls",
             "description": "These settings apply to P extra entries. Manage characters and entry switches in Dating interactions in the sidebar.",
-            "paths": {
-                "exportDirectory": {
-                    "label": "Interaction JSON folder",
-                    "hint": "Dating scene JSON files used by P extra entries."
-                },
-                "audioDirectory": {
-                    "label": "Dating audio folder",
-                    "hint": "Select the audio / dating folder in the asset library."
-                },
-                "assetsDirectory": {
-                    "label": "Art asset library folder",
-                    "hint": "Select the root folder containing character art assets."
-                }
-            },
             "dragHold": "Hold left mouse button before dragging",
             "opacity": "Interaction point opacity",
             "draftHelp": "Both pages share unsaved dating settings. You can keep editing after switching pages."

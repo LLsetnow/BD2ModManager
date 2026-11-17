@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Tab, TabGroup, TabList, TabPanels } from '@headlessui/vue';
-import { CircleArrowUp, FlaskConical, Monitor, Settings } from '@lucide/vue';
+import { CircleArrowUp, FlaskConical, Heart, Monitor, Settings } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GeneralTab from './tabs/GeneralTab.vue';
 import InterfaceTab from './tabs/InterfaceTab.vue';
 import UpdateTab from './tabs/UpdateTab.vue';
 import ExperimentalTab from './tabs/ExperimentalTab.vue';
+import DatingInteractionsTab from './tabs/DatingInteractionsTab.vue';
 import { useDev } from '../../composables/useDev.ts';
 
 
@@ -16,6 +17,10 @@ const tabs = computed(() => [{
     label: t(`settingsTab.general.label`),
     value: 'general',
     icon: Settings,
+}, {
+    label: t('settingsTab.dating.label'),
+    value: 'dating',
+    icon: Heart
 }, {
     label: t('settingsTab.interface.label'),
     value: 'interface',
@@ -82,6 +87,7 @@ onMounted(() => {
             </div>
             <TabPanels class="flex-1 p-4 py-2 w-full">
                 <GeneralTab />
+                <DatingInteractionsTab />
                 <InterfaceTab />
                 <UpdateTab />
                 <ExperimentalTab />

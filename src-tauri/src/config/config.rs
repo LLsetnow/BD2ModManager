@@ -1,15 +1,19 @@
 use log::info;
+use std::fs;
 use serde::{Deserialize, Serialize};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
 
 use crate::utils::path::get_config_file_path;
+
+pub const DEFAULT_ASSET_LIBRARY_DIRECTORY: &str = r"F:\Neowiz\Brown-Dust-2-Asset-master";
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", default)]
 pub struct AppConfig {
     pub game_directory: Option<String>,
     pub staging_directory: Option<String>,
+    pub asset_library_directory: Option<String>,
     pub language: String,
     pub theme: String,
     pub sync_method: String,
@@ -29,6 +33,7 @@ pub struct AppConfig {
 pub struct PartialAppConfig {
     pub game_directory: Option<String>,
     pub staging_directory: Option<String>,
+    pub asset_library_directory: Option<String>,
     pub language: Option<String>,
     pub theme: Option<String>,
     pub sync_method: Option<String>,
@@ -50,6 +55,9 @@ impl AppConfig {
         }
         if let Some(staging_directory) = partial.staging_directory {
             self.staging_directory = Some(staging_directory);
+        }
+        if let Some(asset_library_directory) = partial.asset_library_directory {
+            self.asset_library_directory = Some(asset_library_directory);
         }
         if let Some(language) = partial.language {
             self.language = language;
@@ -95,6 +103,7 @@ impl Default for AppConfig {
         Self {
             game_directory: None,
             staging_directory: None,
+            asset_library_directory: None,
             language: "en_US".into(),
             theme: "dark".into(),
             sync_method: "copy".into(),
@@ -116,6 +125,7 @@ impl Default for PartialAppConfig {
         Self {
             game_directory: None,
             staging_directory: None,
+            asset_library_directory: None,
             language: None,
             theme: None,
             sync_method: None,
@@ -175,6 +185,20 @@ impl BD2Config {
         store.set("config", serde_json::to_value(&self.config)?);
         store.save()?;
 
+        if let Some(root) = self.config.asset_library_directory.as_deref() {
+            self.save_shared_asset_library_root(root)?;
+        }
+
+        Ok(())
+    }
+
+    fn save_shared_asset_library_root(&self, root: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let app_data = self.app.path().app_data_dir()?;
+        let shared_dir = app_data.parent().unwrap_or(&app_data)
+            .join("LLsetnow")
+            .join("BD2AssetLibrary");
+        fs::create_dir_all(&shared_dir)?;
+        fs::write(shared_dir.join("root.txt"), root.trim())?;
         Ok(())
     }
 

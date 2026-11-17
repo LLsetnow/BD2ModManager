@@ -15,7 +15,6 @@ import { useLoggingStore } from '../../stores/logging'
 import { globalModals } from '../../composables/useGlobalModals.ts'
 
 import KofiIcon from '../icons/KofiIcon.vue'
-import AfDianIcon from '../icons/AfDianIcon.vue'
 import DiscordIcon from '../icons/DiscordIcon.vue'
 import RefinedGithub from '../../assets/icons/github.svg'
 
@@ -108,10 +107,9 @@ watch(isOpen, async (isVisible) => {
     }
 })
 
-const GITHUB_URL = 'https://github.com/bruhnn/BD2ModManager'
+const GITHUB_URL = 'https://github.com/LLsetnow/BD2ModManager'
 const DISCORD_URL = 'https://discord.gg/B3Aqz6tDG2'
 const KOFI_URL = 'https://ko-fi.com/bruhnn'
-const AFDIAN_URL = 'https://afdian.com/a/bruhnn'
 </script>
 
 <template>
@@ -125,16 +123,6 @@ const AFDIAN_URL = 'https://afdian.com/a/bruhnn'
                 <div class="flex flex-col gap-0.5">
                     <p class="text-xs font-semibold text-orange-300">{{ $t('app.modals.welcome.supportBanner.title') }}</p>
                     <p class="text-xs text-orange-200/80">{{ $t('app.modals.welcome.supportBanner.message', {platform: 'Ko-Fi'}) }}</p>
-                </div>
-            </div>
-
-            <div v-else
-                class="flex items-center gap-3 p-3 rounded-md border border-purple-500/30 bg-purple-500/10 cursor-pointer hover:bg-purple-500/20 transition-colors"
-                @click="openUrl(AFDIAN_URL)">
-                <AfDianIcon class="w-4 h-4 fill-purple-400 shrink-0" />
-                <div class="flex flex-col gap-0.5">
-                    <p class="text-xs font-semibold text-purple-300">{{ $t('app.modals.welcome.supportBanner.title') }}</p>
-                    <p class="text-xs text-purple-200/80">{{ $t('app.modals.welcome.supportBanner.message', { platform: 'AfDian' }) }}</p>
                 </div>
             </div>
 

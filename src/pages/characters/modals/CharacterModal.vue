@@ -34,6 +34,8 @@ const show = defineModel('show', {
 const props = defineProps<{
     selectedCostume: Character | null;
     toggleMod: (mod: BD2Mod) => void;
+    initialTab?: 'Standing' | 'Cutscene' | 'Dating';
+    busy?: boolean;
 }>();
 
 const modsStore = useModsStore();
@@ -189,7 +191,7 @@ const charName = computed(() => {
             </div>
 
             <div class="flex flex-col min-h-0 flex-1">
-                <TabGroup :key="costumeIds.join(',')">
+                <TabGroup :key="`${costumeIds.join(',')}:${initialTab ?? 'Standing'}`" :default-index="Object.keys(modsByType).indexOf(initialTab ?? 'Standing')">
                     <TabList class="flex flex-wrap shrink-0 items-center gap-1 px-3 py-2 border-b border-border-default" as="div">
                         <Tab v-for="(mods, type) in modsByType" :key="type" v-slot="{ selected }" as="template">
                             <button class="flex items-center gap-2 px-3 py-2 text-sm rounded-sm transition-colors cursor-pointer hover:bg-state-hover"
@@ -217,7 +219,7 @@ const charName = computed(() => {
                                 <template v-else>
                                         <div v-for="mod in mods" :key="mod.name"
                                             class="flex items-center gap-3 px-4 py-3 border-b border-border-default hover:bg-state-hover transition-colors">
-                                            <Checkbox :model-value="mod.enabled" @update:model-value="toggleMod(mod)" :disabled="modsStore.isSyncing" class="shrink-0" />
+                                            <Checkbox :model-value="mod.enabled" @update:model-value="toggleMod(mod)" :disabled="modsStore.isSyncing || busy" class="shrink-0" />
                                             <button @click="openPreviewMod(mod)" :disabled="isOpeningPreview"
                                                 class="w-5 h-5 flex items-center justify-center shrink-0 cursor-pointer text-text-secondary hover:text-text-primary transition-colors disabled:opacity-50"
                                                 :aria-label="$t('charactersTab.characterModal.previewMod')">
@@ -233,7 +235,7 @@ const charName = computed(() => {
                                                 :icon="Trash2"
                                                 icon-class="text-error"
                                                 class="shrink-0"
-                                                :disabled="modsStore.isSyncing"
+                                                :disabled="modsStore.isSyncing || busy"
                                                 :aria-label="$t('charactersTab.characterModal.deleteFromLibrary')"
                                                 :title="$t('charactersTab.characterModal.deleteFromLibrary')"
                                                 @click.stop.prevent="deleteMods(mod)"

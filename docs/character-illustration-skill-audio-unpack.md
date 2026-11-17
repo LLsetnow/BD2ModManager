@@ -1,4 +1,4 @@
-# Brown Dust II 角色立绘与技能音频解包
+# Brown Dust II 角色资源、技能音频与演出架构解包
 
 本文记录从 Unity Addressables 缓存提取角色立绘、技能卡立绘、Spine 资源和角色技能音频的方法。结果基于本机当前游戏构建核对；Addressables 的 bundle hash 会随版本变化，每次更新都应先检查 `catalog.json`。
 
@@ -178,3 +178,96 @@ ffprobe -v error -show_entries format=duration -show_entries stream=codec_name,s
 ```
 
 `vgmstream-cli -m` 应显示 FSB 子流总数及当前流名；`ffprobe` 应识别导出文件为 PCM WAV。系统 FFmpeg 的 FSB demuxer 在本次环境中返回 `Not yet implemented`，用于 WAV 校验可以，用来替代 vgmstream 读取此 FSB5 则不行。
+
+
+---
+
+## 技能演出时间轴与游戏音频架构
+
+本节记录 2026-11-17 本机游戏缓存的核对结果。前文提到的 756 个技能 FSB 子流是可复用的原始声音素材；游戏实际播放的“技能演出声音”由 Unity Timeline 触发 FMOD 事件，有些事件会混合多个子流、延迟、音量和效果。要还原演出，应保留 Timeline 与 FMOD 的关联。
+
+### 资源分层
+
+音频相关资源分为三层：
+
+1. **Unity Addressables 目录与缓存**  
+   当前安装目录为 F:\Neowiz\Browndust2\Browndust2_10000001\Brown Dust II_Data。游戏启动后使用的 Addressables catalog 还可见于 %USERPROFILE%\AppData\LocalLow\Gamfs\BrownDust II\com.unity.addressables\catalog_alpha.json。catalog 将逻辑 bundle ID、m_BundleName、内容 hash 和缓存文件关联起来；缓存数据位于 Addressable\<m_BundleName>\<m_Hash>\__data。Bundle 通常是压缩 UnityFS，应先解包，再用 UnityPy 查看对象。游戏更新后目录名和 hash 会变化，不能把本文的 hash 当成永久地址。
+
+2. **角色技能源声音（FSB5）**  
+   common-sound_assets_sound/character_skills.bytes、character_skills_group00.bytes 和 character_skills_group01.bytes 三个 TextAsset 各包含一个 FSB5。FSB 名称表中的 Char<资源编号>_Skill_* 是基础素材名。三个 FSB 合计 756 个子流。可用 vgmstream 按 FSB 子流编号单独解码 WAV。一个素材可能被多个 FMOD 事件使用；素材名中的 CutScene 也不保证其本身就是游戏听到的完整演出混音。
+
+3. **FMOD 事件与语言语音**  
+   游戏安装目录的 Brown Dust II_Data\Plugins\x86_64\fmodstudio.dll 是 FMOD Studio 2.03.12。SoundMaster 和 Sound 银行包含事件描述及声音资源；日语角色银行可在 SoundData\Patched\LocalVoice_JP 找到，韩语 local_common_*.bytes.bundle 位于本地化 Addressables 缓存。Voice_Common 的事件路径经常是语言无关的，实际取哪种语言由已加载的语言银行和 programmer sound 回调决定。
+
+### 从 Timeline 找到应播放的声音
+
+角色技能演出不是一个孤立的 Spine 动画。Addressables 中的 isolated-cutscene<编号>-group_assets_all_*.bundle 通常同时包含演出用 Spine 资源、Unity Timeline、PlayableDirector 和视觉对象。以 000708 为例，Timeline 中可见 Char000708_Set_Skill 与 Char000708 两个 PlayableAsset；后者包含 Spine 动画状态轨道及 FMOD Event Track。
+
+解析步骤如下：
+
+1. 从当前 catalog 找到 isolated-cutscene<编号>-group_assets_all bundle，并读取 UnityFS。
+2. 遍历 UnityPy 对象，找到 PlayableDirector，沿 m_PlayableAsset 读取 Timeline。
+3. 递归遍历 Timeline 的 m_Tracks 和子轨道 m_Children；从音频轨道的 m_Clips 读取 m_Start、m_Duration、m_ClipIn、m_TimeScale、音量、淡入淡出及引用的 Playable 对象。
+4. 从 FMODEventPlayable 或 FMODVoiceEventPlayable 读取 EventReference.Guid、EventLength、StopType、参数与类型。用游戏版本匹配的 FMOD Studio API 按 GUID 调用 FMOD_Studio_System_GetEventByID，再用 EventDescription 的路径查询接口得到 event:/... 路径。
+5. 对语音事件注册 FMOD_STUDIO_EVENT_CALLBACK_CREATE_PROGRAMMER_SOUND，从回调取得真正被选择的 FSB 子流名。最终映射关系是“Timeline clip → FMOD GUID / event path → 语言银行中的 programmer sample”，不能只按人物编号或 clip 显示名猜测。
+
+m_Start 是声音事件相对于 Timeline 的触发时刻；m_ClipIn 和 m_TimeScale 会改变源音频在片段中的位置或播放速率。Timeline 片段时长、FMOD 的 EventLength 和解码后 WAV 时长含义不同，应分别保留。实现预览时还应处理片段音量、并行轨道和 StopType。
+
+### 提取语音 WAV
+
+FSB5 样本名称表可用于精确选出上一步回调得到的 programmer sample。按样本在 FSB 内的序号调用 vgmstream，输出到按语言和角色资源编号分层的目录，例如：
+
+    F:\Neowiz\Brown-Dust-2-Asset-master\audio\skills\ja-JP\000708\Char000708_BattleSkill_3.wav
+    F:\Neowiz\Brown-Dust-2-Asset-master\audio\skills\ko-KR\000708\Char000708_BattleSkill_3.wav
+
+原始日语银行可直接查找 FSB5。韩语 Addressables bundle 需要先解压 UnityFS，再在其 TextAsset 数据中查找 FSB5。对每个目标 sample 记录语言、银行源路径、银行 SHA-256、FSB 序号、内部名称及导出 WAV 的 SHA-256；这样 catalog 更新后能重新校验来源，而不用依赖缓存目录名。
+
+示例命令（-s 使用从 1 开始的 FSB 子流序号）：
+
+    F:\Neowiz\tools\vgmstream-win64\vgmstream-cli.exe -i -s 17 -o sample.wav voice-bank.fsb
+
+解码后检查 WAV 头、PCM 格式、采样率、声道数、帧数和非静音峰值。vgmstream-cli -m voice-bank.fsb 可核对 FSB 子流名称及总数。
+
+本机缓存核对到 358 个不同的技能演出语音样本名：日语银行找到 357 个，韩语银行找到 307 个。缺少的银行样本仅表示本次扫描的本机缓存没有找到，不能据此断言游戏从未发布该语音；更新 catalog 或下载新的语言 bundle 后应重新扫描。
+
+### 提取完整 FMOD 技能音效
+
+对 Timeline 引用的 SFX，优先渲染 FMOD Event，而不是把同名 FSB 子流直接当作最终结果。离线渲染使用与游戏匹配的 fmodstudio.dll：
+
+1. 创建 Studio system 时指定与 DLL 兼容的头文件版本；本机 DLL 使用 FMOD_STUDIO_INIT_VERSION = 0x20300。
+2. 设置 Core 输出为 WAVWRITER_NRT，并固定输出采样率、声道布局和 DSP buffer 大小。
+3. 加载当前构建的 SoundMaster、Sound 与需要的语言银行。按 Timeline GUID 取得事件，先加载 sample data，再启动 event instance。
+4. 调用 FMOD_Studio_System_Update 推进无实时设备的渲染；使用 master channel group 的 DSP clock 记录起止帧。
+5. 从离线生成的 PCM WAV 按帧切出事件音频，同时记录 event path、Timeline GUID、源 bank hash、音量、帧数和 WAV hash。
+
+本机按 Timeline GUID 唯一事件核对到 173 个 SFX 事件，事件均能在本机 FMOD 银行中解析，离线渲染后的 PCM WAV 均非静音。这个数字是本次本地资源快照，不是今后游戏版本的固定总数。
+
+### 与 ModPreview 的时间控制同步
+
+ModPreview 现有立绘类预览加载单个 Spine skeleton；“游戏过程动画预览”则通过 useGameCutscene 读取 src/data/cutscenes/<编号>.json，重建 Timeline 里的骨骼轨道和画面图层。Scene 的动画时间由 useGameCutscene.update(delta, loop) 推进，seek(value) 重置并重放动画轨道到目标时间。当前 Scene schema 有 nodes、tracks、curves、activations、assets、textures 和可选 baked 图层，尚未内嵌 FMOD 音频轨道。
+
+接入声音时，音频事件应沿用同一 Scene 时间轴：开始演出时从 0 建立调度；运行时按 Timeline clip 时间触发；暂停时暂停或冻结调度；拖动进度时停止旧事件并根据目标时间恢复；重播、切换资源、停止预览和组件销毁时清理所有 AudioBufferSource 或 scheduled node。循环回到 0 时重新调度。拖动应重建当前时间点仍有效的事件并跳过已经结束的事件，避免把被跳过的台词和音效补播出来。
+
+声音清单至少要保存：
+
+- Scene / cutscene ID、源 bundle hash 和 Timeline revision；
+- clip 起点、片段时长、clipIn、timeScale、音量与停止规则；
+- FMOD GUID、事件路径、SFX/语音类型；
+- SFX WAV 路径，或每种语言的语音 sample 路径；
+- WAV 时长、采样格式和 hash。
+
+语言语音使用 ja-JP / ko-KR 映射。若当前选择语言没有对应文件，可按已存在的语音设置回退到另一种语言，并显示实际播放的语言。某个声音文件缺失不应阻止画面时间轴运行。
+
+### 本地分析工具与更新注意事项
+
+本机常用工具：
+
+- F:\Neowiz\tools\unity_voice_bundles.mjs：解压 UnityFS LZ4 bundle，解析 Addressables cache 元数据。
+- F:\Neowiz\tools\extract_standing_audio.mjs：包含 FSB5 名称表、子流与 PCM WAV 检查函数。
+- F:\Neowiz\tools\vgmstream-win64\vgmstream-cli.exe：从 FSB5 导出单个 sample。
+- F:\Neowiz\tools\extract_skill_timelines.py：扫描已缓存的 isolated-cutscene Timeline。
+- F:\Neowiz\tools\extract_skill_voices.mjs：按事件回调得到的样本名提取两种语言语音。
+- F:\Neowiz\tools\render_skill_events.py：调用游戏 FMOD DLL 离线渲染完整 SFX event。
+- 游戏 managed assemblies 位于 Brown Dust II_Data\Managed，可用来核对 FMOD Unity Timeline playable 字段和 StopType 枚举。
+
+更新游戏后，应从最新 catalog 重建 bundle 映射，确认 bundle hash、GUID、bank 版本和资源是否齐全；再对至少一个已知角色比较 Timeline 时间戳、事件路径、渲染 WAV 时长和播放片段边界。不要用旧版本 GUID 或缓存 hash 默默回退到另一构建的音频。

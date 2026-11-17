@@ -24,7 +24,6 @@
             "removeMissingProfileMods": "Adicionado o botão “Remover ausentes” para limpar entradas de mods ausentes do perfil selecionado (issue #91, contribuição de {'@'}SuuKomura).",
             "activeDownloads": "Adicionado painel de downloads ativos para acompanhar o progresso dos downloads.",
             "diskSpaceCheck": "Adicionada verificação de espaço livre em disco antes da sincronização.",
-            "titlebarCredits": "Adicionados créditos aos apoiadores e colaboradores na barra de título.",
             "modLoaderDiscord": "Adicionado botão do Discord do BrownDustX na aba Carregador de Mods.",
             "notificationActions": "Adicionados botões de ação às notificações e melhorado seu tamanho.",
             "themeTransitions": "Adicionadas animações ao trocar de tema.",
@@ -280,15 +279,7 @@
         "actions": {
             "github": "GitHub",
             "logs": "Logs",
-            "kofi": "Apoiar no Ko-Fi",
-            "afdian": "Apoiar no Afdian"
-        },
-        "credits": {
-            "creator": "por",
-            "thanks": "agradecimentos a",
-            "creator_tooltip": "Criado por {'@'}bruhnn",
-            "supporter_tooltip": "Apoiador no {platform}",
-            "bug_reports_tooltip": "Relatar problemas e sugestões no GitHub"
+            "kofi": "Apoiar no Ko-Fi"
         }
     },
     "sidebar": {
@@ -1095,6 +1086,10 @@
                     "modsDirectory": {
                         "label": "Diretório de Preparo dos Mods",
                         "placeholder": "Selecione um diretório para armazenar seus mods antes de sincronizar"
+                    },
+                    "assetLibraryDirectory": {
+                        "label": "Diretório da Biblioteca de Recursos de Arte",
+                        "description": "Configurações de namoro, áudio e recursos de prévia são baixados do repositório para esta pasta quando necessários."
                     }
                 },
                 "modManagement": {
@@ -1276,20 +1271,6 @@
             "label": "Interações de encontro",
             "title": "Recursos e controles de encontro",
             "description": "Estas configurações se aplicam às entradas extras P. Gerencie personagens e entradas em Interações de encontro na barra lateral.",
-            "paths": {
-                "exportDirectory": {
-                    "label": "Pasta de JSON de interação",
-                    "hint": "Arquivos JSON de cenas de encontro usados pelas entradas extras P."
-                },
-                "audioDirectory": {
-                    "label": "Pasta de áudio de encontros",
-                    "hint": "Selecione a pasta audio / dating na biblioteca de recursos."
-                },
-                "assetsDirectory": {
-                    "label": "Pasta da biblioteca de recursos visuais",
-                    "hint": "Selecione a pasta raiz da biblioteca com os recursos visuais dos personagens."
-                }
-            },
             "dragHold": "Segure o botão esquerdo antes de arrastar",
             "opacity": "Opacidade dos pontos de interação",
             "draftHelp": "As duas páginas compartilham as configurações não salvas. Você pode continuar editando após trocar de página."

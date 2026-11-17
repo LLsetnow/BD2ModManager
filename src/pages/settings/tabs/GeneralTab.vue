@@ -31,6 +31,7 @@ import ThemeEditorModal from './modals/ThemeEditorModal.vue'
 
 const settingsStore = useSettingsStore()
 const confirm = useConfirm()
+const defaultAssetLibraryDirectory = 'F:\\Neowiz\\Brown-Dust-2-Asset-master'
 
 const modsStore = useModsStore()
 const preferencesStore = usePreferencesStore()
@@ -310,6 +311,16 @@ async function handleGameDirectoryBrowse() {
     }
 }
 
+async function handleAssetLibraryBrowse() {
+    const folder = await open({
+        multiple: false,
+        directory: true,
+        defaultPath: settingsStore.settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory,
+    })
+
+    if (folder) await settingsStore.saveSettings({ assetLibraryDirectory: folder })
+}
+
 const themeEditorModalRef = useTemplateRef("themeEditorModal")
 
 const themeMenuActions = computed(() => {
@@ -432,6 +443,23 @@ async function onThemeDelete(themeName: string) {
                                 @click="handleStagingModsBrowse" />
 
                             <Button :icon="SquareArrowOutUpRight" :tooltip="$t('common.actions.openFolder')" :disabled="!settings.stagingDirectory" @click="handleOpenFolder(settings.stagingDirectory)" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 items-center gap-4">
+                        <label class="text-sm font-medium">
+                            {{ $t('settingsTab.general.sections.directories.assetLibraryDirectory.label') }}
+                            <p class="mt-1 text-xs font-normal text-text-secondary">
+                                {{ $t('settingsTab.general.sections.directories.assetLibraryDirectory.description') }}
+                            </p>
+                        </label>
+
+                        <div class="flex col-span-2 gap-2 items-center">
+                            <Input class="w-full min-w-32" :model-value="settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory" readonly />
+                            <Button :label="$t('common.actions.browse')" :icon="Folder" class="min-w-32"
+                                @click="handleAssetLibraryBrowse" />
+                            <Button :icon="SquareArrowOutUpRight" :tooltip="$t('common.actions.openFolder')"
+                                @click="handleOpenFolder(settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory)" />
                         </div>
                     </div>
                 </div>

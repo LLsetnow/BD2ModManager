@@ -125,7 +125,7 @@ const versions = [
         <template #footer>
             <div class="flex items-center justify-between gap-4 p-4">
                 <button type="button" class="text-sm text-accent hover:underline cursor-pointer"
-                    @click="openUrl('https://github.com/bruhnn/BD2ModManager/releases')">
+                    @click="openUrl('https://github.com/LLsetnow/BD2ModManager/releases')">
                     {{ t('whatsNew.allReleases') }}
                 </button>
                 <Button :label="t('common.actions.close')" @click="closeModal" />

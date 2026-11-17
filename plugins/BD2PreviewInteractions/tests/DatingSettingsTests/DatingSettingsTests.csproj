@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><UseAppHost>false</UseAppHost>
+    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <UseSharedCompilation>false</UseSharedCompilation><CscToolPath>$(MSBuildProjectDirectory)\..\..\.build-tools\</CscToolPath><CscToolExe>csc.cmd</CscToolExe>
+    <GameRoot Condition="'$(GameRoot)' == ''">F:\Neowiz\Browndust2\Browndust2_10000001</GameRoot>
+    <ManagedDir>$(GameRoot)\BrownDust II_Data\Managed</ManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../DatingSceneDefaults.cs" Link="DatingSceneDefaults.cs" />
+    <Compile Include="../../LocalInteractionSettings.cs" Link="LocalInteractionSettings.cs" />
+    <Reference Include="BepInEx"><HintPath>$(GameRoot)\BepInEx\core\BepInEx.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

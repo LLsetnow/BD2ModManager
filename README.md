@@ -125,8 +125,8 @@
 ### 设置文件与外部资源
 
 - **服装外观映射 `settings.json`**：保存总开关、源服装到目标服装的映射、各项映射开关和选中的皮肤。插件使用游戏现有资源，也可以通过 BrownDustX 使用已启用的资源替换 Mod。
-- **约会互动 `settings.json`**：保存各场景的 P 入口和原生入口开关、互动 JSON、音频和资源目录，以及鼠标左键按住时长、互动标记不透明度等选项。
-- **外部约会资源**：P 模式使用 `illust_dating*.json` 文件描述互动场景。约会音频和美术资源位于设置中指定的本地目录，与插件 DLL 分开存放。下载位置见下方[约会互动资源来源与目录设置](#dating-interactions-resource-sources-and-directory-settings)。
+- **约会互动 settings.json**：保存各场景的 P 入口和原生入口开关、鼠标左键按住时长与互动标记不透明度。约会配置和资源路径不再写入此设置文件。
+- **外部约会资源**：约会 JSON、音频及 ModPreview 素材会按需从 [LLsetnow/Brown-Dust-2-Asset](https://github.com/LLsetnow/Brown-Dust-2-Asset) 下载到本地素材库。
 
 每个插件的 `settings.json` 用于配置对应插件；`illust_dating*.json` 文件描述互动内容。Mod Manager 还会在应用数据目录保存名为 `costume-skins.json` 和 `local-interactions.json` 的配置副本。
 
@@ -134,19 +134,9 @@
 
 `npm run build:game-plugin` 会构建两个插件。每个项目的 `bin/Release/netstandard2.1/` 目录包含 DLL、`.pdb` 调试符号和 `.deps.json` 依赖元数据。构建脚本会将两个 DLL 复制到 `src-tauri/resources/`，并嵌入 Mod Manager 可执行文件，以供插件安装功能使用。当前安装流程会部署 DLL 和设置文件。
 
-<a id="dating-interactions-resource-sources-and-directory-settings"></a>
+## 素材库目录
 
-## 约会互动：资源来源与目录设置
-
-打开 **设置 → 约会互动**，为下列设置选择对应的本地目录，然后点击**保存设置**。
-
-| 设置项 | 资源来源 | 应选择的本地目录 |
-| --- | --- | --- |
-| **互动 JSON 目录** | [LLsetnow/neowiz：dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | 下载或克隆仓库后，选择 `mods/dating-interaction-configs`。该目录中直接包含 `illust_dating1.json` 至 `illust_dating22.json`。 |
-| **约会音频目录** | [bruhnn/Brown-Dust-2-Asset：audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | 选择资源库中的 `audio/dating` 子目录，例如 `F:/Neowiz/Brown-Dust-2-Asset-master/audio/dating`。 |
-| **美术资源库目录** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | 选择下载或克隆后的资源库根目录，其中包含 `spine`、`ui` 和 `header` 等文件夹，例如 `F:/Neowiz/Brown-Dust-2-Asset-master`。 |
-
-约会音频和美术资源都可以从 [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) 获取。该资源库基于 [myssal](https://github.com/myssal/Brown-Dust-2-Asset) 的资源。下载或克隆后，将**约会音频目录**设置为其中的 `audio/dating` 子目录，将**美术资源库目录**设置为资源库根目录。
+在 **设置 → 常规 → 目录 → 美术素材库目录** 中选择本地目录。打开约会互动设置时，管理器会检查 `audio/dating` 中的场景 JSON，并从 [LLsetnow/Brown-Dust-2-Asset/audio/dating](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating) 下载缺失文件。ModPreview 访问缺失素材时，也会从该仓库按需下载并保存到相同的素材库根目录，不使用 AppData 作为素材缓存位置。
 
 ---
 

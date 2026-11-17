@@ -24,7 +24,6 @@
             "removeMissingProfileMods": "新增「移除遺失項目」按鈕，用於清理所選設定檔中已不存在的模組紀錄（問題 #91，由 {'@'}SuuKomura 貢獻）。",
             "activeDownloads": "新增進行中的下載面板，可查看下載進度。",
             "diskSpaceCheck": "同步前新增可用磁碟空間檢查。",
-            "titlebarCredits": "在標題列中新增支持者和貢獻者致謝。",
             "modLoaderDiscord": "在模組載入器分頁中新增 BrownDustX 的 Discord 按鈕。",
             "notificationActions": "為通知新增操作按鈕，並改善通知大小。",
             "themeTransitions": "切換主題時新增過渡動畫。",
@@ -280,15 +279,7 @@
         "actions": {
             "github": "GitHub",
             "logs": "日誌",
-            "kofi": "在 Ko-Fi 上支持",
-            "afdian": "在愛發電上支持"
-        },
-        "credits": {
-            "creator": "作者",
-            "thanks": "感謝",
-            "creator_tooltip": "由 {'@'}bruhnn 製作",
-            "supporter_tooltip": "{platform} 上的贊助者",
-            "bug_reports_tooltip": "在 GitHub 上回報問題或提出建議"
+            "kofi": "在 Ko-Fi 上支持"
         }
     },
     "sidebar": {
@@ -1095,6 +1086,10 @@
                     "modsDirectory": {
                         "label": "模組暫存目錄",
                         "placeholder": "選取同步前用於存放模組的目錄"
+                    },
+                    "assetLibraryDirectory": {
+                        "label": "美術素材庫目錄",
+                        "description": "約會設定、音訊和預覽素材會從儲存庫按需下載到此目錄。"
                     }
                 },
                 "modManagement": {
@@ -1276,20 +1271,6 @@
             "label": "約會互動",
             "title": "約會互動資源與操作",
             "description": "以下設定用於 P 額外入口。角色和入口開關可在側欄的「約會互動」中管理。",
-            "paths": {
-                "exportDirectory": {
-                    "label": "互動 JSON 目錄",
-                    "hint": "P 額外入口使用的約會場景 JSON 檔案。"
-                },
-                "audioDirectory": {
-                    "label": "約會音訊目錄",
-                    "hint": "選擇素材庫中的 audio / dating 資料夾。"
-                },
-                "assetsDirectory": {
-                    "label": "美術素材庫目錄",
-                    "hint": "選擇包含角色美術資源的素材庫根目錄。"
-                }
-            },
             "dragHold": "左鍵長按後可拖曳",
             "opacity": "觸點透明度",
             "draftHelp": "兩頁共用尚未儲存的約會設定，切換頁面後仍可繼續編輯。"

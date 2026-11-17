@@ -81,7 +81,7 @@ const previewStatus = computed(() => {
 
 async function updateApp() {
   appUpdateError.value = null
-  if (isPortable.value) {
+  if (isPortable.value || (appUpdate.value?.status === UpdateStatus.UpdateAvailable && appUpdate.value.update.downloadUrl)) {
     if (appUpdate.value?.status === UpdateStatus.UpdateAvailable) {
       globalModals.updateAvailable.showModal(appUpdate.value.update as AppUpdateAvailable)
     }

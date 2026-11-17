@@ -24,7 +24,6 @@
             "removeMissingProfileMods": "選択中のプロファイルから存在しないMODの登録を削除する「見つからないMODを削除」ボタンを追加しました（Issue #91、{'@'}SuuKomuraによる貢献）。",
             "activeDownloads": "ダウンロードの進行状況を確認できるパネルを追加しました。",
             "diskSpaceCheck": "同期前にディスクの空き容量を確認するようにしました。",
-            "titlebarCredits": "タイトルバーに支援者と貢献者のクレジットを追加しました。",
             "modLoaderDiscord": "MODローダータブにBrownDustXのDiscordボタンを追加しました。",
             "notificationActions": "通知に操作ボタンを追加し、通知のサイズを改善しました。",
             "themeTransitions": "テーマ切り替え時のアニメーションを追加しました。",
@@ -280,15 +279,7 @@
         "actions": {
             "github": "GitHub",
             "logs": "ログ",
-            "kofi": "Ko-Fiでサポート",
-            "afdian": "Afdianでサポート"
-        },
-        "credits": {
-            "creator": "作者",
-            "thanks": "協力",
-            "creator_tooltip": "{'@'}bruhnn 制作",
-            "supporter_tooltip": "{platform} の支援者",
-            "bug_reports_tooltip": "GitHub で不具合報告・ご提案"
+            "kofi": "Ko-Fiでサポート"
         }
     },
     "sidebar": {
@@ -1095,6 +1086,10 @@
                     "modsDirectory": {
                         "label": "MODステージングディレクトリ",
                         "placeholder": "同期前にMODを保存するディレクトリを選択"
+                    },
+                    "assetLibraryDirectory": {
+                        "label": "アートアセットライブラリ",
+                        "description": "デート設定、音声、プレビュー素材を必要に応じてリポジトリから保存します。"
                     }
                 },
                 "modManagement": {
@@ -1276,20 +1271,6 @@
             "label": "デート交流",
             "title": "デート交流のリソースと操作",
             "description": "以下は P 追加入り口用の設定です。キャラクターや入り口の切り替えはサイドバーの「デート交流」で管理できます。",
-            "paths": {
-                "exportDirectory": {
-                    "label": "交流 JSON フォルダー",
-                    "hint": "P 追加入り口で使用するデートシーンの JSON ファイル。"
-                },
-                "audioDirectory": {
-                    "label": "デート音声フォルダー",
-                    "hint": "素材ライブラリ内の audio / dating フォルダーを選択してください。"
-                },
-                "assetsDirectory": {
-                    "label": "画像素材ライブラリフォルダー",
-                    "hint": "キャラクターの画像素材を含むライブラリのルートフォルダーを選択してください。"
-                }
-            },
             "dragHold": "ドラッグ開始まで左ボタンを長押し",
             "opacity": "交流ポイントの不透明度",
             "draftHelp": "両ページで未保存のデート設定を共有します。ページを切り替えても編集を続けられます。"
