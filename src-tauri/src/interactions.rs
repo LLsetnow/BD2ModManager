@@ -2,7 +2,7 @@ use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::{Duration, Syst
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
-use crate::{AppState, config::{PartialAppConfig, config::DEFAULT_ASSET_LIBRARY_DIRECTORY}, utils::path::get_game_dir};
+use crate::{AppState, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2PreviewInteractions.dll");
 const PLUGIN_VERSION: &str = "0.4.2";
@@ -153,31 +153,13 @@ fn read_settings(app: &tauri::AppHandle, state: &AppState) -> Result<Interaction
     Ok(defaults())
 }
 
-fn legacy_asset_library_directory(app: &tauri::AppHandle, state: &AppState) -> Option<String> {
-    let mut paths = Vec::new();
-    if let Ok(dir) = plugin_dir(state) { paths.push(dir.join("settings.json")); }
-    if let Ok(path) = manager_path(app) { paths.push(path); }
-    for path in paths {
-        let Ok(bytes) = fs::read(path) else { continue; };
-        let Ok(value) = serde_json::from_slice::<Value>(&bytes) else { continue; };
-        let Some(directory) = value.get("assetsDirectory").and_then(Value::as_str).map(str::trim) else { continue; };
-        if Path::new(directory).is_absolute() { return Some(directory.to_string()); }
-    }
-    None
-}
-
-fn asset_library_root(app: &tauri::AppHandle, state: &AppState) -> Result<PathBuf, String> {
-    let configured = state.config.lock().map_err(|e| e.to_string())?.asset_library_directory.clone();
-    let root = configured.clone()
-        .or_else(|| legacy_asset_library_directory(app, state))
-        .unwrap_or_else(|| DEFAULT_ASSET_LIBRARY_DIRECTORY.to_string());
+fn asset_library_root(state: &AppState) -> Result<PathBuf, String> {
+    let root = state.config.lock().map_err(|e| e.to_string())?.asset_library_directory.clone()
+        .filter(|root| !root.trim().is_empty())
+        .ok_or_else(|| "请先在 BD2ModManager 设置中选择美术素材库根目录".to_string())?;
     let path = PathBuf::from(root.trim());
     if !path.is_absolute() { return Err("请选择完整的美术素材库根目录".into()); }
-    if configured.is_none() {
-        state.config.lock().map_err(|e| e.to_string())?
-            .update_config(PartialAppConfig { asset_library_directory: Some(path.to_string_lossy().into_owned()), ..Default::default() })
-            .map_err(|e| e.to_string())?;
-    }
+    if !path.is_dir() { return Err("美术素材库根目录不存在或不是文件夹".into()); }
     Ok(path)
 }
 
@@ -254,7 +236,7 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 #[tauri::command]
 pub async fn get_local_interactions(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<InteractionStatus, String> {
     let settings = read_settings(&app, &state)?;
-    let dating_directory = asset_library_root(&app, &state)?.join("audio").join("dating");
+    let dating_directory = asset_library_root(&state)?.join("audio").join("dating");
     ensure_dating_configs(&dating_directory).await?;
     let now = SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| e.to_string())?.as_millis() as u64;
     let available = catalog().into_iter().map(|entry| {
@@ -299,7 +281,7 @@ pub async fn install_local_interactions(app: tauri::AppHandle, state: tauri::Sta
         fs::OpenOptions::new().write(true).open(&target).map_err(|_| "插件正在使用或目录不可写，请退出游戏后安装".to_string())?;
     }
     let settings = read_settings(&app, &state)?;
-    let dating_directory = asset_library_root(&app, &state)?.join("audio").join("dating");
+    let dating_directory = asset_library_root(&state)?.join("audio").join("dating");
     ensure_dating_configs(&dating_directory).await?;
     let temporary = dir.join("BD2PreviewInteractions.dll.tmp");
     fs::write(&temporary, PLUGIN).map_err(|e| e.to_string())?;

@@ -1,12 +1,9 @@
 use log::info;
-use std::fs;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 use tauri_plugin_store::StoreExt;
 
 use crate::utils::path::get_config_file_path;
-
-pub const DEFAULT_ASSET_LIBRARY_DIRECTORY: &str = r"F:\Neowiz\Brown-Dust-2-Asset-master";
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", default)]
@@ -185,20 +182,6 @@ impl BD2Config {
         store.set("config", serde_json::to_value(&self.config)?);
         store.save()?;
 
-        if let Some(root) = self.config.asset_library_directory.as_deref() {
-            self.save_shared_asset_library_root(root)?;
-        }
-
-        Ok(())
-    }
-
-    fn save_shared_asset_library_root(&self, root: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let app_data = self.app.path().app_data_dir()?;
-        let shared_dir = app_data.parent().unwrap_or(&app_data)
-            .join("LLsetnow")
-            .join("BD2AssetLibrary");
-        fs::create_dir_all(&shared_dir)?;
-        fs::write(shared_dir.join("root.txt"), root.trim())?;
         Ok(())
     }
 

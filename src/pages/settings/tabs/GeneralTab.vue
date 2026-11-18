@@ -31,7 +31,6 @@ import ThemeEditorModal from './modals/ThemeEditorModal.vue'
 
 const settingsStore = useSettingsStore()
 const confirm = useConfirm()
-const defaultAssetLibraryDirectory = 'F:\\Neowiz\\Brown-Dust-2-Asset-master'
 
 const modsStore = useModsStore()
 const preferencesStore = usePreferencesStore()
@@ -315,7 +314,7 @@ async function handleAssetLibraryBrowse() {
     const folder = await open({
         multiple: false,
         directory: true,
-        defaultPath: settingsStore.settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory,
+        defaultPath: settingsStore.settings.assetLibraryDirectory || undefined,
     })
 
     if (folder) await settingsStore.saveSettings({ assetLibraryDirectory: folder })
@@ -455,11 +454,12 @@ async function onThemeDelete(themeName: string) {
                         </label>
 
                         <div class="flex col-span-2 gap-2 items-center">
-                            <Input class="w-full min-w-32" :model-value="settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory" readonly />
+                            <Input class="w-full min-w-32" :model-value="settings.assetLibraryDirectory ?? ''" readonly />
                             <Button :label="$t('common.actions.browse')" :icon="Folder" class="min-w-32"
                                 @click="handleAssetLibraryBrowse" />
                             <Button :icon="SquareArrowOutUpRight" :tooltip="$t('common.actions.openFolder')"
-                                @click="handleOpenFolder(settings.assetLibraryDirectory ?? defaultAssetLibraryDirectory)" />
+                                :disabled="!settings.assetLibraryDirectory"
+                                @click="handleOpenFolder(settings.assetLibraryDirectory ?? '')" />
                         </div>
                     </div>
                 </div>

@@ -15,8 +15,7 @@ pub struct PreviewIpc {
 fn snapshot(app: &tauri::AppHandle) -> Value {
     let state = app.state::<crate::AppState>();
     let mods = state.mod_manager.lock().unwrap().get_mods();
-    let asset_library_directory = state.config.lock().unwrap().asset_library_directory.clone()
-        .unwrap_or_else(|| crate::config::config::DEFAULT_ASSET_LIBRARY_DIRECTORY.to_string());
+    let asset_library_directory = state.config.lock().unwrap().asset_library_directory.clone();
     json!({ "mods": mods, "assetLibraryDirectory": asset_library_directory })
 }
 
