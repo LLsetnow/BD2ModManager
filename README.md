@@ -10,7 +10,6 @@
 > 🎉 **下载最新版本：** [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases)
 >
 
-作者：[@LLsetnow](https://github.com/LLsetnow)
 
 如果您有改进建议或遇到问题，欢迎提交 Issue 或联系作者。
 
