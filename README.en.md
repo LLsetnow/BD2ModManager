@@ -12,8 +12,6 @@
 > 🎉 **Download the latest version:** [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases)
 >
 
-Author: [@LLsetnow](https://github.com/LLsetnow)
-
 If you have suggestions or run into any problems with the app, feel free to open an issue or contact me.
 
 > [!WARNING]
