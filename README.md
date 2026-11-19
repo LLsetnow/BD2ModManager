@@ -86,11 +86,7 @@
 - ✅ 节省磁盘空间
 - ❌ 需要管理员权限
 
-#### 示例对比（383 个 Mod）
-
-| 复制 | 符号链接 |
-|------|---------|
-| <img src="./screenshots/sync_copy_v405.gif" width="260" /> | <img src="./screenshots/sync_symlink_v405.gif" width="260" /> |
+同步后可点击窗口右上角的同步状态，查看每个 Mod 的同步结果。 [查看界面截图](#界面截图)
 
 ## 服装外观映射与约会互动插件：文件和安装
 
@@ -139,16 +135,140 @@
 
 ---
 
-## 📸 截图
+## 界面截图
 
-### Mod 页面（v4.0.1）
-![Mod 页面](./screenshots/mods_page_v401.png)
+以下截图来自 BD2ModManager `v4.3.1-local.6` 的简体中文界面。模组条目、配置文件和目录使用演示数据。
 
-### 角色页面（v4.0.1）
-![角色页面](./screenshots/characters_page_v401.png)
+### Mod 管理
 
-### Mod 预览（BD2ModPreview v1.0.0）
-![Mod 预览](./screenshots/bd2modpreview_v100v2.png)
+查看启用状态和当前配置文件，按名称、角色或作者搜索，或按立绘、过场动画、场景、约会、NPC 和小游戏筛选。
+
+![Mod 列表、搜索框、类型筛选和同步按钮](./screenshots/v4.3.1-local.6/mod-library.png)
+
+<details>
+<summary>导入、筛选、批量操作、冲突与同步</summary>
+
+从「添加模组」菜单导入 ZIP 压缩包或已有文件夹。
+
+![从 ZIP 或文件夹导入 Mod](./screenshots/v4.3.1-local.6/mod-import.png)
+
+高级筛选可定位已启用、已禁用、有冲突或有错误的 Mod。
+
+![Mod 列表的高级筛选菜单](./screenshots/v4.3.1-local.6/mod-filters.png)
+
+右键单个 Mod，可预览、重命名、修改作者或复制并迁移角色 ID。
+
+![单个 Mod 的右键菜单](./screenshots/v4.3.1-local.6/mod-actions.png)
+
+多选后可批量启用、禁用、修改作者或删除。
+
+![多选三个 NPC Mod 后的批量操作菜单](./screenshots/v4.3.1-local.6/mod-bulk-actions.png)
+
+发现冲突时，可预览候选 Mod，选择保留项后应用并同步。
+
+![同一服装的两个立绘 Mod 及冲突处理选项](./screenshots/v4.3.1-local.6/mod-conflicts.png)
+
+点击标题栏的同步状态，可查看完成进度和每个 Mod 的处理结果。
+
+![同步完成后的进度条与逐项日志](./screenshots/v4.3.1-local.6/mod-sync.png)
+
+</details>
+
+### 角色图鉴与 ModPreview
+
+角色网格显示服装、Mod 数量和各类型 Mod 的状态，可按 Mod 状态、发布时间或联动属性筛选。
+
+![仅显示已有 Mod 的角色网格及筛选条件](./screenshots/v4.3.1-local.6/character-gallery.png)
+
+<details>
+<summary>角色列表、服装详情、立绘对比和技能动画</summary>
+
+列表视图按角色归拢服装，并列出过场动画、立绘和约会 Mod 的状态。
+
+![按角色分组的服装列表](./screenshots/v4.3.1-local.6/character-list.png)
+
+打开服装详情后，可按类型管理 Mod、逐项预览、比较同类 Mod，或前往皮肤映射。
+
+![服装详情中的 Mod 分类、启用状态与比较入口](./screenshots/v4.3.1-local.6/character-costume.png)
+
+从「比较全部」打开 ModPreview `v1.0.5-local.2`，可并排播放两套立绘，并将多个预览加入同一组联动控制。
+
+![ModPreview 并排播放两个立绘 Mod](./screenshots/v4.3.1-local.6/preview-compare.png)
+
+技能过场预览提供时间轴、游戏动态背景和技能音频。
+
+![格雷的技能过场、日语音频状态和播放时间轴](./screenshots/v4.3.1-local.6/preview-skill.png)
+
+</details>
+
+### 皮肤映射与约会互动
+
+约会互动分别管理官方原生入口和 P 额外入口。每个角色都可独立开关，场景卡片会显示本地 JSON 的状态。
+
+![约会互动双入口总开关、角色开关与场景 JSON 状态](./screenshots/v4.3.1-local.6/dating-interactions.png)
+
+<details>
+<summary>服装皮肤映射与单角色约会 Mod</summary>
+
+为同一角色添加目标皮肤，选择当前外观，并单独启用或停用各项映射。
+
+![来源服装、目标皮肤和已配置的映射](./screenshots/v4.3.1-local.6/costume-skin-mapping.png)
+
+从约会角色卡打开对应的 Mod 列表，可启用、禁用或预览该角色的约会 Mod。
+
+![从约会页面打开的单角色约会 Mod 详情](./screenshots/v4.3.1-local.6/dating-mods.png)
+
+</details>
+
+### 配置文件与模组加载器
+
+<details>
+<summary>配置文件、模板和加载器组件</summary>
+
+保存多套 Mod 组合，通过侧栏切换当前配置文件，并查看每套配置中启用的 Mod。
+
+![配置文件列表与当前配置启用的 Mod](./screenshots/v4.3.1-local.6/profiles.png)
+
+创建配置文件时，可使用现有配置作为模板。
+
+![填写名称、描述并选择配置文件模板](./screenshots/v4.3.1-local.6/profile-create.png)
+
+模组加载器显示 BepInEx、BrownDustX 和 Configuration Manager 的版本及安装状态，支持拖放 BepInEx 或 BrownDustX 安装包。
+
+![模组加载器中的组件版本、安装状态和拖放区域](./screenshots/v4.3.1-local.6/mod-loader.png)
+
+</details>
+
+### 应用设置
+
+<details>
+<summary>目录、同步、主题、列表显示、约会操作、更新与迁移</summary>
+
+常规设置集中管理语言、主题、游戏目录、Mod 暂存目录、美术素材库和同步方式。
+
+![常规设置中的三个目录和同步选项](./screenshots/v4.3.1-local.6/settings-general.png)
+
+主题编辑器可自定义界面颜色，包括强调色、边框、文本、Mod 类型和状态。
+
+![创建主题时的颜色分类和色值](./screenshots/v4.3.1-local.6/theme-editor.png)
+
+界面设置可选择 Mod 列表的显示列，并调整角色、类型图标和颜色。
+
+![Mod 列表的列与样式设置](./screenshots/v4.3.1-local.6/settings-interface.png)
+
+在约会互动设置中调整 P 额外入口的左键长按时间和触点透明度。
+
+![约会互动的长按时间与触点透明度](./screenshots/v4.3.1-local.6/settings-dating.png)
+
+更新页显示管理器和 ModPreview 版本，并提供版本检查、更新渠道和自动更新选项。
+
+![管理器与 ModPreview 的版本及更新设置](./screenshots/v4.3.1-local.6/settings-updates.png)
+
+实验性功能可从 v3.2.4 或更早版本导入配置文件和 Mod 作者。
+
+![旧版配置文件及 Mod 作者导入入口](./screenshots/v4.3.1-local.6/settings-migration.png)
+
+</details>
 
 ---
 
