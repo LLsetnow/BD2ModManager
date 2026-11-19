@@ -89,11 +89,7 @@ Creates shortcuts instead of copying files.
 - ✅ Saves disk space
 - ❌ Requires admin rights
 
-#### Example Comparison (383 mods)
-
-| Copy | Symlink |
-|------|---------|
-| <img src="./screenshots/sync_copy_v405.gif" width="260" /> | <img src="./screenshots/sync_symlink_v405.gif" width="260" /> |
+After syncing, click the sync status in the top-right corner to see the result for each mod. [View screenshots](#screenshots)
 
 ## Skin Mapping and Dating Interaction Plugins: Files and Installation
 
@@ -127,8 +123,8 @@ Install BepInEx first, then exit the game before installing or updating either p
 ### Settings files and external resources
 
 - **Skin mapping `settings.json`** stores the master switch, source-to-target costume mappings, individual mapping switches, and the selected skins. The plugin uses existing game assets and can also use enabled asset replacement mods through BrownDustX.
-- **Dating interaction `settings.json`** stores each scene's P and native entry switches, the interaction JSON, audio, and asset directories, and options such as the left-button hold duration and interaction marker opacity.
-- **External dating resources:** P mode uses `illust_dating*.json` files to describe interaction scenes. Dating audio and artwork are stored in the local directories selected in settings. These resources are separate from the plugin DLL. Download locations are listed in [Dating interaction resources and directory settings](#dating-interactions-resource-sources-and-directory-settings) below.
+- **Dating interaction `settings.json`** stores each scene's P and native entry switches, the left mouse button hold duration, and interaction marker opacity.
+- **External dating resources** include scene JSON, audio, and ModPreview assets. The manager and ModPreview download the files they need to the configured asset library. [Brown Dust 2 Asset Library](https://github.com/LLsetnow/Brown-Dust-2-Asset)
 
 Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` files describe interaction content. Manager also saves configuration copies named `costume-skins.json` and `local-interactions.json` in its application data directory.
 
@@ -138,30 +134,146 @@ Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` fi
 
 <a id="dating-interactions-resource-sources-and-directory-settings"></a>
 
-## Dating Interactions: Resource Sources and Directory Settings
+## Asset Library
 
-Open **Settings → Dating interactions**, select the appropriate local folder for each of the following settings, then click **Save settings**.
-
-| Setting | Resource source | Local folder to select |
-| --- | --- | --- |
-| **Interaction JSON directory** | [LLsetnow/neowiz: dating-interaction-configs](https://github.com/LLsetnow/neowiz/tree/main/mods/dating-interaction-configs) | After downloading or cloning the repository, select `mods/dating-interaction-configs`, which directly contains `illust_dating1.json` through `illust_dating22.json`. |
-| **Dating audio directory** | [bruhnn/Brown-Dust-2-Asset: audio/dating](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master/audio/dating) | Select the asset library's `audio/dating` subdirectory (`audio\dating` on Windows), for example `F:\Neowiz\Brown-Dust-2-Asset-master\audio\dating`. |
-| **Artwork asset library directory** | [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master) | Select the root of the downloaded or cloned asset library, containing folders such as `spine`, `ui`, and `header`, for example `F:\Neowiz\Brown-Dust-2-Asset-master`. |
-
-Both dating audio and artwork are available from [bruhnn/Brown-Dust-2-Asset](https://github.com/bruhnn/Brown-Dust-2-Asset/tree/master), a library based on assets by [myssal](https://github.com/myssal/Brown-Dust-2-Asset). After downloading or cloning this asset library, set **Dating audio directory** to its `audio/dating` subdirectory (`audio\dating` on Windows), and set **Artwork asset library directory** to the asset library's root.
+Select a local root folder under **Settings → General → Directories → Art Asset Library Directory**. When you open Dating Interactions, the manager checks for scene JSON under `audio/dating` and downloads missing files. ModPreview also saves assets it downloads to this library root. [Brown Dust 2 dating scene assets](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating)
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
-### Mods Page (v4.0.1)
-![Mods Page](./screenshots/mods_page_v401.png)
+These screenshots show a BD2ModManager `v4.3.1-local.6` source build in Simplified Chinese with example mods, profiles, and directory paths.
 
-### Characters Page (v4.0.1)
-![Characters Page](./screenshots/characters_page_v401.png)
+### Mod Management
 
-### Mod Preview (BD2ModPreview v1.0.0)
-![Mod Preview](./screenshots/bd2modpreview_v100v2.png)
+See which mods are enabled in the active profile. Search by mod name, character, or author, and filter by standing portrait, cutscene, scene, dating, NPC, or minigame.
+
+![Mod library with search, type filters, and sync controls](./screenshots/v4.3.1-local.6/mod-library.png)
+
+<details>
+<summary>Importing, filtering, bulk actions, conflicts, and sync</summary>
+
+Use **Add Mod** to import a ZIP archive or an existing folder.
+
+![Add Mod menu with ZIP and folder import options](./screenshots/v4.3.1-local.6/mod-import.png)
+
+Use advanced filters to find enabled or disabled mods, conflicts, and errors.
+
+![Advanced filters for the mod list](./screenshots/v4.3.1-local.6/mod-filters.png)
+
+Right-click a mod to preview it, rename it, edit its author, or copy it to another character ID.
+
+![Context menu for a single mod](./screenshots/v4.3.1-local.6/mod-actions.png)
+
+Select several mods to enable, disable, edit their authors, or delete them together.
+
+![Bulk action menu for three selected NPC mods](./screenshots/v4.3.1-local.6/mod-bulk-actions.png)
+
+When the manager detects a conflict, preview the candidates and select which mod to keep before syncing.
+
+![Conflict resolution for two standing portrait mods targeting one costume](./screenshots/v4.3.1-local.6/mod-conflicts.png)
+
+Click the sync status in the title bar to see progress and the result for each mod.
+
+![Completed sync with a progress bar and per-mod log](./screenshots/v4.3.1-local.6/mod-sync.png)
+
+</details>
+
+### Character Gallery and ModPreview
+
+The character grid shows costumes, mod counts, and mod status by type. Filters include mod status, release dates, and collaboration characters.
+
+![Character grid filtered to costumes with mods](./screenshots/v4.3.1-local.6/character-gallery.png)
+
+<details>
+<summary>Character list, costume details, portrait comparison, and skill animation</summary>
+
+The list groups costumes by character and shows the status of cutscene, standing portrait, and dating mods. Group headings follow the character name setting.
+
+![Costumes grouped under localized character names in list view](./screenshots/v4.3.1-local.6/character-list.png)
+
+Open a costume to manage mods by type, preview one mod, compare mods of the same type, or open Skin Mapping.
+
+![Costume details with mod tabs, enable switches, and comparison controls](./screenshots/v4.3.1-local.6/character-costume.png)
+
+**Compare all** opens the selected mod type in ModPreview `v1.0.5-local.2`. Play standing portraits side by side and put previews in the same group to control them together.
+
+![Two standing portrait mods playing side by side in ModPreview](./screenshots/v4.3.1-local.6/preview-compare.png)
+
+Skill cutscene previews include a timeline, animated in-game backgrounds, and skill audio.
+
+![Gray's skill cutscene with an audio status indicator and playback timeline](./screenshots/v4.3.1-local.6/preview-skill.png)
+
+</details>
+
+### Skin Mapping and Dating Interactions
+
+Dating Interactions manages the official native entry and the extra P entry separately. Each character has independent switches, and the scene card shows the status of its local JSON file.
+
+![Dating interaction controls for native and P entries and per-character scene status](./screenshots/v4.3.1-local.6/dating-interactions.png)
+
+<details>
+<summary>Costume skin mapping and per-character dating mods</summary>
+
+Add target skins for the same character, select the current appearance, and enable or disable individual mappings.
+
+![Source costume, target skin, and saved costume mappings](./screenshots/v4.3.1-local.6/costume-skin-mapping.png)
+
+Open the mod list from a dating character card to enable, disable, or preview that character's dating mods.
+
+![Dating mod details opened from a character's scene card](./screenshots/v4.3.1-local.6/dating-mods.png)
+
+</details>
+
+### Profiles and Mod Loader
+
+<details>
+<summary>Profiles, templates, and loader components</summary>
+
+Save multiple mod setups, switch the active profile from the sidebar, and see which mods each profile enables.
+
+![Profile list and the mods enabled in the selected profile](./screenshots/v4.3.1-local.6/profiles.png)
+
+Use an existing profile as a template when you create a new one.
+
+![New profile form with a name, description, and template](./screenshots/v4.3.1-local.6/profile-create.png)
+
+The Mod Loader shows the versions and installation status of BepInEx, BrownDustX, and Configuration Manager. Drop a BepInEx or BrownDustX archive onto the page to install it.
+
+![Mod Loader component versions, installation status, and drop area](./screenshots/v4.3.1-local.6/mod-loader.png)
+
+</details>
+
+### Application Settings
+
+<details>
+<summary>Directories, sync, themes, list display, dating controls, updates, and migration</summary>
+
+General settings include language, theme, game and staging directories, the artwork library, and the sync method.
+
+![General settings with game, staging, and artwork library directories](./screenshots/v4.3.1-local.6/settings-general.png)
+
+Use the theme editor to customize accent colors, borders, text, mod types, and status colors.
+
+![Theme editor with color categories and values](./screenshots/v4.3.1-local.6/theme-editor.png)
+
+Choose which columns appear in the mod list and how character names, mod type icons, and colors are displayed.
+
+![Settings for mod list columns and appearance](./screenshots/v4.3.1-local.6/settings-interface.png)
+
+Adjust how long to hold the left mouse button before dragging and set the interaction marker opacity for the extra P entry.
+
+![Dating interaction hold duration and interaction marker opacity](./screenshots/v4.3.1-local.6/settings-dating.png)
+
+See the installed Manager and ModPreview versions. The Updates tab also provides manual checks, an update channel, and automatic update options.
+
+![Manager and ModPreview version and update settings](./screenshots/v4.3.1-local.6/settings-updates.png)
+
+Import profiles and mod authors from v3.2.4 or earlier under **Experimental Features**.
+
+![Import options for legacy profiles and mod authors](./screenshots/v4.3.1-local.6/settings-migration.png)
+
+</details>
 
 ---
 

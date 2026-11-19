@@ -10,6 +10,7 @@ import { Character, useCharactersStore } from '../../stores/characters';
 import { useModsStore } from '../../stores/mods';
 
 import { useHeader } from '../../composables/useHeader';
+import { getCharName, useLang } from '../../utils/formatCharName.ts';
 
 import CharacterList from './CharacterList.vue';
 import CharacterGrid from './CharacterGrid.vue';
@@ -25,6 +26,7 @@ import { useModActions } from '../../composables/useModActions.ts';
 import { useModInstall } from '../../composables/useModInstall.ts';
 
 const { t } = useI18n()
+const lang = useLang()
 const route = useRoute()
 
 const charactersStore = useCharactersStore()
@@ -362,7 +364,7 @@ const charactersList = computed(() => {
     }
 
     return Array.from(groups.entries()).map(([name, costumes]) => ({
-        name,
+        name: getCharName(costumes[0], lang.value).character || name,
         costumes: costumes.map(costume => ({
             ...costume,
             hasCutscene: hasCutsceneInstalled(costume.id),
