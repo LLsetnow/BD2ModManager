@@ -65,7 +65,7 @@ List<(int Hash, bool Pose1Leg, bool Pose2Leg)> Frames(Spine.Animation reaction, 
     var frames = new List<(int Hash, bool Pose1Leg, bool Pose2Leg)>();
     for (var time = 0f; time <= motion.Duration + .1f; time += 1f / 60)
     {
-        state.Update(1f / 60); state.Apply(skeleton); skeleton.UpdateWorldTransform();
+        state.Update(1f / 60); state.Apply(skeleton); skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
         var hash = new HashCode();
         foreach (var slot in skeleton.Slots)
         {

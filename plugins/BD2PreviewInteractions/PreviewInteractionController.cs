@@ -230,7 +230,7 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
                 retainedBones.Clear();
                 Skeleton.SetToSetupPose();
                 State.Apply(Skeleton);
-                Skeleton.UpdateWorldTransform();
+                Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
                 dragPoint = null;
                 clicks.Clear();
             }
@@ -266,7 +266,7 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
             {
                 bone.X = dragBone.x;
                 bone.Y = dragBone.y;
-                Skeleton.UpdateWorldTransform();
+                Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
                 var collider = Polygon(dragPoint["collider"]).Select(p => BoneToWorld(bone, p)).ToArray();
                 var destination = -1;
                 var regions = Items(dragPoint, "destinations");
@@ -294,7 +294,7 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
                 else ChangeGroup(dragPoint, destination, false);
             }
         }
-        else if (retainedBones.Count > 0) Skeleton.UpdateWorldTransform();
+        else if (retainedBones.Count > 0) Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
     }
 
     private static bool Contains(Vector2[] polygon, Vector2 point)
@@ -544,7 +544,7 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
         {
             Skeleton.SetToSetupPose();
             State.Apply(Skeleton);
-            Skeleton.UpdateWorldTransform();
+            Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
         }
     }
 
@@ -622,7 +622,7 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
         reaction = State.SetAnimation(1, name, false);
         reaction.MixDuration = 0;
         State.Apply(Skeleton);
-        Skeleton.UpdateWorldTransform();
+        Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
     }
     private void PlayAnimation(int track, string? name, bool loop)
     {
@@ -747,6 +747,6 @@ internal sealed class PreviewInteractionController : MonoBehaviour,
         tool = id;
         ApplyTool();
         State.Apply(Skeleton);
-        Skeleton.UpdateWorldTransform();
+        Skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
     }
 }

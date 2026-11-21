@@ -98,7 +98,7 @@ internal sealed class OfficialSpineData
                     X = source.X, Y = source.Y, Rotation = source.Rotation,
                     ScaleX = source.ScaleX, ScaleY = source.ScaleY,
                     ShearX = source.ShearX, ShearY = source.ShearY,
-                    Length = source.Length, TransformMode = source.TransformMode,
+                    Length = source.Length, Inherit = source.Inherit,
                     // These are invisible input helpers; group/tool filtering controls availability.
                     SkinRequired = false,
                 };

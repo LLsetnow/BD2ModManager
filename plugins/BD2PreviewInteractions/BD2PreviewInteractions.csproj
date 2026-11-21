@@ -11,9 +11,9 @@
     <GameRoot Condition="'$(GameRoot)' == ''">F:\Neowiz\Browndust2\Browndust2_10000001</GameRoot>
     <ManagedDir>$(GameRoot)\BrownDust II_Data\Managed</ManagedDir>
     <BepInExDir>$(GameRoot)\BepInEx\core</BepInExDir>
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests/**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="tests/**" />
     <Reference Include="BepInEx"><HintPath>$(BepInExDir)\BepInEx.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="0Harmony"><HintPath>$(BepInExDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>

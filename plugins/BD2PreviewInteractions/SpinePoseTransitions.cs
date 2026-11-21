@@ -21,6 +21,6 @@ internal static class SpinePoseTransitions
     internal static void ApplyCurrent(AnimationState state, Skeleton skeleton)
     {
         state.Apply(skeleton);
-        skeleton.UpdateWorldTransform();
+        skeleton.UpdateWorldTransform(Spine.Skeleton.Physics.Pose);
     }
 }
