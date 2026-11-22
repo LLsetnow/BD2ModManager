@@ -7,6 +7,7 @@
     <ManagedDir>$(GameRoot)\BrownDust II_Data\Managed</ManagedDir>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="../../../../src-tauri/data/modmanager.json" LogicalName="modmanager.json" />
     <Compile Include="../../DatingSceneDefaults.cs" Link="DatingSceneDefaults.cs" />
     <Compile Include="../../LocalInteractionSettings.cs" Link="LocalInteractionSettings.cs" />
     <Reference Include="BepInEx"><HintPath>$(GameRoot)\BepInEx\core\BepInEx.dll</HintPath></Reference>

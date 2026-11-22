@@ -1,13 +1,12 @@
-use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::Duration};
+use std::{collections::HashSet, fs, path::{Path, PathBuf}};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
 use crate::{AppState, game::{bundled_plugins, game::BundledPluginStatus}, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2PreviewInteractions.dll");
-const PLUGIN_VERSION: &str = "0.5.1";
+const PLUGIN_VERSION: &str = "0.5.2";
 const PLUGIN_DLL: &str = "BD2PreviewInteractions.dll";
-const CHARACTERS: &str = include_str!("../data/characters.json");
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -84,11 +83,11 @@ fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     Ok(app.path().app_data_dir().map_err(|e| e.to_string())?.join("local-interactions.json"))
 }
 
-fn catalog() -> Vec<SceneEntry> {
-    let data: Value = serde_json::from_str(CHARACTERS).expect("bundled characters");
+fn catalog(data: &Value) -> Vec<SceneEntry> {
     let Some(dating) = data["dating"].as_object() else { return vec![]; };
     let Some(characters) = data["characters"].as_array() else { return vec![]; };
     let mut entries: Vec<_> = dating.iter().filter_map(|(number, costume)| {
+        scene_number(&format!("illust_dating{number}"))?;
         let costume = costume.as_str()?;
         let character = characters.iter().find(|c| c["costume_id"].as_str() == Some(costume))?;
         let portrait = character.pointer("/assets/character_image").or_else(|| character.get("character_image"))?.as_str()?;
@@ -110,7 +109,7 @@ fn scene_number(id: &str) -> Option<u32> {
     number.parse::<u32>().ok().filter(|n| (1..=9999).contains(n))
 }
 
-fn defaults() -> InteractionSettings {
+fn defaults(entries: Vec<SceneEntry>) -> InteractionSettings {
     InteractionSettings {
         schema_version: 2,
         assets_directory: String::new(),
@@ -118,7 +117,7 @@ fn defaults() -> InteractionSettings {
         p_entries_enabled: true,
         native_entries_enabled: true,
         drag_hold_seconds: 0.35, marker_opacity: 0.32,
-        scenes: catalog(),
+        scenes: entries,
     }
 }
 
@@ -131,21 +130,21 @@ fn legacy_native_mode(dir: Option<&Path>) -> bool {
     })).unwrap_or(true)
 }
 
-fn normalize(mut settings: InteractionSettings, legacy_native: bool) -> Result<InteractionSettings, String> {
+fn normalize(mut settings: InteractionSettings, legacy_native: bool, legacy_defaults: &HashSet<u32>, entries: &[SceneEntry]) -> Result<InteractionSettings, String> {
     if settings.schema_version != 1 && settings.schema_version != 2 { return Err("不支持的配置版本".into()); }
     let was_legacy = settings.schema_version == 1;
     if settings.schema_version == 1 {
         for scene in &mut settings.scenes {
-            let added = matches!(scene_number(&scene.scene_id), Some(7|9|12|18|19|21));
+            let added = scene_number(&scene.scene_id).is_some_and(|id| legacy_defaults.contains(&id));
             scene.native_enabled = if added { legacy_native && scene.enabled } else { true };
             if added && legacy_native { scene.enabled = false; }
         }
         settings.schema_version = 2;
     }
-    for mut entry in catalog() {
+    for mut entry in entries.iter().cloned() {
         if !settings.scenes.iter().any(|s| s.scene_id == entry.scene_id) {
             // Existing official entries were visible even in the old P-only UI.
-            entry.native_enabled = was_legacy && !matches!(scene_number(&entry.scene_id), Some(7|9|12|18|19|21));
+            entry.native_enabled = was_legacy && !scene_number(&entry.scene_id).is_some_and(|id| legacy_defaults.contains(&id));
             settings.scenes.push(entry);
         }
     }
@@ -156,20 +155,24 @@ fn normalize(mut settings: InteractionSettings, legacy_native: bool) -> Result<I
     Ok(settings)
 }
 
-fn read_settings(app: &tauri::AppHandle, state: &AppState) -> Result<InteractionSettings, String> {
-    read_settings_for_dir(app, plugin_dir(state).ok().as_deref())
+fn legacy_native_defaults(asset_root: &Path) -> HashSet<u32> {
+    let data = crate::updater::catalogs::read_installed(asset_root, "modmanager.json")
+        .and_then(|bytes| serde_json::from_slice::<Value>(&bytes).ok())
+        .or_else(|| serde_json::from_str(include_str!("../data/modmanager.json")).ok());
+    data.as_ref().and_then(|value| value.pointer("/dating/legacyNativeSceneIds")?.as_array())
+        .into_iter().flatten().filter_map(|value| u32::try_from(value.as_u64()?).ok()).collect()
 }
 
-fn read_settings_for_dir(app: &tauri::AppHandle, dir: Option<&Path>) -> Result<InteractionSettings, String> {
+fn read_settings_for_dir(app: &tauri::AppHandle, dir: Option<&Path>, asset_root: &Path, entries: &[SceneEntry]) -> Result<InteractionSettings, String> {
     // Prefer game settings so the page describes what the plugin will load.
     let game = dir.map(|p| p.join("settings.json"));
     for path in game.into_iter().chain(std::iter::once(manager_path(app)?)) {
         if path.exists() {
             let settings = serde_json::from_slice(&fs::read(&path).map_err(|e| e.to_string())?).map_err(|e| format!("{}: {e}", path.display()))?;
-            return normalize(settings, legacy_native_mode(dir));
+            return normalize(settings, legacy_native_mode(dir), &legacy_native_defaults(asset_root), entries);
         }
     }
-    Ok(defaults())
+    Ok(defaults(entries.to_vec()))
 }
 
 fn asset_library_root(state: &AppState) -> Result<PathBuf, String> {
@@ -188,46 +191,6 @@ fn valid_scene_file(bytes: &[u8], scene_id: &str) -> bool {
     value["schemaVersion"] == 1 && value["sceneId"] == scene_id
         && value.pointer("/scene/groups").is_some_and(Value::is_array)
         && value.pointer("/scene/points").is_some_and(Value::is_array)
-}
-
-async fn ensure_dating_configs(directory: &Path) -> Result<(), String> {
-    fs::create_dir_all(directory).map_err(|e| format!("无法创建约会素材目录：{e}"))?;
-    let client = reqwest::Client::builder().timeout(Duration::from_secs(25)).build().map_err(|e| e.to_string())?;
-    let bases = [
-        "https://raw.githubusercontent.com/LLsetnow/Brown-Dust-2-Asset/master/audio/dating/",
-        "https://cdn.jsdelivr.net/gh/LLsetnow/Brown-Dust-2-Asset@master/audio/dating/",
-    ];
-    for entry in catalog() {
-        let path = directory.join(format!("{}.json", entry.scene_id));
-        if path.is_file() { continue; }
-        let mut failure = String::new();
-        let mut downloaded = false;
-        for base in bases {
-            let response = match client.get(format!("{base}{}.json", entry.scene_id)).send().await {
-                Ok(response) if response.status().is_success() => response,
-                Ok(response) => { failure = format!("HTTP {}", response.status()); continue; },
-                Err(error) => { failure = error.to_string(); continue; },
-            };
-            let bytes = match response.bytes().await {
-                Ok(bytes) if bytes.len() <= 8 * 1024 * 1024 => bytes,
-                Ok(_) => { failure = "文件超过 8 MB".into(); continue; },
-                Err(error) => { failure = error.to_string(); continue; },
-            };
-            if !valid_scene_file(&bytes, &entry.scene_id) {
-                failure = "JSON 格式或约会编号无效".into();
-                continue;
-            }
-            let temporary = path.with_extension("json.download");
-            fs::write(&temporary, &bytes).map_err(|e| e.to_string())?;
-            fs::rename(&temporary, &path).map_err(|e| e.to_string())?;
-            downloaded = true;
-            break;
-        }
-        if !downloaded {
-            return Err(format!("无法从 Brown-Dust-2-Asset 下载 {}.json：{failure}", entry.scene_id));
-        }
-    }
-    Ok(())
 }
 
 fn validate(settings: &InteractionSettings) -> Result<(), String> {
@@ -255,19 +218,17 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn get_local_interactions(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<InteractionStatus, String> {
-    let mut settings = read_settings(&app, &state)?;
     let assets_directory = asset_library_root(&state)?;
+    let characters = crate::updater::game_data::load_characters(&app, &assets_directory).map_err(|e| e.to_string())?;
+    let entries = catalog(&characters);
+    let mut settings = read_settings_for_dir(&app, plugin_dir(&state).ok().as_deref(), &assets_directory, &entries)?;
     settings.assets_directory = assets_directory.to_string_lossy().into_owned();
     let dating_directory = assets_directory.join("audio").join("dating");
-    ensure_dating_configs(&dating_directory).await?;
-    let available = catalog().into_iter().map(|entry| {
+    let available = entries.into_iter().map(|entry| {
         let path = dating_directory.join(format!("{}.json", entry.scene_id));
-        let json = fs::read(&path).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok());
-        let status = match json {
-            None if !path.exists() => "missing",
-            Some(ref v) if v["schemaVersion"] == 1 && v["sceneId"] == entry.scene_id
-                && v.pointer("/scene/groups").is_some_and(Value::is_array)
-                && v.pointer("/scene/points").is_some_and(Value::is_array) => "ready",
+        let status = match fs::read(path) {
+            Ok(bytes) if valid_scene_file(&bytes, &entry.scene_id) => "ready",
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => "missing",
             _ => "invalid",
         };
         CatalogEntry { entry, export_status: status.into() }
@@ -296,7 +257,6 @@ pub async fn install_local_interactions(app: tauri::AppHandle, state: tauri::Sta
 
     bundled_plugins::require_game_closed()?;
     let assets_directory = asset_library_root(&state)?;
-    ensure_dating_configs(&assets_directory.join("audio").join("dating")).await?;
 
     let _operation = bundled_plugins::lock_installation()?;
     if plugin_dir(&state)? != dir || !bundled_plugins::has_bepinex(game) {
@@ -311,7 +271,8 @@ pub(crate) fn deploy_bundled_plugin(
 ) -> Result<bool, String> {
     let dir = plugin_dir_for_game(game);
     bundled_plugins::deploy_dll(&dir.join(PLUGIN_DLL), PLUGIN, force, |path| {
-        let mut settings = read_settings_for_dir(app, Some(&dir))?;
+        let characters = crate::updater::game_data::load_characters(app, assets).map_err(|e| e.to_string())?;
+        let mut settings = read_settings_for_dir(app, Some(&dir), assets, &catalog(&characters))?;
         settings.assets_directory = assets.to_string_lossy().into_owned();
         bundled_plugins::write_initial_settings(path, &settings)
     })
@@ -319,7 +280,18 @@ pub(crate) fn deploy_bundled_plugin(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{catalog as build_catalog, defaults as build_defaults, normalize as normalize_with_catalog, *};
+
+    fn catalog() -> Vec<SceneEntry> {
+        build_catalog(&serde_json::from_str(include_str!("../data/characters.json")).unwrap())
+    }
+
+    fn defaults() -> InteractionSettings { build_defaults(catalog()) }
+
+    fn normalize(settings: InteractionSettings, legacy_native: bool) -> Result<InteractionSettings, String> {
+        normalize_with_catalog(settings, legacy_native, &HashSet::from([7, 9, 12, 18, 19, 21]), &catalog())
+    }
+
     #[test]
     fn master_switch_preserves_entries_and_supports_legacy_settings() {
         let mut json = serde_json::to_value(defaults()).unwrap();

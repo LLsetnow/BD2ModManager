@@ -1,5 +1,5 @@
 use log::{debug, info, warn};
-use semver::Version;
+use std::path::PathBuf;
 use serde::Serialize;
 use tauri::{ipc::Channel, Manager};
 
@@ -26,50 +26,45 @@ impl Serialize for GameDataUpdateError {
     }
 }
 
-const CHARACTERS_URL: &str = "https://raw.githubusercontent.com/bruhnn/BD2ModManager/refs/heads/main/src-tauri/data/characters.json";
 const STANDING_ASSETS_BASE_URL: &str = "https://raw.githubusercontent.com/bruhnn/BD2ModManager/refs/heads/main/public/characters/standing/";
 const HEADS_ASSETS_BASE_URL: &str = "https://raw.githubusercontent.com/bruhnn/BD2ModManager/refs/heads/main/public/characters/heads/";
+const ASSET_BASE_URL: &str = "https://raw.githubusercontent.com/LLsetnow/Brown-Dust-2-Asset/refs/heads/master/";
+const BUNDLED_CHARACTERS: &str = include_str!("../../data/characters.json");
 
-async fn fetch_latest_characters_data() -> Result<(String, serde_json::Value), GameDataUpdateError>
-{
-    let client = reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(10))
-        .build()
-        .map_err(|e| GameDataUpdateError::CheckFailed(e.to_string()))?;
-
-    let json = client
-        .get(CHARACTERS_URL)
-        .send()
-        .await
-        .map_err(|e| GameDataUpdateError::CheckFailed(e.to_string()))?
-        .json::<serde_json::Value>()
-        .await
-        .map_err(|e| GameDataUpdateError::InvalidData(e.to_string()))?;
-
-    let version = json
-        .get("version")
-        .and_then(|v| v.as_str())
-        .unwrap_or("0.0.0")
-        .to_string();
-
-    Ok((version, json))
+fn valid_characters(value: &serde_json::Value) -> bool {
+    value.get("version").and_then(|version| version.as_str()).is_some()
+        && value.get("characters").and_then(|characters| characters.as_array()).is_some()
+        && value.get("dating").and_then(|dating| dating.as_object()).is_some()
 }
 
-fn get_local_characters_version(app_handle: &tauri::AppHandle) -> Option<String> {
-    let path = app_handle
-        .path()
-        .app_data_dir()
-        .ok()?
-        .join("characters.json");
-    let data = std::fs::read_to_string(path).ok()?;
-    let json: serde_json::Value = serde_json::from_str(&data).ok()?;
-    json.get("version")
-        .and_then(|v| v.as_str())
-        .map(|s| s.to_string())
+pub fn load_characters(app_handle: &tauri::AppHandle, asset_root: &std::path::Path) -> Result<serde_json::Value, GameDataUpdateError> {
+    let installed = super::catalogs::read_installed(asset_root, "characters.json");
+    let previous = crate::utils::path::get_characters_path(app_handle)
+        .and_then(|path| std::fs::read(path).ok());
+    let value = [installed.as_deref(), previous.as_deref(), Some(BUNDLED_CHARACTERS.as_bytes())]
+        .into_iter().flatten()
+        .filter_map(|bytes| serde_json::from_slice(bytes).ok())
+        .find(valid_characters);
+    value.ok_or_else(|| GameDataUpdateError::InvalidData("no usable characters.json catalog is available".into()))
+}
+
+pub(crate) fn character_image_path(character: &serde_json::Value, category: &str) -> Option<String> {
+    let (key, directory) = match category {
+        "standing" => ("character_image", "ui/illust/illust_inven_char"),
+        "heads" => ("head_image", "ui/icon/icon_char"),
+        _ => return None,
+    };
+    let name = character["assets"][key].as_str()?;
+    let stem = name.strip_suffix(".png")?;
+    if stem.is_empty() || !stem.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'_') {
+        return None;
+    }
+    Some(format!("{directory}/{name}"))
 }
 
 async fn download_missing_assets(
     app_handle: &tauri::AppHandle,
+    asset_root: &std::path::Path,
     characters: &serde_json::Value,
     on_event: &Channel<GameDataEvent>
 ) -> Result<bool, GameDataUpdateError> {
@@ -106,7 +101,7 @@ async fn download_missing_assets(
         .map(|(path, _)| path.to_string())
         .collect();
 
-    let characters_w_missing_assets: Vec<(String, bool, bool)> = {
+    let characters_w_missing_assets: Vec<(&serde_json::Value, &str, bool, bool)> = {
         // #[cfg(debug_assertions)]
         // {
         //     vec![]
@@ -120,6 +115,7 @@ async fn download_missing_assets(
             .iter()
             .filter_map(|character| {
                 let id = character["id"].as_str()?;
+                if id.len() != 6 || !id.bytes().all(|byte| byte.is_ascii_digit()) { return None; }
 
                 let is_standing_bundled =
                     bundled_assets.contains(&format!("/characters/standing/{}.png", id));
@@ -141,11 +137,13 @@ async fn download_missing_assets(
                     is_head_downloaded
                 );
 
-                let must_download_standing = !is_standing_bundled && !is_standing_downloaded;
-                let must_download_head = !is_head_bundled && !is_head_downloaded;
+                let has_local_image = |category| character_image_path(character, category)
+                    .is_some_and(|path| asset_root.join(path).is_file());
+                let must_download_standing = !is_standing_bundled && !is_standing_downloaded && !has_local_image("standing");
+                let must_download_head = !is_head_bundled && !is_head_downloaded && !has_local_image("heads");
 
                 if must_download_standing || must_download_head {
-                    Some((id.to_string(), must_download_standing, must_download_head))
+                    Some((character, id, must_download_standing, must_download_head))
                 } else {
                     None
                 }
@@ -155,7 +153,7 @@ async fn download_missing_assets(
 
     let total = characters_w_missing_assets
         .iter()
-        .map(|(_, must_download_standing, must_download_head)| {
+        .map(|(_, _, must_download_standing, must_download_head)| {
             (*must_download_standing as usize) + (*must_download_head as usize)
         })
         .sum::<usize>();
@@ -181,13 +179,15 @@ async fn download_missing_assets(
     let mut current = 0;
     let mut downloaded = false;
 
-    for (character_id, must_download_standing, must_download_head) in
-        characters_w_missing_assets.iter()
+    for (character, character_id, must_download_standing, must_download_head) in
+        characters_w_missing_assets
     {
         info!("Downloading missing assets for {character_id}; standing: {must_download_standing}, head: {must_download_head}");
 
-        if *must_download_standing {
-            let standing_url = format!("{}{}.png", STANDING_ASSETS_BASE_URL, character_id);
+        if must_download_standing {
+            let standing_url = character_image_path(character, "standing")
+                .map(|path| format!("{ASSET_BASE_URL}{path}"))
+                .unwrap_or_else(|| format!("{STANDING_ASSETS_BASE_URL}{character_id}.png"));
             let response = client.get(&standing_url).send().await.map_err(|e| {
                 GameDataUpdateError::DownloadFailed(format!(
                     "standing asset for {character_id}: {e}"
@@ -223,7 +223,7 @@ async fn download_missing_assets(
             let _ = on_event.send(GameDataEvent::Updating {
                 resource: "char_assets".to_string(),
                 percentage,
-                label: character_id.clone(),
+                label: character_id.to_owned(),
                 download: Some(GameDataDownloadProgress {
                     percentage: Some(percentage),
                     current: Some(current as u32),
@@ -232,8 +232,10 @@ async fn download_missing_assets(
             });
         }
 
-        if *must_download_head {
-            let head_url = format!("{}{}.png", HEADS_ASSETS_BASE_URL, character_id);
+        if must_download_head {
+            let head_url = character_image_path(character, "heads")
+                .map(|path| format!("{ASSET_BASE_URL}{path}"))
+                .unwrap_or_else(|| format!("{HEADS_ASSETS_BASE_URL}{character_id}.png"));
             let response = client.get(&head_url).send().await.map_err(|e| {
                 GameDataUpdateError::DownloadFailed(format!("head asset for {character_id}: {e}"))
             })?;
@@ -265,7 +267,7 @@ async fn download_missing_assets(
             let _ = on_event.send(GameDataEvent::Updating {
                 resource: "char_assets".to_string(),
                 percentage,
-                label: character_id.clone(),
+                label: character_id.to_owned(),
                 download: Some(GameDataDownloadProgress {
                     percentage: Some(percentage),
                     current: Some(current as u32),
@@ -278,147 +280,28 @@ async fn download_missing_assets(
     Ok(downloaded)
 }
 
-pub async fn update_characters(
+pub async fn update_game_data(
     app_handle: tauri::AppHandle,
+    asset_root: PathBuf,
+    game_version: Option<String>,
+    download_character_images: bool,
     on_event: Channel<GameDataEvent>,
 ) -> Result<bool, GameDataUpdateError> {
     let _ = on_event.send(GameDataEvent::Started);
 
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "characters".to_string(),
-        percentage: 0,
-        label: "request_github".to_string(),
-        download: Some(GameDataDownloadProgress {
-            percentage: None,
-            current: None,
-            total: None,
-        }),
-    });
-
-    let (latest_version_str, latest_characters) = fetch_latest_characters_data().await?;
-
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "characters".to_string(),
-        percentage: 5,
-        label: "got_characters".to_string(),
-        download: None,
-    });
-
-    let latest_version = Version::parse(&latest_version_str)
-        .map_err(|e| GameDataUpdateError::InvalidData(format!("invalid latest version: {e}")))?;
-
-    info!("Latest characters version: {latest_version}");
-
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "characters".to_string(),
-        percentage: 10,
-        label: "checking_version".to_string(),
-        download: None,
-    });
-
-    if let Some(local_str) = get_local_characters_version(&app_handle) {
-        let local_version = Version::parse(&local_str)
-            .map_err(|e| GameDataUpdateError::InvalidData(format!("invalid local version: {e}")))?;
-
-        debug!("Local characters version: {local_version}");
-
-        if local_version >= latest_version {
-            info!("Characters data is up to date (version {local_version})");
-            info!("Checking for missing character assets...");
-
-            let _ = on_event.send(GameDataEvent::Updated {
-                resource: "characters".to_string(),
-                label: "already_uptodate".to_string()
-            });
-
-            let local_characters: serde_json::Value = std::fs::read_to_string(
-                app_handle
-                    .path()
-                    .app_data_dir()
-                    .map_err(|e| GameDataUpdateError::SaveFailed(e.to_string()))?
-                    .join("characters.json"),
-            )
-            .ok()
-            .and_then(|s| serde_json::from_str(&s).ok())
-            .unwrap_or(latest_characters.clone());
-
-            let _ = on_event.send(GameDataEvent::Updating {
-                resource: "char_assets".to_string(),
-                percentage: 0,
-                label: "checking_assets".to_string(),
-                download: None,
-            });
-
-            let updated = download_missing_assets(&app_handle, &local_characters, &on_event).await?;
-
-            info!("All character assets are present");
-
-            let _ = on_event.send(GameDataEvent::Updated {
-                resource: "char_assets".to_string(),
-                label: "assets_updated".to_string()
-            });
-
-            let _ = on_event.send(GameDataEvent::Finished);
-
-            return Ok(updated);
+    let catalogs_updated = super::catalogs::update_catalogs(&asset_root, game_version.as_deref(), &on_event).await?;
+    let mut images_updated = false;
+    if download_character_images {
+        let characters = load_characters(&app_handle, &asset_root)?;
+        match download_missing_assets(&app_handle, &asset_root, &characters, &on_event).await {
+            Ok(updated) => images_updated = updated,
+            Err(error) => warn!("Could not download character images: {error}"),
         }
-
-        info!("Updating characters: {local_version} -> {latest_version}");
-    } else {
-        warn!("No local characters data found, will use latest version {latest_version}");
+        let _ = on_event.send(GameDataEvent::Updated {
+            resource: "char_assets".into(),
+            label: "assets_updated".into(),
+        });
     }
-
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "characters".to_string(),
-        percentage: 15,
-        label: "saving_characters".to_string(),
-        download: None,
-    });
-
-    let app_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|e| GameDataUpdateError::SaveFailed(e.to_string()))?;
-
-    let characters_path = app_dir.join("characters.json");
-
-    let characters_json = serde_json::to_string_pretty(&latest_characters)
-        .map_err(|e| GameDataUpdateError::InvalidData(e.to_string()))?;
-
-    std::fs::write(&characters_path, characters_json)
-        .map_err(|e| GameDataUpdateError::SaveFailed(format!("characters.json: {e}")))?;
-
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "characters".to_string(),
-        percentage: 100,
-        label: "characters_updated".to_string(),
-        download: None,
-    });
-
-    info!("Characters data updated to version {latest_version}, downloading missing assets...");
-
-    let _ = on_event.send(GameDataEvent::Updating {
-        resource: "char_assets".to_string(),
-        percentage: 0,
-        label: "checking_assets".to_string(),
-        download: None,
-    });
-
-    download_missing_assets(&app_handle, &latest_characters, &on_event).await?;
-
-    info!("All character assets are present");
-
-    let _ = on_event.send(GameDataEvent::Updated {
-        resource: "char_assets".to_string(),
-        label: "assets_updated".to_string(),
-    });
-
-    let _ = on_event.send(GameDataEvent::Updated {
-        resource: "characters".to_string(),
-        label: "characters_updated".to_string(),
-    });
-
     let _ = on_event.send(GameDataEvent::Finished);
-
-    Ok(true)
+    Ok(catalogs_updated || images_updated)
 }

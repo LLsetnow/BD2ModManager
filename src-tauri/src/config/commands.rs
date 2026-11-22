@@ -23,8 +23,12 @@ pub fn set_settings(app: tauri::AppHandle, state: tauri::State<AppState>, value:
     debug!("Updating config with: {:?}", value);
     config.update_config(value).map_err(|e| e.to_string())
         .map(|()| {
+            let root = config.asset_library_path();
             drop(config);
             if update_asset_library_directory {
+                if let Err(error) = crate::utils::path::share_asset_library_root(&root) {
+                    log::warn!("Failed to share the asset library directory: {error}");
+                }
                 crate::ipc::publish_preview_mods(app);
             }
         })

@@ -9,7 +9,6 @@ namespace BD2PreviewInteractions;
 
 internal sealed class LocalInteractionSettings
 {
-    private const string DefaultAssetLibraryDirectory = @"F:\Neowiz\Brown-Dust-2-Asset-master";
     private static string SharedAssetLibraryRootPath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LLsetnow", "BD2AssetLibrary", "root.txt");
 
@@ -17,7 +16,7 @@ internal sealed class LocalInteractionSettings
     internal bool Enabled { get; private set; } = true;
     internal bool PEntriesEnabled { get; private set; } = true;
     internal bool NativeEntriesEnabled { get; private set; } = true;
-    internal string AssetsDirectory { get; private set; } = ReadSharedAssetLibraryRoot() ?? DefaultAssetLibraryDirectory;
+    internal string AssetsDirectory { get; private set; } = ReadSharedAssetLibraryRoot() ?? "";
     internal string ExportDirectory => Path.Combine(AssetsDirectory, "audio", "dating");
     internal string AudioDirectory => Path.Combine(AssetsDirectory, "audio", "dating");
     internal float DragHoldSeconds { get; private set; } = 0.35f;
@@ -30,7 +29,7 @@ internal sealed class LocalInteractionSettings
     {
         var result = new LocalInteractionSettings();
         if (File.Exists(FilePath)) return Parse(File.ReadAllText(FilePath), legacyNative);
-        if (!legacyNative) result.Scenes = DatingSceneDefaults.Create();
+        if (!legacyNative) result.Scenes = DatingSceneDefaults.Create(result.AssetsDirectory);
         return result;
     }
 
@@ -55,10 +54,11 @@ internal sealed class LocalInteractionSettings
         result.PEntriesEnabled = root.Value<bool?>("pEntriesEnabled") ?? true;
         result.NativeEntriesEnabled = root.Value<bool?>("nativeEntriesEnabled") ?? true;
         var configuredRoot = ReadSharedAssetLibraryRoot() ?? root.Value<string>("assetsDirectory") ?? result.AssetsDirectory;
-        result.AssetsDirectory = Path.GetFullPath(configuredRoot);
+        result.AssetsDirectory = Path.IsPathRooted(configuredRoot) ? Path.GetFullPath(configuredRoot) : "";
         result.DragHoldSeconds = Math.Max(0.15f, Math.Min(1.5f, root.Value<float?>("dragHoldSeconds") ?? 0.35f));
         result.MarkerOpacity = Math.Max(0.08f, Math.Min(0.6f, root.Value<float?>("markerOpacity") ?? 0.32f));
         var scenes = new Dictionary<int, SceneSpec>();
+        var legacyNativeDefaults = DatingSceneDefaults.NativeDefaultNumbers(result.AssetsDirectory);
         foreach (var entry in (root["scenes"] as JArray ?? new JArray()).OfType<JObject>())
         {
             var sceneId = entry.Value<string>("sceneId") ?? "";
@@ -74,7 +74,7 @@ internal sealed class LocalInteractionSettings
             // not override the enabled BrownDustX mods.
             var spec = new SceneSpec(id, sceneId, costume, "", avatar, entry.Value<string>("title") ?? sceneId);
             var p = entry.Value<bool?>("enabled") ?? version == 1;
-            var useLegacyNative = version == 1 && legacyNative && DatingSceneDefaults.WasNativeDefault(number);
+            var useLegacyNative = version == 1 && legacyNative && legacyNativeDefaults.Contains(number);
             var native = version == 2
                 ? entry.Value<bool?>("nativeEnabled") == true
                 : useLegacyNative && p;

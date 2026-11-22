@@ -287,8 +287,17 @@ pub enum GameDataEvent {
 }
 
 #[tauri::command]
-pub async fn update_game_data(app_handle: AppHandle, on_event: Channel<GameDataEvent>) -> Result<bool, GameDataUpdateError> {
-    updater::game_data::update_characters(app_handle, on_event).await
+pub async fn update_game_data(
+    app_handle: AppHandle,
+    state: tauri::State<'_, crate::AppState>,
+    on_event: Channel<GameDataEvent>,
+) -> Result<bool, GameDataUpdateError> {
+    let (asset_root, game_directory, download_character_images) = {
+        let config = state.config.lock().map_err(|error| GameDataUpdateError::CheckFailed(error.to_string()))?;
+        (config.asset_library_path(), crate::utils::path::get_game_dir(&config), config.auto_download_game_data)
+    };
+    let game_version = game_directory.as_ref().and_then(crate::game::game::get_game_version);
+    updater::game_data::update_game_data(app_handle, asset_root, game_version, download_character_images, on_event).await
 }
 
 #[cfg(feature = "portable")]

@@ -34,6 +34,27 @@ export function useAppInitializer() {
     updateGameData,
   } = useUpdater()
 
+  let initialized = false
+  let catalogCheck: Promise<void> | undefined
+  let catalogCheckPending = false
+
+  function refreshGameData() {
+    catalogCheckPending = true
+    catalogCheck ??= (async () => {
+      while (catalogCheckPending) {
+        catalogCheckPending = false
+        await updateGameData()
+      }
+    })().finally(() => { catalogCheck = undefined })
+  }
+
+  watch(() => [
+    settingsStore.settings.assetLibraryDirectory,
+    settingsStore.settings.gameDirectory,
+  ] as const, ([root, game], [previousRoot, previousGame]) => {
+    if (initialized && (root !== previousRoot || game !== previousGame)) refreshGameData()
+  })
+
   async function initializeGamePath(): Promise<string | null> {
     try {
       const saved = settingsStore.settings.gameDirectory
@@ -68,7 +89,8 @@ export function useAppInitializer() {
     await modsStore.discoverMods()
     await gameStore.refresh()
 
-    updateGameData()
+    initialized = true
+    refreshGameData()
 
     if (settingsStore.settings.autoUpdateModPreview) {
       checkForModPreviewUpdate(true)
