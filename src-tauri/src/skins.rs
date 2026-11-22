@@ -2,7 +2,7 @@ use std::{collections::{BTreeMap, HashSet}, fs, path::{Path, PathBuf}};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
-use crate::{AppState, utils::path::get_game_dir};
+use crate::{AppState, game::game::BundledPluginStatus, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2CostumeSkins.dll");
 const VERSION: &str = "0.1.1";
@@ -86,9 +86,8 @@ pub struct Costume {
 pub struct SkinStatus {
     settings: SkinSettings,
     costumes: Vec<Costume>,
-    installed: bool,
-    plugin_current: bool,
-    plugin_version: &'static str,
+    #[serde(flatten)]
+    plugin: BundledPluginStatus,
     settings_path: String,
 }
 
@@ -140,6 +139,11 @@ fn plugin_dir(state: &AppState) -> Result<PathBuf, String> {
     Ok(game.join("BepInEx/plugins/BD2CostumeSkins"))
 }
 
+pub(crate) fn bundled_plugin_status(state: &AppState) -> BundledPluginStatus {
+    let dll = plugin_dir(state).ok().map(|dir| dir.join("BD2CostumeSkins.dll"));
+    BundledPluginStatus::from_dll(dll, PLUGIN, VERSION)
+}
+
 fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     Ok(app.path().app_data_dir().map_err(|e| e.to_string())?.join("costume-skins.json"))
 }
@@ -168,11 +172,9 @@ fn write_json(path: &Path, settings: &SkinSettings) -> Result<(), String> {
 pub fn get_costume_skins(app: tauri::AppHandle, state: tauri::State<AppState>) -> Result<SkinStatus, String> {
     let settings = read_settings(&app, &state)?;
     let dir = plugin_dir(&state).ok();
-    let dll = dir.as_ref().map(|d| d.join("BD2CostumeSkins.dll"));
     Ok(SkinStatus {
-        settings, costumes: catalog(), installed: dll.as_ref().is_some_and(|p| p.exists()),
-        plugin_current: dll.and_then(|p| fs::read(p).ok()).is_some_and(|bytes| bytes == PLUGIN),
-        plugin_version: VERSION, settings_path: dir.map(|p| p.join("settings.json").to_string_lossy().into_owned()).unwrap_or_default(),
+        settings, costumes: catalog(), plugin: bundled_plugin_status(&state),
+        settings_path: dir.map(|p| p.join("settings.json").to_string_lossy().into_owned()).unwrap_or_default(),
     })
 }
 

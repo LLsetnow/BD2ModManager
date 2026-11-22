@@ -897,11 +897,15 @@
             "bepinexMissing": "缺少 BepInEx。"
         },
         "labels": {
+            "costumeSkins": "造型替換",
+            "bundledVersion": "隨附 v{version}",
             "gameDirectory": "遊戲目錄：",
             "frameworkAndPlugins": "框架與外掛",
             "logs": "日誌"
         },
         "descriptions": {
+            "datingInteractions": "在遊戲中使用官方約會入口和本機 P 預覽。",
+            "costumeSkins": "在遊戲中依照對應設定替換角色服裝外觀。",
             "bepinex": "BepInEx 是一個模組框架，BrownDustX 正常運作需要它。",
             "browndustx": "BrownDustX 是一個 BepInEx 外掛，提供各種便利功能，並讓您在《棕色塵埃 II》中使用模組。",
             "configurationManager": "Configuration Manager 是一個 BepInEx 外掛，讓您可以在遊戲中設定 BrownDustX 的選項。"
@@ -915,6 +919,7 @@
             "gameDirectoryNotSet": "未設定遊戲目錄，請在設定中設定後才能安裝 BrownDustX。"
         },
         "actions": {
+            "manage": "管理",
             "installFromGithub": "從 GitHub 安裝",
             "selectFile": "選取檔案",
             "remove": "移除"

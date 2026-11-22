@@ -897,11 +897,15 @@
             "bepinexMissing": "BepInExがありません。"
         },
         "labels": {
+            "costumeSkins": "衣装スキン置換",
+            "bundledVersion": "同梱 v{version}",
             "gameDirectory": "ゲームディレクトリ：",
             "frameworkAndPlugins": "フレームワークとプラグイン",
             "logs": "ログ"
         },
         "descriptions": {
+            "datingInteractions": "ゲーム内で公式デートとローカル P プレビューを利用できます。",
+            "costumeSkins": "設定した対応関係に沿ってゲーム内の衣装の外観を置き換えます。",
             "bepinex": "BepInExはMODフレームワークです。BrownDustXの動作に必要です。",
             "browndustx": "BrownDustXはBepInExのプラグインで、様々な利便性向上機能を提供し、ブラウンダスト IIでMODを使用できるようにします。",
             "configurationManager": "Configuration ManagerはBepInExのプラグインで、ゲーム内でBrownDustXの設定を変更できます。"
@@ -915,6 +919,7 @@
             "gameDirectoryNotSet": "ゲームディレクトリが設定されていません。BrownDustXをインストールするには設定で指定してください。"
         },
         "actions": {
+            "manage": "管理",
             "installFromGithub": "GitHubからインストール",
             "selectFile": "ファイルを選択",
             "remove": "削除"

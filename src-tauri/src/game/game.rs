@@ -33,6 +33,48 @@ pub struct VersionResult {
     pub can_configure: Option<bool>,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BundledPluginStatus {
+    pub installed: bool,
+    pub plugin_current: bool,
+    pub plugin_version: &'static str,
+}
+
+impl BundledPluginStatus {
+    pub(crate) fn from_dll(dll: Option<PathBuf>, bundled: &[u8], version: &'static str) -> Self {
+        let installed = dll.as_ref().is_some_and(|path| path.is_file());
+        let plugin_current = dll.and_then(|path| fs::read(path).ok())
+            .is_some_and(|bytes| bytes == bundled);
+        Self { installed, plugin_current, plugin_version: version }
+    }
+}
+
+#[cfg(test)]
+mod bundled_plugin_status_tests {
+    use super::*;
+
+    #[test]
+    fn reports_missing_current_and_different_plugin_files() {
+        let dir = tempfile::tempdir().unwrap();
+        let dll = dir.path().join("Plugin.dll");
+        let missing = BundledPluginStatus::from_dll(Some(dll.clone()), b"current", "1.2.3");
+        assert!(!missing.installed && !missing.plugin_current);
+
+        fs::write(&dll, b"other").unwrap();
+        let different = BundledPluginStatus::from_dll(Some(dll.clone()), b"current", "1.2.3");
+        assert!(different.installed && !different.plugin_current);
+
+        fs::write(&dll, b"current").unwrap();
+        let current = BundledPluginStatus::from_dll(Some(dll), b"current", "1.2.3");
+        assert_eq!(serde_json::to_value(current).unwrap(), serde_json::json!({
+            "installed": true,
+            "pluginCurrent": true,
+            "pluginVersion": "1.2.3",
+        }));
+    }
+}
+
 pub fn get_game_version(game_path: &PathBuf) -> Option<String> {
     let path = game_path
         .join("BrownDust II_Data")

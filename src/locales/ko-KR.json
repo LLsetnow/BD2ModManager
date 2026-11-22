@@ -897,11 +897,15 @@
             "bepinexMissing": "BepInEx가 없습니다."
         },
         "labels": {
+            "costumeSkins": "의상 스킨 교체",
+            "bundledVersion": "포함 버전 v{version}",
             "gameDirectory": "게임 디렉토리: ",
             "frameworkAndPlugins": "프레임워크 및 플러그인",
             "logs": "로그"
         },
         "descriptions": {
+            "datingInteractions": "게임에서 공식 데이트 항목과 로컬 P 미리보기를 사용합니다.",
+            "costumeSkins": "설정한 스킨 매핑에 따라 게임 내 의상 외형을 교체합니다.",
             "bepinex": "BepInEx는 모딩 프레임워크입니다. BrownDustX가 정상 작동하려면 필요합니다.",
             "browndustx": "BrownDustX는 BepInEx 플러그인으로, 다양한 편의 기능을 추가하고 브라운더스트 II에서 모드를 사용할 수 있게 해줍니다.",
             "configurationManager": "Configuration Manager는 BepInEx 플러그인으로, 게임 내에서 BrownDustX 설정을 변경할 수 있게 해줍니다."
@@ -915,6 +919,7 @@
             "gameDirectoryNotSet": "게임 디렉토리가 설정되지 않았습니다. BrownDustX를 설치하려면 설정에서 지정해 주세요."
         },
         "actions": {
+            "manage": "관리",
             "installFromGithub": "GitHub에서 설치",
             "selectFile": "파일 선택",
             "remove": "제거"

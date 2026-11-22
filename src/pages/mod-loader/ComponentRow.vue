@@ -13,6 +13,7 @@ const props = defineProps<{
     label: string
     description: string
     state: PluginState,
+    bundled?: boolean
     disabled?: boolean
     showGithub?: boolean
     requiresBepInEx?: boolean
@@ -30,12 +31,22 @@ const { t } = useI18n()
 function getStatusMessage(status: Status) {
     switch (status) {
         case Status.Installed: return t("modLoaderTab.status.installed")
-        case Status.InstalledButOutdated: return t("modLoaderTab.status.installedButOutdated")
+        case Status.InstalledButOutdated: return t(props.bundled ? "common.plugin.updateAvailable" : "modLoaderTab.status.installedButOutdated")
         case Status.NotInstalled: return t("modLoaderTab.status.notInstalled")
         case Status.BepInExMissing: return t("modLoaderTab.status.bepinexMissing")
         default: return status
     }
 }
+
+const versionLabel = computed(() => props.bundled && props.state.version
+    ? t('modLoaderTab.labels.bundledVersion', { version: props.state.version })
+    : props.state.version)
+const statusLabel = computed(() => getStatusMessage(props.state.status))
+const statusColor = computed(() => {
+    if (props.state.status === Status.Installed) return 'text-success'
+    if (props.state.status === Status.NotInstalled) return 'text-text-secondary'
+    return 'text-warning'
+})
 
 function isInstalled(status: Status) {
     return status === Status.Installed || status === Status.InstalledButOutdated
@@ -62,23 +73,20 @@ const cantRemoveReason = computed(() =>
             <div class="flex items-center gap-1.5">
                 <TriangleAlert v-if="state.status === Status.BepInExMissing" class="w-4 h-4 text-warning" />
                 <span class="text-sm text-text-primary">{{ label }}</span>
-                <span v-if="state.version" class="inline lg:hidden text-sm text-text-secondary">
-                    v{{ state.version }}
+                <span v-if="versionLabel" class="inline lg:hidden text-sm text-text-secondary">
+                    {{ bundled ? versionLabel : `v${versionLabel}` }}
                 </span>
             </div>
             <p class="text-xs text-text-secondary truncate" :title="description">{{ description }}</p>
+            <p v-if="bundled" class="text-xs lg:hidden" :class="statusColor">{{ statusLabel }}</p>
         </div>
 
         <span class="hidden lg:inline text-sm" :class="state.version ? 'text-text-primary' : 'text-text-secondary'">
-            {{ state.version ?? '-' }}
+            {{ versionLabel ?? '-' }}
         </span>
 
         <div class="hidden lg:flex items-center gap-1">
-            <span class="text-xs" :class="{
-                'text-success': isInstalled(state.status),
-                'text-warning': state.status === Status.BepInExMissing || state.status === Status.InstalledButOutdated,
-                'text-text-secondary': state.status === Status.NotInstalled,
-            }">{{ getStatusMessage(state.status) }}</span>
+            <span class="text-xs" :class="statusColor">{{ statusLabel }}</span>
         </div>
 
         <div class="flex gap-1 justify-end items-center">
@@ -87,7 +95,8 @@ const cantRemoveReason = computed(() =>
                     @click="openUrl('https://www.gamekee.com/zsca2/640938.html')" />
                 <Button variant="text" label="Discord" :icon="DiscordIcon" label-class="hidden lg:inline" @click="openUrl('https://discord.gg/B3Aqz6tDG2')"></Button>
             </template>
-            <template v-if="canInstall">
+            <slot v-if="$slots.actions" name="actions" />
+            <template v-else-if="canInstall">
                 <Button v-if="showGithub" variant="text" :label="$t('modLoaderTab.actions.installFromGithub')"
                     :icon="GithubIcon" label-class="hidden lg:inline" :disabled="disabled"
                     @click="emit('installFromGithub')" />

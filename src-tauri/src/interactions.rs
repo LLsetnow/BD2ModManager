@@ -2,7 +2,7 @@ use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::Duration};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
-use crate::{AppState, utils::path::get_game_dir};
+use crate::{AppState, game::game::BundledPluginStatus, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2PreviewInteractions.dll");
 const PLUGIN_VERSION: &str = "0.5.1";
@@ -54,9 +54,8 @@ pub struct CatalogEntry {
 pub struct InteractionStatus {
     settings: InteractionSettings,
     available: Vec<CatalogEntry>,
-    installed: bool,
-    plugin_current: bool,
-    plugin_version: &'static str,
+    #[serde(flatten)]
+    plugin: BundledPluginStatus,
     settings_path: String,
 }
 
@@ -65,6 +64,11 @@ fn plugin_dir(state: &AppState) -> Result<PathBuf, String> {
     let game = get_game_dir(&config).ok_or("请先在设置中选择游戏目录")?;
     if !game.join("BrownDust II.exe").exists() { return Err("游戏目录无效".into()); }
     Ok(game.join("BepInEx/plugins/BD2PreviewInteractions"))
+}
+
+pub(crate) fn bundled_plugin_status(state: &AppState) -> BundledPluginStatus {
+    let dll = plugin_dir(state).ok().map(|dir| dir.join("BD2PreviewInteractions.dll"));
+    BundledPluginStatus::from_dll(dll, PLUGIN, PLUGIN_VERSION)
 }
 
 fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
@@ -255,10 +259,7 @@ pub async fn get_local_interactions(app: tauri::AppHandle, state: tauri::State<'
         };
         CatalogEntry { entry, export_status: status.into() }
     }).collect();
-    let dll = plugin_dir(&state).ok().map(|p| p.join("BD2PreviewInteractions.dll"));
-    let installed = dll.as_ref().is_some_and(|p| p.exists());
-    let plugin_current = dll.and_then(|p| fs::read(p).ok()).is_some_and(|b| b == PLUGIN);
-    Ok(InteractionStatus { settings, available, installed, plugin_current, plugin_version: PLUGIN_VERSION,
+    Ok(InteractionStatus { settings, available, plugin: bundled_plugin_status(&state),
         settings_path: plugin_dir(&state).map(|p| p.join("settings.json").to_string_lossy().into_owned()).unwrap_or_default() })
 }
 

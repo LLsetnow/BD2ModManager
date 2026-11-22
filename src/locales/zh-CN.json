@@ -897,11 +897,15 @@
             "bepinexMissing": "BepInEx 缺失。"
         },
         "labels": {
+            "costumeSkins": "皮肤替换",
+            "bundledVersion": "随附 v{version}",
             "gameDirectory": "游戏目录：",
             "frameworkAndPlugins": "框架与插件",
             "logs": "日志"
         },
         "descriptions": {
+            "datingInteractions": "在游戏中使用官方约会入口和本地 P 预览。",
+            "costumeSkins": "在游戏中按映射替换角色服装的外观。",
             "bepinex": "BepInEx 是一个模组框架，BrownDustX 正常运行需要它。",
             "browndustx": "BrownDustX 是 BepInEx 的插件，为《棕尘2》提供多项品质改善功能并支持模组加载。",
             "configurationManager": "Configuration Manager 是 BepInEx 的插件，允许您在游戏内配置 BrownDustX 设置。"
@@ -915,6 +919,7 @@
             "gameDirectoryNotSet": "未设置游戏目录，请在设置中配置后再安装 BrownDustX。"
         },
         "actions": {
+            "manage": "管理",
             "installFromGithub": "从 GitHub 安装",
             "selectFile": "选择文件",
             "remove": "移除"

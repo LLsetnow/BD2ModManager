@@ -30,6 +30,18 @@ const defaultState = (): PluginState => ({ status: Status.NotInstalled, version:
 const bepInExState = ref<PluginState>(defaultState())
 const brownDustXState = ref<PluginState>(defaultState())
 const configurationManagerState = ref<PluginState>(defaultState())
+type BundledPlugin = { installed: boolean; pluginCurrent: boolean; pluginVersion: string }
+const bundledPlugins = ref<{ dating: BundledPlugin; skins: BundledPlugin } | null>(null)
+const bundledRows = computed(() => [
+    { route: 'interactions', label: t('sidebar.tabs.interactions'), description: t('modLoaderTab.descriptions.datingInteractions'), plugin: bundledPlugins.value?.dating },
+    { route: 'skins', label: t('modLoaderTab.labels.costumeSkins'), description: t('modLoaderTab.descriptions.costumeSkins'), plugin: bundledPlugins.value?.skins },
+])
+
+function bundledPluginState(plugin?: BundledPlugin): PluginState {
+    if (!plugin) return defaultState()
+    const status = plugin.pluginCurrent ? Status.Installed : plugin.installed ? Status.InstalledButOutdated : Status.NotInstalled
+    return { status, version: plugin.pluginVersion }
+}
 
 const isBepInExDialogOpen = ref(false)
 const isConfigManagerDialogOpen = ref(false)
@@ -102,20 +114,26 @@ async function initialize(log = true) {
         bepInExState.value = defaultState()
         brownDustXState.value = defaultState()
         configurationManagerState.value = defaultState()
+        bundledPlugins.value = null
         isRefreshing.value = false
         return false
     }
 
     isRefreshing.value = true
-    const [bdx, bepinex, configManager] = await Promise.all([
+    const [bdx, bepinex, configManager, plugins] = await Promise.all([
         getComponentState('get_browndustx_version', 'BrownDustX', [Status.Installed, Status.InstalledButOutdated], log),
         getComponentState('get_bepinex_version', 'BepInEx', [Status.Installed], log),
         getComponentState('get_configmanager_version', 'Configuration Manager', [Status.Installed], log),
+        invoke<typeof bundledPlugins.value>('get_bundled_game_plugins').catch(error => {
+            loggingStore.logError('Could not read bundled plugin status:', error)
+            return null
+        }),
     ])
     if (request !== refreshRequest || directory !== settingsStore.settings.gameDirectory) return false
     brownDustXState.value = bdx
     bepInExState.value = bepinex
     configurationManagerState.value = configManager
+    bundledPlugins.value = plugins
     isRefreshing.value = false
     return true
 }
@@ -340,6 +358,13 @@ const CONFIGMANAGER_ASSETS_FILTER_REGEX = /BepInEx/i
                         @install-from-github="isConfigManagerDialogOpen = true"
                         @install="promptForArchive($t('modLoaderTab.fileDialog.configManagerTitle'), 'install_configmanager', 'Configuration Manager')"
                         @remove="uninstallComponent('uninstall_configmanager', 'removeConfigManager', 'Configuration Manager')" />
+                    <ComponentRow v-for="row in bundledRows" :key="row.route" :label="row.label"
+                        :description="row.description" :state="bundledPluginState(row.plugin)" bundled>
+                        <template #actions>
+                            <Button variant="text" size="sm" :label="$t('modLoaderTab.actions.manage')"
+                                @click="router.push({ name: row.route })" />
+                        </template>
+                    </ComponentRow>
                 </div>
             </div>
 

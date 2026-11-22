@@ -897,11 +897,15 @@
             "bepinexMissing": "BepInEx não encontrado."
         },
         "labels": {
+            "costumeSkins": "Substituição de visuais",
+            "bundledVersion": "Incluído v{version}",
             "gameDirectory": "Diretório do Jogo: ",
             "frameworkAndPlugins": "Framework e Plugins",
             "logs": "Logs"
         },
         "descriptions": {
+            "datingInteractions": "Use entradas oficiais de encontros e prévias P locais no jogo.",
+            "costumeSkins": "Substitua a aparência dos trajes no jogo usando os mapeamentos de visuais.",
             "bepinex": "BepInEx é um framework de modding. É necessário para que o BrownDustX funcione corretamente.",
             "browndustx": "BrownDustX é um plugin para BepInEx que adiciona diversas melhorias de qualidade de vida e permite o uso de mods em Brown Dust II.",
             "configurationManager": "Configuration Manager é um plugin para BepInEx que permite configurar as opções do BrownDustX dentro do jogo."
@@ -915,6 +919,7 @@
             "gameDirectoryNotSet": "O diretório do jogo não está definido. Por favor, defina-o nas configurações para habilitar a instalação do BrownDustX."
         },
         "actions": {
+            "manage": "Gerenciar",
             "installFromGithub": "Instalar do GitHub",
             "selectFile": "Selecionar Arquivo",
             "remove": "Remover"

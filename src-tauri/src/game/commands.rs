@@ -146,6 +146,20 @@ pub fn get_configmanager_version(app_handle: tauri::AppHandle, state: tauri::Sta
     game::get_configmanager_version(&app_handle, &game_path)
 }
 
+#[derive(serde::Serialize)]
+pub struct BundledGamePlugins {
+    dating: game::BundledPluginStatus,
+    skins: game::BundledPluginStatus,
+}
+
+#[tauri::command]
+pub fn get_bundled_game_plugins(state: tauri::State<AppState>) -> BundledGamePlugins {
+    BundledGamePlugins {
+        dating: crate::interactions::bundled_plugin_status(&state),
+        skins: crate::skins::bundled_plugin_status(&state),
+    }
+}
+
 #[tauri::command]
 pub async fn install_bepinex(
     state: tauri::State<'_, AppState>, 
