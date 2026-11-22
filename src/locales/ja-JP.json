@@ -1434,10 +1434,10 @@
         "managementToggle": "デート交流の管理を有効化",
         "native": "公式の標準入り口",
         "nativeToggle": "公式の標準入り口を有効化",
-        "nativeHelp": "ゲーム標準のアイコン・交流・章チェックを使用し、JSON の書き出しは不要です。キャラクターを無効にすると所持済みの標準入り口も非表示になります。アカウントデータは変更しません。",
+        "nativeHelp": "有効にした公式のデート項目をゲーム内の左側リストに表示します。アカウントで所有している項目の報酬はゲームが管理します。",
         "extra": "P 追加入り口",
         "extraToggle": "P 追加入り口を有効化",
-        "extraHelp": "ローカルのシーン JSON と音声を使う、P マーク付きのアイコンを追加します。キャラクターの切り替えは標準入り口から独立しています。",
+        "extraHelp": "ゲームのデート画面で「P 预览」を押してキャラクターを選びます。プレビューはローカルのシーン JSON と音声を使用します。",
         "configured": "{count} / {total} 人を設定済み",
         "plugin": "デート交流プラグイン {version}",
         "pluginUpdate": "両方の入り口を設定するにはプラグインを更新してください",
@@ -1449,10 +1449,8 @@
         "exportStatus": {
             "ready": "P シーン JSON 使用可能",
             "missing": "P シーン JSON なし",
-            "expired": "P シーン JSON 期限切れ",
             "invalid": "P シーン JSON 無効"
         },
-        "expires": "有効期限：{time}",
         "nativeFor": "{name}の公式の標準入り口",
         "extraFor": "{name}の P 追加入り口",
         "configureMods": "Mod を設定",

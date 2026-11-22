@@ -14,6 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="tests/**" />
+    <EmbeddedResource Include="../../src-tauri/data/costume-skins-default.json" LogicalName="BD2CostumeSkins.DefaultSettings.json" />
     <Reference Include="BepInEx"><HintPath>$(BepInExDir)\BepInEx.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="0Harmony"><HintPath>$(BepInExDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>

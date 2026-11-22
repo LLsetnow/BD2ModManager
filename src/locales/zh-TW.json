@@ -1434,10 +1434,10 @@
         "managementToggle": "約會互動管理總開關",
         "native": "官方原生入口",
         "nativeToggle": "官方原生入口總開關",
-        "nativeHelp": "使用遊戲原生頭像、互動和章節檢查，無須匯出 JSON。停用角色開關也會隱藏其已擁有的原生入口，不會修改帳號資料。",
+        "nativeHelp": "在遊戲左側清單顯示已啟用的官方約會入口。帳號已有入口的獎勵由遊戲處理。",
         "extra": "P 額外入口",
         "extraToggle": "P 額外入口總開關",
-        "extraHelp": "在頭像列新增帶 P 標記的額外對象，使用本機場景 JSON 和音訊。角色開關與原生入口互不影響。",
+        "extraHelp": "在遊戲約會介面點擊「P 預覽」，開啟使用本機場景 JSON 與音訊的角色清單。",
         "configured": "已設定 {count} / {total} 位角色",
         "plugin": "約會互動外掛 {version}",
         "pluginUpdate": "已有外掛，請更新以支援雙入口設定",
@@ -1449,10 +1449,8 @@
         "exportStatus": {
             "ready": "P 場景 JSON 可用",
             "missing": "P 場景缺少 JSON",
-            "expired": "P 場景 JSON 已過期",
             "invalid": "P 場景 JSON 無效"
         },
-        "expires": "有效期限至 {time}",
         "nativeFor": "{name}的官方原生入口",
         "extraFor": "{name}的 P 額外入口",
         "configureMods": "設定模組",

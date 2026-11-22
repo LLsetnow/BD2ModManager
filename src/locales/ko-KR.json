@@ -1434,10 +1434,10 @@
         "managementToggle": "데이트 상호작용 관리 활성화",
         "native": "공식 기본 항목",
         "nativeToggle": "공식 기본 항목 활성화",
-        "nativeHelp": "JSON 내보내기 없이 게임의 기본 초상화, 상호작용, 챕터 확인을 사용합니다. 캐릭터를 끄면 이미 보유한 기본 항목도 숨겨지며 계정 데이터는 변경되지 않습니다.",
+        "nativeHelp": "활성화한 공식 데이트 항목을 게임 왼쪽 목록에 표시합니다. 계정에서 보유한 항목의 보상은 게임에서 처리합니다.",
         "extra": "P 추가 항목",
         "extraToggle": "P 추가 항목 활성화",
-        "extraHelp": "로컬 장면 JSON과 오디오를 사용하는 P 표시 초상화를 추가합니다. 캐릭터 스위치는 기본 항목과 독립적으로 작동합니다.",
+        "extraHelp": "게임의 데이트 화면에서 「P 预览」을 눌러 캐릭터를 선택합니다. 미리보기는 로컬 장면 JSON과 오디오를 사용합니다.",
         "configured": "{count} / {total}명 설정됨",
         "plugin": "데이트 상호작용 플러그인 {version}",
         "pluginUpdate": "두 항목을 설정하려면 설치된 플러그인을 업데이트하세요",
@@ -1449,10 +1449,8 @@
         "exportStatus": {
             "ready": "P 장면 JSON 사용 가능",
             "missing": "P 장면 JSON 없음",
-            "expired": "P 장면 JSON 만료됨",
             "invalid": "P 장면 JSON 유효하지 않음"
         },
-        "expires": "유효 기간: {time}",
         "nativeFor": "{name}의 공식 기본 항목",
         "extraFor": "{name}의 P 추가 항목",
         "configureMods": "모드 설정",

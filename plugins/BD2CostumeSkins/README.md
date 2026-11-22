@@ -1,6 +1,6 @@
 # 本地服装皮肤
 
-`BD2CostumeSkins` 是 BD2ModManager 内置的独立 BepInEx 插件。首个预设为莉亚特里斯「女仆代号 R」`001207` →「甜蜜的诱惑」`001297`。
+`BD2CostumeSkins` 是 BD2ModManager 内置的独立 BepInEx 插件。首次使用时，管理器和插件均使用 `src-tauri/data/costume-skins-default.json` 中内置的 14 条映射及其初始皮肤选择。
 
 - 游戏角色页面选中来源服装后，小人上方显示原生 **Skin** 按钮。每次点击按「原版、已启用的目标皮肤」顺序循环，并保存选择。
 - ModManager 的 **皮肤映射** 页面提供添加、移除、名称、启停、当前皮肤及插件安装。角色详情中也有入口。

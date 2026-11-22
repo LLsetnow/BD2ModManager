@@ -1434,10 +1434,10 @@
         "managementToggle": "Ativar gerenciamento de encontros",
         "native": "Entradas nativas oficiais",
         "nativeToggle": "Ativar entradas nativas oficiais",
-        "nativeHelp": "Usa retratos, interações e verificações de capítulos do jogo, sem exportar JSON. Desativar um personagem oculta sua entrada nativa já obtida, sem alterar dados da conta.",
+        "nativeHelp": "Mostra as entradas oficiais de encontros ativadas na lista lateral do jogo. O jogo gerencia as recompensas das entradas que sua conta possui.",
         "extra": "Entradas extras P",
         "extraToggle": "Ativar entradas extras P",
-        "extraHelp": "Adiciona retratos extras com a marca P usando JSON e áudio locais. Os controles de personagem são independentes das entradas nativas.",
+        "extraHelp": "Na tela de encontros do jogo, selecione P 预览 (Prévia P) para escolher um personagem. A prévia usa os arquivos JSON e o áudio locais.",
         "configured": "{count} / {total} personagens configurados",
         "plugin": "Plugin de encontros {version}",
         "pluginUpdate": "Atualize o plugin instalado para usar os dois tipos de entrada",
@@ -1449,10 +1449,8 @@
         "exportStatus": {
             "ready": "JSON da cena P disponível",
             "missing": "JSON da cena P ausente",
-            "expired": "JSON da cena P expirado",
             "invalid": "JSON da cena P inválido"
         },
-        "expires": "Válido até {time}",
         "nativeFor": "Entrada nativa oficial de {name}",
         "extraFor": "Entrada extra P de {name}",
         "configureMods": "Configurar mods",

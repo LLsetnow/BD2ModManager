@@ -1,11 +1,11 @@
-use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::{Duration, SystemTime, UNIX_EPOCH}};
+use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::Duration};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
 use crate::{AppState, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2PreviewInteractions.dll");
-const PLUGIN_VERSION: &str = "0.4.2";
+const PLUGIN_VERSION: &str = "0.5.1";
 const CHARACTERS: &str = include_str!("../data/characters.json");
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -26,6 +26,8 @@ pub struct SceneEntry {
 #[serde(rename_all = "camelCase")]
 pub struct InteractionSettings {
     schema_version: u32,
+    #[serde(default)]
+    assets_directory: String,
     #[serde(default = "default_enabled")]
     enabled: bool,
     #[serde(default = "default_enabled")]
@@ -45,7 +47,6 @@ pub struct CatalogEntry {
     #[serde(flatten)]
     entry: SceneEntry,
     export_status: String,
-    expires_at_ms: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -99,6 +100,7 @@ fn scene_number(id: &str) -> Option<u32> {
 fn defaults() -> InteractionSettings {
     InteractionSettings {
         schema_version: 2,
+        assets_directory: String::new(),
         enabled: true,
         p_entries_enabled: true,
         native_entries_enabled: true,
@@ -235,24 +237,22 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn get_local_interactions(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<InteractionStatus, String> {
-    let settings = read_settings(&app, &state)?;
-    let dating_directory = asset_library_root(&state)?.join("audio").join("dating");
+    let mut settings = read_settings(&app, &state)?;
+    let assets_directory = asset_library_root(&state)?;
+    settings.assets_directory = assets_directory.to_string_lossy().into_owned();
+    let dating_directory = assets_directory.join("audio").join("dating");
     ensure_dating_configs(&dating_directory).await?;
-    let now = SystemTime::now().duration_since(UNIX_EPOCH).map_err(|e| e.to_string())?.as_millis() as u64;
     let available = catalog().into_iter().map(|entry| {
         let path = dating_directory.join(format!("{}.json", entry.scene_id));
         let json = fs::read(&path).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok());
-        let expiry = json.as_ref().and_then(|v| v["expiresAtMs"].as_u64());
         let status = match json {
             None if !path.exists() => "missing",
             Some(ref v) if v["schemaVersion"] == 1 && v["sceneId"] == entry.scene_id
                 && v.pointer("/scene/groups").is_some_and(Value::is_array)
-                && v.pointer("/scene/points").is_some_and(Value::is_array) => {
-                    if expiry.unwrap_or(0) > now { "ready" } else { "expired" }
-                },
+                && v.pointer("/scene/points").is_some_and(Value::is_array) => "ready",
             _ => "invalid",
         };
-        CatalogEntry { entry, export_status: status.into(), expires_at_ms: expiry }
+        CatalogEntry { entry, export_status: status.into() }
     }).collect();
     let dll = plugin_dir(&state).ok().map(|p| p.join("BD2PreviewInteractions.dll"));
     let installed = dll.as_ref().is_some_and(|p| p.exists());
@@ -263,6 +263,7 @@ pub async fn get_local_interactions(app: tauri::AppHandle, state: tauri::State<'
 
 #[tauri::command]
 pub fn save_local_interactions(app: tauri::AppHandle, state: tauri::State<AppState>, mut settings: InteractionSettings) -> Result<(), String> {
+    settings.assets_directory = asset_library_root(&state)?.to_string_lossy().into_owned();
     validate(&settings)?;
     for scene in &mut settings.scenes { scene.use_mods = true; }
     let target = plugin_dir(&state)?.join("settings.json");
@@ -280,8 +281,10 @@ pub async fn install_local_interactions(app: tauri::AppHandle, state: tauri::Sta
     if target.exists() {
         fs::OpenOptions::new().write(true).open(&target).map_err(|_| "插件正在使用或目录不可写，请退出游戏后安装".to_string())?;
     }
-    let settings = read_settings(&app, &state)?;
-    let dating_directory = asset_library_root(&state)?.join("audio").join("dating");
+    let mut settings = read_settings(&app, &state)?;
+    let assets_directory = asset_library_root(&state)?;
+    settings.assets_directory = assets_directory.to_string_lossy().into_owned();
+    let dating_directory = assets_directory.join("audio").join("dating");
     ensure_dating_configs(&dating_directory).await?;
     let temporary = dir.join("BD2PreviewInteractions.dll.tmp");
     fs::write(&temporary, PLUGIN).map_err(|e| e.to_string())?;

@@ -14,7 +14,7 @@
 - Manager 4.3.1-local.3 is rebuilt and restarted. Plugin 0.4.1 is installed on disk and will load on the next game restart; the current running game retains its loaded version. C# settings checks (8), Rust configuration checks (5), Vue type checking and production/release builds passed. Game settings/cfg are preserved; backups are in `F:/Neowiz/mod_backups/BD2-dating-0.4.1-20261112-024332`.
 - Skin edits save automatically through serialized per-operation updates against the latest game settings. This preserves other selections made by the game; failed changes are validated before writing and the manager resynchronizes saved state.
 - The following sections record implementation and verification history.
-- Database decoding and native plugin implementation are documented in `docs/dating-native-entries-unpack-and-plugin.md`. The user confirmed that all six 0.3.0 native entries appear and can be entered; individual input/audio/Reset behavior remains outside that acceptance.
+- Database decoding and native plugin implementation are documented in the [archived native entry notes](https://github.com/LLsetnow/BD2ModManager/blob/c913c6ad67fc558a2fa454be7b123aa22752c1de/docs/dating-native-entries-unpack-and-plugin.md). The user confirmed that all six 0.3.0 native entries appear and can be entered; individual input/audio/Reset behavior remains outside that acceptance.
 
 ### 0.4.0: all dating scenes and independent methods
 
@@ -51,7 +51,7 @@
 - Followed the game's design DB decoding code and read the local common cache in memory without modifying it. SQLite `quick_check` passed. Parsed design protobufs using the actual game classes; all 16 runtime list mappings and the captured full source row 32 match.
 - Resolved the six missing scene pairs `(Lobby row ID, InteractionId)`: dating7 `(77, 1000296)`, dating9 `(99, 1001197)`, dating12 `(121, 1061492)`, dating18 `(207, 1000396)`, dating19 `(225, 14)`, dating21 `(274, 1065193)`.
 - Official dating12 has `CostumeId=61402`, `PrestigeSkinId=61492`; the local P catalog previously used 61492 for the costume. Dating19's unlock group/episode fields are 14/10; the other five pairs have 0/0.
-- Five additional Lobby rows reuse these resources with `InteractionId=0`; exclude them when locating native interaction entries. Full records, protobufs and provenance are outside the repository in `F:/Neowiz/releases/official-dating-six-20261112.json`. Details are in `docs/dating-prefab-unpack.md`.
+- Five additional Lobby rows reuse these resources with `InteractionId=0`; exclude them when locating native interaction entries. Full records, protobufs and provenance are outside the repository in `F:/Neowiz/releases/official-dating-six-20261112.json`. See the [archived prefab notes](https://github.com/LLsetnow/BD2ModManager/blob/c913c6ad67fc558a2fa454be7b123aa22752c1de/docs/dating-prefab-unpack.md).
 - This extraction did not modify the game plugin, configuration or scene entries. The six scenes have not yet been tested through native entry loading.
 
 ## Authorized requirements

@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core'
 
 export type DatingScene = { sceneId: string; costumeId: number; avatarAddress: string; title: string; enabled: boolean; nativeEnabled: boolean; useMods: boolean }
 export type DatingSettings = { schemaVersion: number; enabled: boolean; pEntriesEnabled: boolean; nativeEntriesEnabled: boolean; dragHoldSeconds: number; markerOpacity: number; scenes: DatingScene[] }
-export type DatingAvailable = DatingScene & { exportStatus: 'ready' | 'missing' | 'expired' | 'invalid'; expiresAtMs: number | null }
+export type DatingAvailable = DatingScene & { exportStatus: 'ready' | 'missing' | 'invalid' }
 export type DatingStatus = { settings: DatingSettings; available: DatingAvailable[]; installed: boolean; pluginCurrent: boolean; pluginVersion: string; settingsPath: string }
 
 // Both pages edit one draft, so saving resource settings cannot overwrite a

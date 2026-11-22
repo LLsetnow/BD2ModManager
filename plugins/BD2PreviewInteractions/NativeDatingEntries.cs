@@ -5,92 +5,50 @@ using Proto.Design.common;
 
 namespace BD2PreviewInteractions;
 
-internal sealed class NativeDatingEntries
+internal static class NativeDatingEntries
 {
-    internal Dictionary<int, NativeDatingEntry> Entries { get; } = new();
-    internal HashSet<int> AddedIds { get; } = new();
-    internal HashSet<int> HiddenIds { get; } = new();
-    private List<int>? lastPreparedList;
-    private List<int> lastOfficialIds = new();
-
-    internal bool IsLocalOnlyInteraction(int interactionId) => interactionId > 0 &&
-        Entries.Values.Any(entry => entry.Row.InteractionId == interactionId && AddedIds.Contains(entry.Row.Id));
-
-    internal List<int> CopyOfficialIds(List<int> incoming)
+    internal static List<int> Filter(IEnumerable<int> incomingIds, IEnumerable<LobbySettingItemTable> rows,
+        bool enabled, HashSet<string> hiddenScenes)
     {
-        // A fresh caller list can now contain a genuinely acquired official row.
-        // Strip additions only when the UI reuses our own decorated list.
-        return ReferenceEquals(incoming, lastPreparedList)
-            ? new List<int>(lastOfficialIds)
-            : new List<int>(incoming);
+        var hiddenIds = new HashSet<int>(rows
+            .Where(row => row.Type == 2 && row.InteractionResourceName.StartsWith("Illust_dating", StringComparison.OrdinalIgnoreCase))
+            .Where(row => !enabled || hiddenScenes.Contains(row.InteractionResourceName))
+            .Select(row => row.Id));
+        return incomingIds.Where(id => !hiddenIds.Contains(id)).ToList();
     }
 
-    internal void RememberList(List<int> ids, List<int>? originals = null)
+    internal static Dictionary<int, int> AppendConfigured(List<int> ids, IEnumerable<string> sceneIds,
+        IEnumerable<LobbySettingItemTable> rows, Func<int, SpineInteractionTable?> getInteraction, Action<string> warn)
     {
-        lastPreparedList = ids;
-        if (originals != null) lastOfficialIds = new List<int>(originals);
-    }
-
-    internal void Clear()
-    {
-        Entries.Clear();
-        AddedIds.Clear();
-        HiddenIds.Clear();
-    }
-
-    internal List<string> Rebuild(List<int> ids, IEnumerable<string> enabledSceneIds,
-        IEnumerable<LobbySettingItemTable> officialRows, Func<int, SpineInteractionTable?> getInteraction,
-        bool hideDisabled = false)
-    {
-        Clear();
-        var failures = new List<string>();
-        var enabled = new HashSet<string>(enabledSceneIds, StringComparer.OrdinalIgnoreCase);
-        var rows = officialRows.ToArray();
-        lastOfficialIds = new List<int>(ids);
-        if (hideDisabled)
+        var officialRows = rows.Where(row => row.Type == 2 && row.Id > 0 && row.InteractionId > 0)
+            .ToLookup(row => row.InteractionResourceName, StringComparer.OrdinalIgnoreCase);
+        var added = new Dictionary<int, int>();
+        foreach (var sceneId in sceneIds)
         {
-            var hidden = new HashSet<int>(rows.Where(row => row.Type == 2
-                && row.InteractionResourceName.StartsWith("Illust_dating", StringComparison.OrdinalIgnoreCase)
-                && !enabled.Contains(row.InteractionResourceName.ToLowerInvariant())).Select(row => row.Id));
-            foreach (var id in ids.Where(hidden.Contains)) HiddenIds.Add(id);
-            ids.RemoveAll(hidden.Contains);
-        }
-        foreach (var sceneId in enabled.OrderBy(id => id, StringComparer.Ordinal))
-        {
+            var matches = officialRows[sceneId].ToArray();
+            if (matches.Length != 1)
+            {
+                warn($"Native dating entry {sceneId} skipped: expected one official lobby row, found {matches.Length}.");
+                continue;
+            }
+
+            var row = matches[0];
+            if (ids.Contains(row.Id)) continue;
             try
             {
-                var candidates = rows.Where(candidate => candidate.Type == 2 && candidate.InteractionId > 0
-                    && string.Equals(candidate.InteractionResourceName, sceneId, StringComparison.OrdinalIgnoreCase)).ToArray();
-                if (candidates.Length != 1)
-                    throw new InvalidOperationException($"expected one official interaction row; found {candidates.Length}");
-                var row = candidates[0];
-                var interaction = getInteraction(row.InteractionId);
-                if (interaction == null || interaction.Id != row.InteractionId)
-                    throw new InvalidOperationException($"interaction table row {row.InteractionId} is missing");
-
-                Entries.Add(row.Id, new NativeDatingEntry(sceneId, row, interaction));
-                if (!ids.Contains(row.Id))
+                if (getInteraction(row.InteractionId)?.Id != row.InteractionId)
                 {
-                    ids.Add(row.Id);
-                    AddedIds.Add(row.Id);
+                    warn($"Native dating entry {sceneId} skipped: interaction row {row.InteractionId} is missing.");
+                    continue;
                 }
+                ids.Add(row.Id);
+                added.Add(row.Id, row.InteractionId);
             }
-            catch (Exception error) { failures.Add($"{sceneId}: {error.GetBaseException().Message}"); }
+            catch (Exception error)
+            {
+                warn($"Native dating entry {sceneId} skipped: {error.GetBaseException().Message}");
+            }
         }
-        return failures;
+        return added;
     }
-}
-
-internal sealed class NativeDatingEntry
-{
-    internal NativeDatingEntry(string sceneId, LobbySettingItemTable row, SpineInteractionTable interaction)
-    {
-        SceneId = sceneId;
-        Row = row;
-        Interaction = interaction;
-    }
-
-    internal string SceneId { get; }
-    internal LobbySettingItemTable Row { get; }
-    internal SpineInteractionTable Interaction { get; }
 }

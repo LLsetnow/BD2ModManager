@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,13 @@ internal sealed class LocalSceneTag : MonoBehaviour { }
 
 internal static class LocalVisuals
 {
+    internal static Canvas FindTopNativeCanvas(SpineInteractionUI owner, Canvas ownerCanvas) =>
+        owner.GetComponentsInChildren<Canvas>(true)
+            .Where(canvas => canvas.GetComponent<LocalSceneTag>() == null)
+            .Append(ownerCanvas)
+            .OrderBy(canvas => SortingLayer.GetLayerValueFromID(canvas.sortingLayerID))
+            .ThenBy(canvas => canvas.sortingOrder).Last();
+
     internal static void DisableNativeScripts(GameObject root)
     {
         foreach (var behaviour in root.GetComponentsInChildren<Behaviour>(true))

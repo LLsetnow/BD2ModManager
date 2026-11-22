@@ -37,10 +37,10 @@ internal sealed class OfficialSpineData
         if (replacer == null) return;
         var method = AccessTools.Method(replacer, "ReplaceSpineData", new[] { typeof(SkeletonDataAsset) });
         if (method == null) throw new MissingMethodException("BrownDustX.ReplaceSpineData");
-        replaceMethod = method;
-        prepareMethod = AccessTools.Method(replacer, "PrepareModsData");
         harmony.Patch(method, prefix: new HarmonyMethod(typeof(OfficialSpineData), nameof(CaptureBeforeReplacement))
         { priority = Priority.First });
+        replaceMethod = method;
+        prepareMethod = AccessTools.Method(replacer, "PrepareModsData");
         Plugin.Instance?.LogDiagnostic("Official Spine capture hook installed before BrownDustX replacement");
     }
 
@@ -59,10 +59,39 @@ internal sealed class OfficialSpineData
         // ModData itself. Publish its ready result before ReplaceSpineData, which
         // would otherwise call the old synchronous LoadModData fallback.
         var replacer = prepareMethod.DeclaringType!;
-        var modData = AccessTools.Method(replacer, "BuildModDataFromPrepared")!.Invoke(null, new[] { runtime });
+        var buildMethod = AccessTools.Method(replacer, "BuildModDataFromPrepared");
+        if (buildMethod == null) throw new MissingMethodException(replacer.FullName, "BuildModDataFromPrepared");
+        var buildOperation = buildMethod.Invoke(null, new[] { runtime });
+        if (buildOperation == null) throw new InvalidOperationException("BrownDustX returned no mod-data build result");
+
+        // Current BrownDustX versions return UniTask<ModData> here. Treating the
+        // boxed UniTask as ModData publishes its "(Pending)" placeholder into the
+        // strongly typed LoadedModsData dictionary. Await it before publishing.
+        object? modData = buildOperation;
+        var getBuildAwaiter = buildOperation.GetType().GetMethod("GetAwaiter", Type.EmptyTypes);
+        if (getBuildAwaiter != null)
+        {
+            var buildAwaiter = getBuildAwaiter.Invoke(buildOperation, null)!;
+            var buildCompleted = buildAwaiter.GetType().GetProperty("IsCompleted")
+                ?? throw new MissingMemberException(buildAwaiter.GetType().FullName, "IsCompleted");
+            while (buildCompleted.GetValue(buildAwaiter) is not true) yield return null;
+            var getModData = buildAwaiter.GetType().GetMethod("GetResult", Type.EmptyTypes)
+                ?? throw new MissingMethodException(buildAwaiter.GetType().FullName, "GetResult");
+            modData = getModData.Invoke(buildAwaiter, null);
+        }
+
         var manager = AccessTools.TypeByName("BrownDustX.ModManager");
-        if (manager != null && AccessTools.Field(manager, "LoadedModsData")?.GetValue(null) is IDictionary loaded && !loaded.Contains(skeleton))
-            loaded[skeleton] = modData;
+        var loadedField = manager == null ? null : AccessTools.Field(manager, "LoadedModsData");
+        if (loadedField?.GetValue(null) is IDictionary loaded && !loaded.Contains(skeleton))
+        {
+            var expectedType = loadedField.FieldType.IsGenericType
+                ? loadedField.FieldType.GetGenericArguments().LastOrDefault()
+                : null;
+            if (modData != null && (expectedType == null || expectedType.IsInstanceOfType(modData)))
+                loaded[skeleton] = modData;
+            else
+                Plugin.Instance?.LogDiagnostic($"BrownDustX ModData was not published for {skeleton}: got {modData?.GetType().FullName ?? "null"}, expected {expectedType?.FullName ?? "unknown"}");
+        }
     }
 
     internal static bool ApplyEnabledMod(SkeletonDataAsset isolated, string skeleton)
@@ -128,7 +157,9 @@ internal sealed class OfficialSpineData
 
     private static void Capture(SkeletonDataAsset asset)
     {
-        if (asset == null || !Plugin.Specs.Values.Any(spec => Matches(asset.name, spec.SceneId))) return;
+        var settings = Plugin.Settings;
+        if (asset == null || !settings.Enabled || !settings.PEntriesEnabled ||
+            !settings.Scenes.Values.Any(spec => Matches(asset.name, spec.SceneId))) return;
         if (originals.TryGetValue(asset.name, out var saved) && saved.Valid) return;
         if (asset.skeletonJSON == null || asset.atlasAssets == null || asset.atlasAssets.Length == 0) return;
         var data = new OfficialSpineData(asset);

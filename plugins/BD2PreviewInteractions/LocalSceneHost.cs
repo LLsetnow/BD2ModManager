@@ -17,6 +17,7 @@ internal sealed class LocalSceneHost
 {
     private readonly Plugin plugin;
     private readonly SpineInteractionUI ui;
+    private readonly bool hideNativeSelector;
     private readonly Dictionary<GameObject, bool> previousChildren = new();
     private readonly Dictionary<Behaviour, bool> previousBehaviours = new();
     private readonly Dictionary<GameObject, bool> previousControls = new();
@@ -36,8 +37,8 @@ internal sealed class LocalSceneHost
     internal bool IsOpen { get; private set; }
     internal bool IsActive => !closed;
 
-    internal LocalSceneHost(Plugin plugin, SpineInteractionUI ui, SceneSpec spec)
-    { this.plugin = plugin; this.ui = ui; Spec = spec; }
+    internal LocalSceneHost(Plugin plugin, SpineInteractionUI ui, SceneSpec spec, bool hideNativeSelector)
+    { this.plugin = plugin; this.ui = ui; Spec = spec; this.hideNativeSelector = hideNativeSelector; }
 
     // Flatten nested iterators so an asynchronous loader exception always restores
     // the official UI instead of escaping Unity's coroutine runner.
@@ -62,8 +63,8 @@ internal sealed class LocalSceneHost
 
     private IEnumerator Prepare()
     {
-        var exportRoot = Plugin.ExportRoot;
-        var audioRoot = Plugin.AudioRoot;
+        var exportRoot = Plugin.Settings.ExportDirectory;
+        var audioRoot = Plugin.Settings.AudioDirectory;
         var read = Task.Run(() => ExportedScene.Read(Spec.SceneId, exportRoot, audioRoot));
         while (!read.IsCompleted) yield return null;
         var data = read.GetAwaiter().GetResult();
@@ -103,7 +104,6 @@ internal sealed class LocalSceneHost
         hudRoot.SetActive(true);
         controller.Begin();
         IsOpen = true;
-        plugin.RefreshAvatarSelection(ui);
         plugin.Notify($"已打开本地互动：{Spec.Title}");
     }
 
@@ -217,6 +217,11 @@ internal sealed class LocalSceneHost
             var value = AccessTools.Field(typeof(SpineInteractionUI), name)?.GetValue(ui);
             SaveAndHide(value is GameObject go ? go : (value as Component)?.gameObject);
         }
+        if (hideNativeSelector)
+        {
+            foreach (var name in new[] { "_goCharSelectScrollClose", "_goCharSelectScrollOpen", "_goCharSelectScrollOpenButton", "_goCharSelectScrollFoldButton" })
+                SaveAndHide(AccessTools.Field(typeof(SpineInteractionUI), name)?.GetValue(ui) as GameObject);
+        }
         foreach (var field in typeof(SpineInteractionUI).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic))
         {
             var value = field.GetValue(ui);
@@ -242,12 +247,6 @@ internal sealed class LocalSceneHost
         try { method.Invoke(value, new[] { Enum.Parse(argument, "IMMEDIATE") }); } catch { }
     }
 
-    internal void Restart()
-    {
-        try { controller?.Restart(); }
-        catch (Exception error) { Fail(error); }
-    }
-
     private void Fail(Exception error)
     {
         if (closed) return;
@@ -261,7 +260,6 @@ internal sealed class LocalSceneHost
         if (closed) return;
         closed = true;
         IsOpen = false;
-        if (committed) plugin.ClearHeaderAvatars(ui);
         if (controller != null) controller.Shutdown();
         foreach (var obj in new[] { hudRoot, overlay, staging })
             if (obj != null) { obj.SetActive(false); UnityEngine.Object.Destroy(obj); }
@@ -297,8 +295,6 @@ internal sealed class ExportedScene
         var envelope = JObject.Parse(File.ReadAllText(path));
         if (envelope.Value<int>("schemaVersion") != 1 || envelope.Value<string>("sceneId") != sceneId)
             throw new InvalidDataException("导出格式或场景编号错误");
-        if (envelope.Value<long>("expiresAtMs") <= DateTimeOffset.UtcNow.ToUnixTimeMilliseconds())
-            throw new InvalidDataException("导出数据已过期，请重新导出");
         var scene = envelope["scene"] as JObject ?? throw new InvalidDataException("缺少场景配置");
         if (scene["groups"] is not JArray || scene["points"] is not JArray) throw new InvalidDataException("场景配置不完整");
         var events = scene["audio"]?["events"] as JObject;

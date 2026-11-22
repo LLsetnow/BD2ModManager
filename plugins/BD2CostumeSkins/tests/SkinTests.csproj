@@ -2,6 +2,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><UseAppHost>false</UseAppHost>
     <UseSharedCompilation>false</UseSharedCompilation><CscToolPath>$(MSBuildProjectDirectory)\..\..\BD2PreviewInteractions\.build-tools\</CscToolPath><CscToolExe>csc.cmd</CscToolExe>
+    <GameRoot Condition="'$(GameRoot)' == ''">F:\Neowiz\Browndust2\Browndust2_10000001</GameRoot>
+    <ManagedDir>$(GameRoot)\BrownDust II_Data\Managed</ManagedDir>
   </PropertyGroup>
-  <ItemGroup><Compile Include="../SkinSettings.cs" Link="SkinSettings.cs" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="../SkinSettings.cs" Link="SkinSettings.cs" />
+    <EmbeddedResource Include="../../../src-tauri/data/costume-skins-default.json" LogicalName="BD2CostumeSkins.DefaultSettings.json" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(ManagedDir)\Newtonsoft.Json.dll" />
+  </ItemGroup>
 </Project>

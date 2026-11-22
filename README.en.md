@@ -208,7 +208,7 @@ Skill cutscene previews include a timeline, animated in-game backgrounds, and sk
 
 ### Skin Mapping and Dating Interactions
 
-Dating Interactions manages the official native entry and the extra P entry separately. Each character has independent switches, and the scene card shows the status of its local JSON file.
+Dating Interactions has separate switches for official entries in the game's dating sidebar and local P previews. Each character card shows its local JSON status. Select P 预览 (P Preview) on the in-game dating screen to open the local character list.
 
 ![Dating interaction controls for native and P entries and per-character scene status](./screenshots/v4.3.1-local.6/dating-interactions.png)
 

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "mappings": [
+    {
+      "sourceId": "001207",
+      "targetId": "001297",
+      "label": "甜蜜的诱惑",
+      "enabled": true
+    },
+    {
+      "sourceId": "021301",
+      "targetId": "021391",
+      "label": "关系逆转",
+      "enabled": true
+    },
+    {
+      "sourceId": "004102",
+      "targetId": "004192",
+      "label": "笨拙小狼",
+      "enabled": true
+    },
+    {
+      "sourceId": "021201",
+      "targetId": "021291",
+      "label": "特别外出",
+      "enabled": true
+    },
+    {
+      "sourceId": "003703",
+      "targetId": "003793",
+      "label": "薄梦阑珊",
+      "enabled": true
+    },
+    {
+      "sourceId": "061002",
+      "targetId": "061092",
+      "label": "新星",
+      "enabled": true
+    },
+    {
+      "sourceId": "065103",
+      "targetId": "065193",
+      "label": "永远的吉祥物",
+      "enabled": true
+    },
+    {
+      "sourceId": "067401",
+      "targetId": "067491",
+      "label": "真意解放",
+      "enabled": true
+    },
+    {
+      "sourceId": "003302",
+      "targetId": "003392",
+      "label": "幸运比基尼",
+      "enabled": true
+    },
+    {
+      "sourceId": "061402",
+      "targetId": "061492",
+      "label": "神秘面纱兔女郎",
+      "enabled": true
+    },
+    {
+      "sourceId": "000206",
+      "targetId": "000296",
+      "label": "仲夏之梦",
+      "enabled": true
+    },
+    {
+      "sourceId": "001107",
+      "targetId": "001197",
+      "label": "奶牛比基尼",
+      "enabled": true
+    },
+    {
+      "sourceId": "061302",
+      "targetId": "061392",
+      "label": "蝶梦",
+      "enabled": true
+    },
+    {
+      "sourceId": "000306",
+      "targetId": "000396",
+      "label": "从容的王牌",
+      "enabled": true
+    }
+  ],
+  "selectedSkins": {
+    "000206": "000296",
+    "000306": "000396",
+    "001107": "001107",
+    "001207": "001297",
+    "003302": "003392",
+    "003703": "003793",
+    "004102": "004192",
+    "021201": "021291",
+    "021301": "021391",
+    "061002": "061092",
+    "061302": "061302",
+    "061402": "061492",
+    "065103": "065193",
+    "067401": "067491"
+  }
+}

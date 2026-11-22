@@ -43,8 +43,7 @@ internal sealed class LocalInteractionHud : MonoBehaviour
         // The character can use a nested Canvas that sorts above UIBase's
         // Canvas. Give all local controls one explicit UI canvas above those
         // character canvases, using the same camera and UI layer.
-        var top = owner.GetComponentsInChildren<Canvas>(true).Append(ownerCanvas)
-            .OrderBy(c => SortingLayer.GetLayerValueFromID(c.sortingLayerID)).ThenBy(c => c.sortingOrder).Last();
+        var top = LocalVisuals.FindTopNativeCanvas(owner, ownerCanvas);
         gameObject.layer = ownerCanvas.gameObject.layer;
         canvas = gameObject.AddComponent<Canvas>();
         canvas.overrideSorting = true;

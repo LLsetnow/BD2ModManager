@@ -1434,10 +1434,10 @@
         "managementToggle": "约会互动管理总开关",
         "native": "官方原生入口",
         "nativeToggle": "官方原生入口总开关",
-        "nativeHelp": "使用游戏原生头像、互动和章节检查，无需导出 JSON。关闭角色开关也会隐藏其已拥有的原生入口，不修改账号数据。",
+        "nativeHelp": "在游戏左侧列表显示已启用的官方约会入口。账号已有入口的奖励由游戏处理。",
         "extra": "P 额外入口",
         "extraToggle": "P 额外入口总开关",
-        "extraHelp": "在头像栏添加带 P 标记的额外对象，使用本地场景 JSON 和音频。角色开关与原生入口互不影响。",
+        "extraHelp": "在游戏约会界面点击「P 预览」，打开使用本地场景 JSON 和音频的角色列表。",
         "configured": "已配置 {count} / {total} 位角色",
         "plugin": "约会互动插件 {version}",
         "pluginUpdate": "已有插件，请更新以支持双入口设置",
@@ -1449,10 +1449,8 @@
         "exportStatus": {
             "ready": "P 场景 JSON 可用",
             "missing": "P 场景缺少 JSON",
-            "expired": "P 场景 JSON 已过期",
             "invalid": "P 场景 JSON 无效"
         },
-        "expires": "有效期至 {time}",
         "nativeFor": "{name}的官方原生入口",
         "extraFor": "{name}的 P 额外入口",
         "configureMods": "配置模组",

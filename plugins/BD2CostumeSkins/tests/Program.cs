@@ -1,12 +1,25 @@
 using System;
+using System.Linq;
 using BD2CostumeSkins;
 
 var count = 0;
 void Check(bool ok, string message) { if (!ok) throw new Exception(message); count++; }
 void Reject(SkinSettings s) { try { s.Validate(); } catch (ArgumentException) { count++; return; } throw new Exception("Invalid settings accepted"); }
-var settings = SkinSettings.Defaults();
+SkinSettings SampleSettings() => new SkinSettings
+{
+    Mappings = { new SkinMapping { SourceId = "001207", TargetId = "001297" } },
+    SelectedSkins = { ["001207"] = "001207" }
+};
+
+var defaults = SkinSettings.Defaults();
+Check(defaults.Enabled && defaults.Mappings.Count == 14, "Bundled settings should enable all 14 mappings");
+Check(defaults.SelectedSkins.Count(pair => pair.Key != pair.Value) == 12, "Bundled settings should select 12 alternate skins");
+Check(defaults.Resolve(306, 306) == 396, "Bundled settings should use the current game selection");
+Check(defaults.Resolve(1107, 1107) == 1107, "Bundled settings should preserve an original skin selection");
+
+var settings = SampleSettings();
 settings.Validate();
-Check(settings.Resolve(1207, 1207) == 1207, "Base skin should be the default");
+Check(settings.Resolve(1207, 1207) == 1207, "Selecting the base skin should preserve its design ID");
 Check(settings.Next(1207, 1207) == "001297", "First click should choose target");
 settings.SelectedSkins["001207"] = "001297";
 Check(settings.Resolve(1207, 1207) == 1297, "Selected target must change design ID");
@@ -35,6 +48,6 @@ settings.Mappings.RemoveAt(2);
 settings.Mappings.Add(new SkinMapping { SourceId = "001207", TargetId = "001206" }); Reject(settings);
 settings.Mappings.RemoveAt(2);
 settings.SelectedSkins["001207"] = "001201"; Reject(settings);
-settings = SkinSettings.Defaults(); settings.Mappings[0].SourceId = "1207"; Reject(settings);
+settings = SampleSettings(); settings.Mappings[0].SourceId = "1207"; Reject(settings);
 Check(!SkinSettings.ValidId("００１２０７") && !SkinSettings.ValidId("000000"), "IDs must use six ASCII digits");
 Console.WriteLine($"Skin policy: {count} checks passed");

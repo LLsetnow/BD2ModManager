@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace BD2CostumeSkins;
 
@@ -19,12 +21,16 @@ public sealed class SkinSettings
     public List<SkinMapping> Mappings { get; set; } = new List<SkinMapping>();
     public Dictionary<string, string> SelectedSkins { get; set; } = new Dictionary<string, string>();
 
-    public static SkinSettings Defaults() => new SkinSettings {
-        Mappings = new List<SkinMapping> {
-            new SkinMapping { SourceId = "001207", TargetId = "001297", Label = "甜蜜的诱惑" }
-        },
-        SelectedSkins = new Dictionary<string, string> { ["001207"] = "001207" }
-    };
+    public static SkinSettings Defaults()
+    {
+        using var stream = typeof(SkinSettings).Assembly.GetManifestResourceStream("BD2CostumeSkins.DefaultSettings.json")
+            ?? throw new InvalidDataException("缺少内置皮肤配置");
+        using var reader = new StreamReader(stream);
+        var settings = JsonConvert.DeserializeObject<SkinSettings>(reader.ReadToEnd())
+            ?? throw new InvalidDataException("内置皮肤配置为空");
+        settings.Validate();
+        return settings;
+    }
 
     public void Validate()
     {

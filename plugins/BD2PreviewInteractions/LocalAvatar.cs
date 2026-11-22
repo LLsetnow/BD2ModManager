@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 namespace BD2PreviewInteractions;
 
-// Display the costume's full standing-art thumbnail over the native thumbnail. The
-// child image avoids races with the native cell's asynchronous thumbnail request.
+// Load the costume thumbnail without delaying the P preview list.
 internal sealed class LocalAvatar : MonoBehaviour
 {
     private static readonly Dictionary<string, AsyncOperationHandle<Texture2D>> assets = new();

@@ -93,12 +93,8 @@ pub struct SkinStatus {
 }
 
 fn defaults() -> SkinSettings {
-    SkinSettings {
-        schema_version: 1,
-        enabled: true,
-        mappings: vec![SkinMapping { source_id: "001207".into(), target_id: "001297".into(), label: "甜蜜的诱惑".into(), enabled: true }],
-        selected_skins: BTreeMap::from([("001207".into(), "001207".into())]),
-    }
+    serde_json::from_str(include_str!("../data/costume-skins-default.json"))
+        .expect("bundled costume skin settings")
 }
 
 fn catalog() -> Vec<Costume> {
@@ -215,8 +211,22 @@ pub fn install_costume_skins(app: tauri::AppHandle, state: tauri::State<AppState
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn sample_settings() -> SkinSettings {
+        SkinSettings {
+            schema_version: 1,
+            enabled: true,
+            mappings: vec![SkinMapping {
+                source_id: "001207".into(),
+                target_id: "001297".into(),
+                label: "甜蜜的诱惑".into(),
+                enabled: true,
+            }],
+            selected_skins: BTreeMap::from([("001207".into(), "001207".into())]),
+        }
+    }
     #[test] fn edits_preserve_current_game_selection_and_unrelated_settings() {
-        let mut current = defaults();
+        let mut current = sample_settings();
         current.selected_skins.insert("001207".into(), "001297".into());
         let edited = apply_change(&current, SkinChange::UpdateMapping { source_id: "001207".into(), target_id: "001297".into(), label: Some("新名称".into()), enabled: None }).unwrap();
         assert_eq!(edited.selected_skins, current.selected_skins);
@@ -226,7 +236,7 @@ mod tests {
         assert!(!disabled.enabled);
     }
     #[test] fn disabling_or_removing_selected_mapping_restores_valid_choice() {
-        let mut current = defaults(); current.selected_skins.insert("001207".into(), "001297".into());
+        let mut current = sample_settings(); current.selected_skins.insert("001207".into(), "001297".into());
         let disabled = apply_change(&current, SkinChange::UpdateMapping { source_id: "001207".into(), target_id: "001297".into(), label: None, enabled: Some(false) }).unwrap();
         assert_eq!(disabled.selected_skins["001207"], "001207");
         assert!(apply_change(&disabled, SkinChange::SelectSkin { source_id: "001207".into(), target_id: "001297".into() }).is_err());
@@ -234,7 +244,7 @@ mod tests {
         assert!(removed.mappings.is_empty() && removed.selected_skins.is_empty());
     }
     #[test] fn invalid_add_does_not_change_original_and_camel_case_actions_deserialize() {
-        let current = defaults();
+        let current = sample_settings();
         let duplicate = current.mappings[0].clone();
         assert!(apply_change(&current, SkinChange::AddMapping { mapping: duplicate }).is_err());
         assert_eq!(current.mappings.len(), 1);
@@ -242,7 +252,7 @@ mod tests {
         assert_eq!(apply_change(&current, change).unwrap().selected_skins["001207"], "001297");
     }
     #[test] fn master_switch_preserves_choices_and_supports_legacy_settings() {
-        let mut json = serde_json::to_value(defaults()).unwrap();
+        let mut json = serde_json::to_value(sample_settings()).unwrap();
         json.as_object_mut().unwrap().remove("enabled");
         let mut settings: SkinSettings = serde_json::from_value(json).unwrap();
         assert!(settings.enabled);
@@ -256,14 +266,26 @@ mod tests {
         assert!(!loaded.enabled);
         assert_eq!(loaded.selected_skins["001207"], "001297");
     }
-    #[test] fn default_liatris_mapping_is_valid() { validate(&defaults()).unwrap(); }
+    #[test]
+    fn bundled_skin_settings_are_valid() {
+        let settings = defaults();
+        validate(&settings).unwrap();
+        assert!(settings.enabled);
+        assert_eq!(settings.mappings.len(), 14);
+        assert_eq!(settings.selected_skins["000306"], "000396");
+        assert_eq!(settings.selected_skins["001107"], "001107");
+        assert_eq!(
+            settings.selected_skins.iter().filter(|(source, target)| source != target).count(),
+            12
+        );
+    }
     #[test] fn rejects_cross_character_and_unknown_ids() {
-        let mut settings = defaults(); settings.mappings[0].target_id = "000202".into();
+        let mut settings = sample_settings(); settings.mappings[0].target_id = "000202".into();
         assert!(validate(&settings).is_err());
         settings.mappings[0].target_id = "999999".into(); assert!(validate(&settings).is_err());
     }
     #[test] fn rejects_cycles_duplicates_and_unrelated_selection() {
-        let mut settings = defaults(); settings.mappings.push(settings.mappings[0].clone());
+        let mut settings = sample_settings(); settings.mappings.push(settings.mappings[0].clone());
         assert!(validate(&settings).is_err());
         settings.mappings[1].source_id = "001297".into(); settings.mappings[1].target_id = "001207".into();
         assert!(validate(&settings).is_err());
@@ -271,7 +293,7 @@ mod tests {
         assert!(validate(&settings).is_err());
     }
     #[test] fn disabled_selection_can_be_preserved_and_ids_keep_leading_zeroes() {
-        let mut settings = defaults(); settings.mappings[0].enabled = false;
+        let mut settings = sample_settings(); settings.mappings[0].enabled = false;
         settings.selected_skins.insert("001207".into(), "001297".into()); validate(&settings).unwrap();
         let bytes = serde_json::to_vec(&settings).unwrap();
         let restored: SkinSettings = serde_json::from_slice(&bytes).unwrap();

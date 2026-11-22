@@ -1412,10 +1412,10 @@
         "managementToggle": "Enable dating interaction management",
         "native": "Official native entries",
         "nativeToggle": "Enable official native entries",
-        "nativeHelp": "Uses the game’s native portraits, interactions and chapter checks without exporting JSON. Disabling a character also hides their owned native entry, without changing account data.",
+        "nativeHelp": "Shows enabled official dating entries in the game's sidebar. The game handles rewards for entries your account owns.",
         "extra": "P extra entries",
         "extraToggle": "Enable P extra entries",
-        "extraHelp": "Adds extra portraits marked P, using local scene JSON and audio. Character switches work independently of native entries.",
+        "extraHelp": "Open P 预览 (P Preview) on the in-game dating screen to choose a character. Previews use local scene JSON and audio.",
         "configured": "Configured {count} / {total} characters",
         "plugin": "Dating interaction plugin {version}",
         "pluginUpdate": "Update the installed plugin to support both entry types",
@@ -1427,10 +1427,8 @@
         "exportStatus": {
             "ready": "P scene JSON available",
             "missing": "P scene JSON missing",
-            "expired": "P scene JSON expired",
             "invalid": "P scene JSON invalid"
         },
-        "expires": "Valid until {time}",
         "nativeFor": "Official native entry for {name}",
         "extraFor": "P extra entry for {name}",
         "configureMods": "Configure mods",

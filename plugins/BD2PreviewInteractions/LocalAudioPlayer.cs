@@ -53,7 +53,7 @@ internal sealed class LocalAudioPlayer : MonoBehaviour
                 clips[hash] = (cached.Clip, ++usage);
                 continue;
             }
-            var path = Path.Combine(Plugin.AudioRoot, hash + ".ogg");
+            var path = Path.Combine(Plugin.Settings.AudioDirectory, hash + ".ogg");
             var verification = Task.Run(() => Verify(path, hash));
             while (!verification.IsCompleted)
             {

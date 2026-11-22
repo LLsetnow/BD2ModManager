@@ -81,10 +81,6 @@ function sceneTitle(scene: DatingScene) {
 }
 function exportState(id: string) { return status.value?.available.find(a => a.sceneId === id)?.exportStatus ?? 'missing' }
 function portrait(scene: DatingScene) { return convertFileSrc(`standing/${String(scene.costumeId).padStart(6, '0')}`, 'bd2assets') }
-function expiry(id: string) {
-  const time = status.value?.available.find(a => a.sceneId === id)?.expiresAtMs
-  return time ? t('interactionsTab.expires', { time: new Date(time).toLocaleString(locale.value.replace(/_/g, '-')) }) : ''
-}
 function setAll(mode: 'enabled' | 'nativeEnabled', value: boolean) {
   settings.value?.scenes.forEach(scene => { scene[mode] = value }); dirty.value = true
 }
@@ -126,7 +122,7 @@ onMounted(() => run(ensureLoaded))
         <p v-if="!settings.enabled" class="text-sm text-text-secondary">{{ t('interactionsTab.disabledHelp') }}</p>
         <div class="interaction-grid">
           <article v-for="scene in visibleScenes" :key="scene.sceneId" class="min-w-0 rounded-lg border border-border-subtle p-3 flex flex-col gap-3">
-            <div class="flex items-start gap-3 min-w-0"><Image :src="portrait(scene)" :alt="sceneTitle(scene)" class="w-20 h-24 shrink-0 object-cover rounded-md bg-surface-panel" error-src="characters/standing/placeholder_character.png" /><div class="min-w-0 flex-1"><h3 class="text-sm font-medium break-words">{{ sceneTitle(scene) }}</h3><p class="text-xs mt-2" :title="expiry(scene.sceneId)" :class="exportState(scene.sceneId) === 'ready' ? 'text-green-400' : 'text-amber-400'">{{ t(`interactionsTab.exportStatus.${exportState(scene.sceneId)}`) }}</p></div></div>
+            <div class="flex items-start gap-3 min-w-0"><Image :src="portrait(scene)" :alt="sceneTitle(scene)" class="w-20 h-24 shrink-0 object-cover rounded-md bg-surface-panel" error-src="characters/standing/placeholder_character.png" /><div class="min-w-0 flex-1"><h3 class="text-sm font-medium break-words">{{ sceneTitle(scene) }}</h3><p class="text-xs mt-2" :class="exportState(scene.sceneId) === 'ready' ? 'text-green-400' : 'text-amber-400'">{{ t(`interactionsTab.exportStatus.${exportState(scene.sceneId)}`) }}</p></div></div>
             <div class="flex items-center justify-between gap-3 border-t border-border-subtle pt-3"><span class="text-sm">{{ t('interactionsTab.native') }}</span><ToggleSwitch v-model="scene.nativeEnabled" :label="t('interactionsTab.nativeFor', { name: sceneTitle(scene) })" :disabled="busy" @update:model-value="dirty = true" /></div>
             <div class="flex items-center justify-between gap-3"><span class="text-sm">{{ t('interactionsTab.extra') }}</span><ToggleSwitch v-model="scene.enabled" :label="t('interactionsTab.extraFor', { name: sceneTitle(scene) })" :disabled="busy" @update:model-value="dirty = true" /></div>
             <button class="action mt-auto justify-between!" :aria-label="t('interactionsTab.configureModsFor', { name: sceneTitle(scene) })" @click="configureMods(scene)"><span class="inline-flex items-center gap-2"><SlidersHorizontal class="w-4 h-4" />{{ t('interactionsTab.configureMods') }}</span><span class="text-xs text-text-secondary">{{ t('interactionsTab.modsEnabled', { count: enabledModsCount(scene.sceneId), total: sceneMods(scene.sceneId).length }) }}</span></button>

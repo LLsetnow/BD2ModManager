@@ -3,6 +3,11 @@ setlocal
 title BD2ModManager
 cd /d "%~dp0"
 
+if exist "src-tauri\target\release\BD2ModManager.exe" (
+    start "" "%~dp0src-tauri\target\release\BD2ModManager.exe"
+    exit /b 0
+)
+
 fltmc >nul 2>&1
 if errorlevel 1 (
     echo Requesting administrator privileges...
@@ -12,11 +17,6 @@ if errorlevel 1 (
         pause
         exit /b 1
     )
-    exit /b 0
-)
-
-if exist "src-tauri\target\release\BD2ModManager.exe" (
-    start "" "%~dp0src-tauri\target\release\BD2ModManager.exe"
     exit /b 0
 )
 
