@@ -63,10 +63,18 @@ pub fn disable_mods(
     mod_manager.disable_mods(mod_names)
 }
 
-fn launch_mod_preview(app_handle: &AppHandle, paths: &[PathBuf]) -> Result<(), PreviewError> {
+fn launch_mod_preview(
+    app_handle: &AppHandle,
+    paths: &[PathBuf],
+    show_sidebar: bool,
+) -> Result<(), PreviewError> {
     let mod_preview_exe = get_mod_preview_path(app_handle)
         .ok_or(PreviewError::ModPreviewNotFound)?;
-    std::process::Command::new(mod_preview_exe)
+    let mut command = std::process::Command::new(mod_preview_exe);
+    if show_sidebar {
+        command.arg("--show-sidebar");
+    }
+    command
         .args(paths)
         .spawn()
         .map_err(|err| match err.kind() {
@@ -78,7 +86,7 @@ fn launch_mod_preview(app_handle: &AppHandle, paths: &[PathBuf]) -> Result<(), P
 
 #[tauri::command]
 pub fn open_official_resources(app_handle: AppHandle) -> Result<(), AppError> {
-    Ok(launch_mod_preview(&app_handle, &[])?)
+    Ok(launch_mod_preview(&app_handle, &[], true)?)
 }
 
 #[tauri::command]
@@ -132,7 +140,7 @@ pub async fn preview_mods(
             return Ok(());
         }
 
-        Ok(launch_mod_preview(&app_handle, &paths)?)
+        Ok(launch_mod_preview(&app_handle, &paths, false)?)
     })
     .await;
 

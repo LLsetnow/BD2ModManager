@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
+import { useGameStore } from './game'
 
 export type DatingScene = { sceneId: string; costumeId: number; avatarAddress: string; title: string; enabled: boolean; nativeEnabled: boolean; useMods: boolean }
 export type DatingSettings = { schemaVersion: number; enabled: boolean; pEntriesEnabled: boolean; nativeEntriesEnabled: boolean; dragHoldSeconds: number; markerOpacity: number; scenes: DatingScene[] }
@@ -16,6 +17,11 @@ export const useDatingInteractionsStore = defineStore('datingInteractions', () =
   const dirty = ref(false)
   const message = ref('')
   const error = ref('')
+  const gameStore = useGameStore()
+
+  watch(() => gameStore.bundledPluginUpdates, plugins => {
+    if (plugins && status.value) Object.assign(status.value, plugins.dating)
+  })
 
   async function load() {
     const result = await invoke<DatingStatus>('get_local_interactions')

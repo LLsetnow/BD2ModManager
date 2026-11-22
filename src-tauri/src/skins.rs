@@ -2,10 +2,11 @@ use std::{collections::{BTreeMap, HashSet}, fs, path::{Path, PathBuf}};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
-use crate::{AppState, game::game::BundledPluginStatus, utils::path::get_game_dir};
+use crate::{AppState, game::{bundled_plugins, game::BundledPluginStatus}, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2CostumeSkins.dll");
 const VERSION: &str = "0.1.1";
+const PLUGIN_DLL: &str = "BD2CostumeSkins.dll";
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -136,12 +137,20 @@ fn plugin_dir(state: &AppState) -> Result<PathBuf, String> {
     let config = state.config.lock().map_err(|e| e.to_string())?;
     let game = get_game_dir(&config).ok_or("请先在设置中选择游戏目录")?;
     if !game.join("BrownDust II.exe").exists() { return Err("游戏目录无效".into()); }
-    Ok(game.join("BepInEx/plugins/BD2CostumeSkins"))
+    Ok(plugin_dir_for_game(&game))
+}
+
+fn plugin_dir_for_game(game: &Path) -> PathBuf {
+    game.join("BepInEx/plugins/BD2CostumeSkins")
 }
 
 pub(crate) fn bundled_plugin_status(state: &AppState) -> BundledPluginStatus {
-    let dll = plugin_dir(state).ok().map(|dir| dir.join("BD2CostumeSkins.dll"));
+    let dll = plugin_dir(state).ok().map(|dir| dir.join(PLUGIN_DLL));
     BundledPluginStatus::from_dll(dll, PLUGIN, VERSION)
+}
+
+pub(crate) fn plugin_status_for_game(game: &Path) -> BundledPluginStatus {
+    BundledPluginStatus::from_dll(Some(plugin_dir_for_game(game).join(PLUGIN_DLL)), PLUGIN, VERSION)
 }
 
 fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
@@ -149,7 +158,11 @@ fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
 }
 
 fn read_settings(app: &tauri::AppHandle, state: &AppState) -> Result<SkinSettings, String> {
-    let game = plugin_dir(state).ok().map(|d| d.join("settings.json"));
+    read_settings_for_dir(app, plugin_dir(state).ok().as_deref())
+}
+
+fn read_settings_for_dir(app: &tauri::AppHandle, dir: Option<&Path>) -> Result<SkinSettings, String> {
+    let game = dir.map(|dir| dir.join("settings.json"));
     for path in game.into_iter().chain(std::iter::once(manager_path(app)?)) {
         if path.exists() {
             let settings = serde_json::from_slice(&fs::read(&path).map_err(|e| e.to_string())?)
@@ -196,18 +209,22 @@ pub fn update_costume_skins(app: tauri::AppHandle, state: tauri::State<AppState>
 
 #[tauri::command]
 pub fn install_costume_skins(app: tauri::AppHandle, state: tauri::State<AppState>) -> Result<(), String> {
+    let _operation = bundled_plugins::lock_installation()?;
     let dir = plugin_dir(&state)?;
-    let game = dir.ancestors().nth(3).ok_or("无效游戏目录")?;
-    if !game.join("BepInEx/core/BepInEx.dll").exists() { return Err("请先安装 BepInEx 模组加载器".into()); }
-    let settings = read_settings(&app, &state)?;
-    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    let dll = dir.join("BD2CostumeSkins.dll");
-    if dll.exists() { fs::OpenOptions::new().write(true).open(&dll).map_err(|_| "插件被占用，请退出游戏后安装")?; }
-    let temporary = dir.join("BD2CostumeSkins.dll.tmp");
-    fs::write(&temporary, PLUGIN).map_err(|e| e.to_string())?;
-    fs::rename(temporary, dll).map_err(|e| format!("安装失败，请退出游戏后重试：{e}"))?;
-    write_json(&dir.join("settings.json"), &settings)?;
-    write_json(&manager_path(&app)?, &settings)
+    let game = dir.ancestors().nth(3).ok_or("无效游戏路径")?;
+    if !bundled_plugins::has_bepinex(game) {
+        return Err("请先安装 BepInEx 模组加载器".into());
+    }
+    bundled_plugins::require_game_closed()?;
+    deploy_bundled_plugin(&app, game, true).map(|_| ())
+}
+
+pub(crate) fn deploy_bundled_plugin(app: &tauri::AppHandle, game: &Path, force: bool) -> Result<bool, String> {
+    let dir = plugin_dir_for_game(game);
+    bundled_plugins::deploy_dll(&dir.join(PLUGIN_DLL), PLUGIN, force, |path| {
+        let settings = read_settings_for_dir(app, Some(&dir))?;
+        bundled_plugins::write_initial_settings(path, &settings)
+    })
 }
 
 #[cfg(test)]

@@ -8,6 +8,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { listen } from '@tauri-apps/api/event';
 
 import { useSettingsStore } from '../../stores/settings';
+import { type BundledGamePlugins, type BundledGamePluginStatus, useGameStore } from '../../stores/game';
 import { LogMessage, useModLoaderLogsStore } from '../../stores/modLoaderLogs';
 import { useHeader } from '../../composables/useHeader';
 import { useConfirm } from '../../plugins/ConfirmService';
@@ -22,6 +23,7 @@ const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
 const settingsStore = useSettingsStore()
+const gameStore = useGameStore()
 const { logs } = useModLoaderLogsStore()
 const loggingStore = useLoggingStore()
 
@@ -30,14 +32,13 @@ const defaultState = (): PluginState => ({ status: Status.NotInstalled, version:
 const bepInExState = ref<PluginState>(defaultState())
 const brownDustXState = ref<PluginState>(defaultState())
 const configurationManagerState = ref<PluginState>(defaultState())
-type BundledPlugin = { installed: boolean; pluginCurrent: boolean; pluginVersion: string }
-const bundledPlugins = ref<{ dating: BundledPlugin; skins: BundledPlugin } | null>(null)
+const bundledPlugins = ref<BundledGamePlugins | null>(null)
 const bundledRows = computed(() => [
     { route: 'interactions', label: t('sidebar.tabs.interactions'), description: t('modLoaderTab.descriptions.datingInteractions'), plugin: bundledPlugins.value?.dating },
     { route: 'skins', label: t('modLoaderTab.labels.costumeSkins'), description: t('modLoaderTab.descriptions.costumeSkins'), plugin: bundledPlugins.value?.skins },
 ])
 
-function bundledPluginState(plugin?: BundledPlugin): PluginState {
+function bundledPluginState(plugin?: BundledGamePluginStatus): PluginState {
     if (!plugin) return defaultState()
     const status = plugin.pluginCurrent ? Status.Installed : plugin.installed ? Status.InstalledButOutdated : Status.NotInstalled
     return { status, version: plugin.pluginVersion }
@@ -166,6 +167,7 @@ async function installComponent(command: string, scope: LogMessage['scope'], sou
         pushLog('info', scope, t(`modLoaderTab.logs.${message}`, { scope, ...source }))
         await invoke(command, source)
         pushLog('success', scope, t('modLoaderTab.logs.installedSuccess', { scope }))
+        if (command === 'install_bepinex') await gameStore.syncBundledPlugins()
         await initialize()
     } catch (error) {
         pushLog('error', scope, t('modLoaderTab.logs.installError', { scope, error: mapInstallError(error) }))
@@ -257,6 +259,10 @@ watch(() => settingsStore.settings.gameDirectory, async (newPath) => {
     }
 })
 
+watch(() => gameStore.bundledPluginUpdates, plugins => {
+    if (plugins) bundledPlugins.value = plugins
+})
+
 useHeader({
     title: computed(() => t('modLoaderTab.title')),
     subtitle: computed(() => t('modLoaderTab.subtitle')),
@@ -264,7 +270,11 @@ useHeader({
         label: computed(() => t('common.actions.refresh')),
         icon: RefreshCcw,
         class: "flex justify-center items-center gap-1 mt-1 px-4 py-1 rounded-sm transition-colors duration-200 border border-border-default cursor-pointer",
-        action: () => { if (!isFinishingSetup.value) void initialize(true) }
+        action: async () => {
+            if (isFinishingSetup.value) return
+            await gameStore.syncBundledPlugins()
+            await initialize(true)
+        }
     }]
 })
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCharactersStore } from '../../stores/characters'
+import { useGameStore } from '../../stores/game'
 import { getCharName, useLang } from '../../utils/formatCharName'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { Shirt, Plus, Trash2, RefreshCw, Download, ArrowRight } from '@lucide/vue'
@@ -25,6 +26,10 @@ const lang = useLang()
 const charactersStore = useCharactersStore()
 const route = useRoute()
 const status = ref<Status>()
+const gameStore = useGameStore()
+watch(() => gameStore.bundledPluginUpdates, plugins => {
+  if (plugins && status.value) Object.assign(status.value, plugins.skins)
+})
 const settings = ref<Settings>()
 const sourceId = ref('001207')
 const targetId = ref('001297')

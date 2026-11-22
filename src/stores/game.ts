@@ -3,6 +3,7 @@ import { readonly, ref, watch } from "vue";
 import { useSettingsStore } from "./settings";
 import { invoke } from "@tauri-apps/api/core";
 import { useLoggingStore } from "./logging";
+import { useNotificationStore } from "./notification";
 
 // #[derive(Serialize)]
 // #[serde(tag = "type", content = "reason")]
@@ -20,8 +21,13 @@ interface VersionInfo {
     canConfigure: boolean
 }
 
+export type BundledGamePluginStatus = { installed: boolean; pluginCurrent: boolean; pluginVersion: string }
+export type BundledGamePlugins = { dating: BundledGamePluginStatus; skins: BundledGamePluginStatus }
+type BundledPluginSync = { changed: boolean; gameRunning: boolean; errors: string[] }
+
 export const useGameStore = defineStore("game", () => {
     const loggingStore = useLoggingStore()
+    const notificationStore = useNotificationStore()
 
     const settingsStore = useSettingsStore()
 
@@ -31,6 +37,35 @@ export const useGameStore = defineStore("game", () => {
     const configurationManagerVersion = ref<VersionInfo | null>(null)
 
     const isGameRunning = ref<boolean>(false)
+    const bundledPluginUpdates = ref<BundledGamePlugins | null>(null)
+    let retryPluginSync: ReturnType<typeof setTimeout> | undefined
+    let syncRequest = 0
+
+    async function syncBundledPlugins() {
+        clearTimeout(retryPluginSync)
+        const request = ++syncRequest
+        const gameDirectory = settingsStore.settings.gameDirectory
+        if (!gameDirectory) return
+
+        try {
+            const result = await invoke<BundledPluginSync>('sync_bundled_game_plugins', { gameDirectory })
+            if (settingsStore.settings.gameDirectory !== gameDirectory || !result) return
+
+            if (result.gameRunning && request === syncRequest) {
+                retryPluginSync = setTimeout(() => void syncBundledPlugins(), 15_000)
+            }
+            if (result.errors.length) {
+                loggingStore.logError('Could not update all bundled game plugins:', result.errors)
+                notificationStore.add({ type: 'warn', message: result.errors.join('\n') })
+            }
+            if (result.changed) {
+                const plugins = await invoke<BundledGamePlugins>('get_bundled_game_plugins')
+                if (settingsStore.settings.gameDirectory === gameDirectory) bundledPluginUpdates.value = plugins
+            }
+        } catch (error) {
+            loggingStore.logError('Could not check bundled game plugins:', error)
+        }
+    }
 
     async function launchGame() {}
 
@@ -65,9 +100,11 @@ export const useGameStore = defineStore("game", () => {
 
     watch(
         () => settingsStore.settings.gameDirectory,
-        (_) => {
+        () => {
             // always refresh when game directory changes, even if it's null
-            refresh()
+            bundledPluginUpdates.value = null
+            void syncBundledPlugins()
+            void refresh()
         },
         {
             immediate: true
@@ -80,6 +117,8 @@ export const useGameStore = defineStore("game", () => {
         browndustxVersion: readonly(browndustxVersion),
         configurationManagerVersion: readonly(configurationManagerVersion),
         isGameRunning: readonly(isGameRunning),
+        bundledPluginUpdates: readonly(bundledPluginUpdates),
+        syncBundledPlugins,
         launchGame,
         refresh
     }
