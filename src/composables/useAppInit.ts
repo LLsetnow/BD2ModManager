@@ -9,6 +9,7 @@ import { useNotificationStore } from "../stores/notification";
 import { useI18n } from "vue-i18n";
 import { useGameStore } from "../stores/game";
 import { useLocalStorage } from "@vueuse/core";
+import { watch } from "vue";
 
 export function useAppInitializer() {
   const { t } = useI18n()
@@ -18,6 +19,14 @@ export function useAppInitializer() {
   const modsStore = useModsStore();
   const gameStore = useGameStore()
   const skipUpdateVersion = useLocalStorage('skipUpdateVersion', '')
+  let pendingUpdate: AppUpdateAvailable | null = null
+
+  watch(() => settingsStore.settings.isFirstLaunch, (isFirstLaunch) => {
+    if (!isFirstLaunch && pendingUpdate) {
+      globalModals.updateAvailable.showModal(pendingUpdate)
+      pendingUpdate = null
+    }
+  })
 
   const {
     checkForModPreviewUpdate,
@@ -25,32 +34,31 @@ export function useAppInitializer() {
     updateGameData,
   } = useUpdater()
 
-  async function initializeGamePath() {
-    // validate saved game dir, if is not valid show the game dir selection
-    // [TODO] move to rust backend, there it can set the game dir
-    // [TODO] what to do if the saved game directory is not valid? show the select game directory modal? or just show an error and let the user open the select game directory modal from settings?
-
-
-    if (!settingsStore.settings.gameDirectory) {
-      loggingStore.logDebug("No saved game directory found.");
-      return;
-    }
-
+  async function initializeGamePath(): Promise<string | null> {
     try {
-      loggingStore.logDebug("Checking current game directory:", settingsStore.settings.gameDirectory);
-      const isValid = await settingsStore.validateGamePath(settingsStore.settings.gameDirectory);
-      loggingStore.logDebug("Is game directory valid:", isValid);
+      const saved = settingsStore.settings.gameDirectory
+      if (saved && await settingsStore.validateGamePath(saved)) return saved
 
-      if (!isValid) {
-        loggingStore.logDebug("Game directory is invalid.");
-      }
+      const detected = await settingsStore.locateGamePath()
+      if (detected?.length !== 1) return null
+
+      const gameDirectory = detected[0]
+      await settingsStore.saveSettings({ gameDirectory })
+      return gameDirectory
     } catch (error) {
-      loggingStore.logError("Error during game directory initialization:", error);
+      loggingStore.logError("Error during game directory initialization:", error)
+      return null
     }
   }
 
   async function initialize(): Promise<{ isFirstLaunch: boolean, isBrownDustXOutdated: boolean, isUpdateAvailable: boolean }> {
     loggingStore.logDebug("Starting BD2ModManager");
+
+    const gameDirectory = await initializeGamePath()
+    const isFirstLaunch = settingsStore.settings.isFirstLaunch
+    if (isFirstLaunch || !gameDirectory) {
+      globalModals.welcome.showModal()
+    }
 
     await Promise.all([
       useCharactersStore().loadCharacters(),
@@ -60,13 +68,6 @@ export function useAppInitializer() {
     await modsStore.discoverMods()
     await gameStore.refresh()
 
-    const isFirstLaunch = settingsStore.settings.isFirstLaunch
-
-    if (isFirstLaunch) {
-      settingsStore.saveSettings({ isFirstLaunch: false })
-    }
-
-    await initializeGamePath()
     updateGameData()
 
     if (settingsStore.settings.autoUpdateModPreview) {
@@ -79,12 +80,9 @@ export function useAppInitializer() {
       updateAvailable = await checkForAppUpdate()
     }
     
-    if (isFirstLaunch) {
-      globalModals.welcome.showModal()
-    }
-
     if (updateAvailable && updateAvailable.versionAvailable !== skipUpdateVersion.value) {
-      globalModals.updateAvailable.showModal(updateAvailable)
+      if (settingsStore.settings.isFirstLaunch) pendingUpdate = updateAvailable
+      else globalModals.updateAvailable.showModal(updateAvailable)
     }
 
     if (gameStore.browndustxVersion?.status === "InstalledButOutdated") {

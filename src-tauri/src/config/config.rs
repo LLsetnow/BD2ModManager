@@ -1,9 +1,10 @@
 use log::info;
 use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 use tauri::AppHandle;
 use tauri_plugin_store::StoreExt;
 
-use crate::utils::path::get_config_file_path;
+use crate::utils::path::{get_config_file_path, get_default_asset_library_dir};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", default)]
@@ -46,6 +47,26 @@ pub struct PartialAppConfig {
 }
 
 impl AppConfig {
+    fn asset_library_override(&self) -> Option<&Path> {
+        self.asset_library_directory.as_deref()
+            .map(str::trim)
+            .filter(|path| !path.is_empty())
+            .map(Path::new)
+    }
+
+    pub fn asset_library_path(&self) -> PathBuf {
+        self.asset_library_override()
+            .map(Path::to_path_buf)
+            .unwrap_or_else(get_default_asset_library_dir)
+    }
+
+    pub fn ensure_default_asset_library(&self) -> std::io::Result<()> {
+        if self.asset_library_override().is_none() {
+            std::fs::create_dir_all(get_default_asset_library_dir())?;
+        }
+        Ok(())
+    }
+
     pub fn merge_from(&mut self, partial: PartialAppConfig) {
         if let Some(game_directory) = partial.game_directory {
             self.game_directory = Some(game_directory);
@@ -101,7 +122,7 @@ impl Default for AppConfig {
             game_directory: None,
             staging_directory: None,
             asset_library_directory: None,
-            language: "en_US".into(),
+            language: "zh_CN".into(),
             theme: "dark".into(),
             sync_method: "copy".into(),
             search_mods_recursively: false,
@@ -207,5 +228,30 @@ impl Deref for BD2Config {
 impl DerefMut for BD2Config {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.config
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unset_asset_library_resolves_next_to_the_executable() {
+        let exe = std::env::current_exe().unwrap();
+        let expected = exe.parent().unwrap().join("asset");
+        for json in ["{}", r#"{"assetLibraryDirectory":null}"#, r#"{"assetLibraryDirectory":" "}"#] {
+            let settings: AppConfig = serde_json::from_str(json).unwrap();
+            assert_eq!(settings.asset_library_path(), expected);
+        }
+        assert!(serde_json::to_value(AppConfig::default()).unwrap()["assetLibraryDirectory"].is_null());
+    }
+
+    #[test]
+    fn a_saved_asset_library_path_takes_priority() {
+        let selected = tempfile::tempdir().unwrap();
+        let settings: AppConfig = serde_json::from_value(serde_json::json!({
+            "assetLibraryDirectory": selected.path(),
+        })).unwrap();
+        assert_eq!(settings.asset_library_path(), selected.path());
     }
 }

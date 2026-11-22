@@ -63,6 +63,24 @@ pub fn disable_mods(
     mod_manager.disable_mods(mod_names)
 }
 
+fn launch_mod_preview(app_handle: &AppHandle, paths: &[PathBuf]) -> Result<(), PreviewError> {
+    let mod_preview_exe = get_mod_preview_path(app_handle)
+        .ok_or(PreviewError::ModPreviewNotFound)?;
+    std::process::Command::new(mod_preview_exe)
+        .args(paths)
+        .spawn()
+        .map_err(|err| match err.kind() {
+            ErrorKind::NotFound => PreviewError::ModPreviewNotFound,
+            _ => PreviewError::PreviewFailed { reason: err.to_string() },
+        })?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn open_official_resources(app_handle: AppHandle) -> Result<(), AppError> {
+    Ok(launch_mod_preview(&app_handle, &[])?)
+}
+
 #[tauri::command]
 pub async fn preview_mods(
     app_handle: AppHandle,
@@ -114,19 +132,7 @@ pub async fn preview_mods(
             return Ok(());
         }
 
-        let mod_preview_exe = get_mod_preview_path(&app_handle)
-            .ok_or(PreviewError::ModPreviewNotFound)?;
-        std::process::Command::new(mod_preview_exe)
-            .args(&paths)
-            .spawn()
-            .map_err(|err| match err.kind() {
-                ErrorKind::NotFound => PreviewError::ModPreviewNotFound,
-                _ => PreviewError::PreviewFailed {
-                    reason: err.to_string(),
-                },
-            })?;
-
-        Ok(())
+        Ok(launch_mod_preview(&app_handle, &paths)?)
     })
     .await;
 

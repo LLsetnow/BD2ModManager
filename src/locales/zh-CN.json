@@ -219,6 +219,11 @@
                 }
             },
             "welcome": {
+                "setup": {
+                    "title": "首次设置 · 1/2",
+                    "description": "先确认游戏目录，再安装模组框架与插件。",
+                    "next": "设置框架与插件"
+                },
                 "title": "欢迎使用 BD2ModManager！",
                 "subtitle": "看起来这是您第一次启动应用。您可以现在设置游戏目录，或跳过并稍后在设置中完成。",
                 "chips": {
@@ -290,6 +295,7 @@
             "currentProfilePlaceholder": "选择配置文件"
         },
         "tabs": {
+            "officialResources": "官方资源",
             "mods": "模组",
             "characters": "角色",
             "profiles": "配置文件",
@@ -875,6 +881,13 @@
         }
     },
     "modLoaderTab": {
+        "setup": {
+            "title": "首次设置 · 2/2",
+            "description": "先安装 BepInEx，再安装 BrownDustX 和 Configuration Manager。BrownDustX 的安装包可通过 Wiki 或 Discord 获取。",
+            "progress": "已安装 {count}/3 个组件",
+            "back": "返回游戏目录",
+            "finish": "完成设置"
+        },
         "title": "模组加载器",
         "subtitle": "安装并管理 BepInEx、BrownDustX 和 Configuration Manager。",
         "status": {

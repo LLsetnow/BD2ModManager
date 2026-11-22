@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Bolt, ChevronRight, Component, Heart, Play, Puzzle, Settings, Users, Shirt } from '@lucide/vue';
+import { Bolt, ChevronRight, Component, GalleryHorizontalEnd, Heart, Play, Puzzle, Settings, Users, Shirt } from '@lucide/vue';
 
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { invoke } from '@tauri-apps/api/core';
@@ -12,6 +12,7 @@ import { useProfilesStore } from '../../stores/profiles.ts';
 import { useNotificationStore } from '../../stores/notification.ts';
 import { useGameStore } from '../../stores/game.ts';
 import { useConfirm } from '../../plugins/ConfirmService';
+import { getErrorMessage } from '../../utils/errors';
 
 import NavigationSection from './NavigationSection.vue'
 import NavigationButton from './NavigationButton.vue';
@@ -25,6 +26,24 @@ const confirm = useConfirm()
 const loggingStore = useLoggingStore()
 const modsStore = useModsStore()
 const gameStore = useGameStore()
+const isOpeningResources = ref(false)
+
+async function openOfficialResources() {
+    if (isOpeningResources.value) return
+    isOpeningResources.value = true
+    try {
+        await invoke('open_official_resources')
+    } catch (error) {
+        loggingStore.logError('Failed to open ModPreview for official resources:', error)
+        notificationStore.add({
+            type: 'error',
+            title: t('sidebar.tabs.officialResources'),
+            message: getErrorMessage(t, error),
+        })
+    } finally {
+        isOpeningResources.value = false
+    }
+}
 
 async function launchGame(vanilla: boolean = false) {
     if (modsStore.isSyncNeeded && !vanilla) {
@@ -79,6 +98,8 @@ function onProfileSelected(profile_id: string) {
                 <NavigationButton :icon="Users" :label="$t('sidebar.tabs.characters')" value="characters" />
                 <NavigationButton :icon="Shirt" :label="$t('sidebar.tabs.skins')" value="skins" />
                 <NavigationButton :icon="Heart" :label="$t('sidebar.tabs.interactions')" value="interactions" />
+                <NavigationButton :icon="GalleryHorizontalEnd" :label="$t('sidebar.tabs.officialResources')"
+                    :disabled="isOpeningResources" @click="openOfficialResources" />
             </NavigationSection>
             <NavigationSection :title="$t('sidebar.sections.settings')">
                 <NavigationButton :icon="Bolt" :label="$t('sidebar.tabs.profiles')" value="profiles" />

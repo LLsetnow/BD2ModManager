@@ -140,6 +140,9 @@ pub fn run() {
 
             let mut config = BD2Config::new(app_handle.clone());
             config.load_config();
+            if let Err(error) = config.ensure_default_asset_library() {
+                log::warn!("Failed to create the default asset library directory: {error}");
+            }
 
             let profiles_dir: PathBuf = get_default_profiles_dir(app_handle, false);
             // let temp_dir = get_temp_dir();
@@ -230,6 +233,7 @@ pub fn run() {
             mods::commands::unsync_mods,
             mods::commands::is_sync_needed,
             mods::commands::preview_mods,
+            mods::commands::open_official_resources,
             // profiles
             profiles::commands::get_profiles,
             profiles::commands::switch_profile,

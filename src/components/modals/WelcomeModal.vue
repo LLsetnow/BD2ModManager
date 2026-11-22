@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { AlertOctagon, Check, RefreshCcw } from '@lucide/vue'
 
-import { onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 import { dirname } from '@tauri-apps/api/path'
 import { openUrl } from '@tauri-apps/plugin-opener'
@@ -29,6 +30,7 @@ const {
 } = globalModals.welcome
 
 const { t } = useI18n()
+const router = useRouter()
 const loggingStore = useLoggingStore()
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
@@ -38,6 +40,9 @@ const {
 } = useLocale()
 
 const gamePathsFound = ref<string[]>([])
+const validatedPath = ref<string | null>(null)
+const pathBusy = ref(false)
+const canContinue = computed(() => !!validatedPath.value && validatedPath.value === settings.value.gameDirectory && !pathBusy.value)
 const errorMessage = ref<string | null>(null)
 const errorKey = ref(0)
 
@@ -47,6 +52,8 @@ function setError(msg: string | null) {
 }
 
 async function handlePathSelected(path: string) {
+    if (pathBusy.value) return
+    pathBusy.value = true
     try {
         const isValid = await validateGamePath(path)
 
@@ -56,13 +63,17 @@ async function handlePathSelected(path: string) {
         }
 
         await saveSettings({ gameDirectory: path })
-        errorMessage.value = null
+        validatedPath.value = path
+        setError(null)
     } catch (err) {
         setError(t('app.modals.welcome.selectGameDirectory.errors.unknownError', { error: err }))
+    } finally {
+        pathBusy.value = false
     }
 }
 
 async function handleDirectoryBrowse() {
+    if (pathBusy.value) return
     const file = await open({
         filters: [{ name: 'Executable Files', extensions: ['exe'] }],
         multiple: false,
@@ -82,30 +93,44 @@ async function handleDirectoryBrowse() {
 
 async function findGamePaths() {
     loggingStore.logDebug('WelcomeModal opened, attempting to locate game path.')
-
-    const detectedGamePaths = await locateGamePath()
-    if (detectedGamePaths && detectedGamePaths.length > 0) {
-        // add some paths to test
-        gamePathsFound.value = detectedGamePaths
-    } else {
-        loggingStore.logDebug('No game paths found by locateGamePath.')
-        gamePathsFound.value = []
+    const path = settings.value.gameDirectory
+    try {
+        const [paths, valid] = await Promise.all([locateGamePath(), path ? validateGamePath(path) : false])
+        gamePathsFound.value = paths ?? []
+        if (pathBusy.value || settings.value.gameDirectory !== path) return
+        validatedPath.value = (valid && path) || null
+        setError(path && !valid ? t('app.modals.welcome.selectGameDirectory.errors.invalidDirectory', { path }) : null)
+    } catch (err) {
+        setError(t('app.modals.welcome.selectGameDirectory.errors.unknownError', { error: err }))
     }
 }
 
-onMounted(async () => {
-    loggingStore.logDebug('WelcomeModal mounted.')
-
-    if (isOpen.value) {
-        await findGamePaths()
+async function continueSetup() {
+    const path = validatedPath.value
+    if (!canContinue.value || !path) return
+    pathBusy.value = true
+    try {
+        if (!await validateGamePath(path) || path !== settings.value.gameDirectory) {
+            validatedPath.value = null
+            setError(t('app.modals.welcome.selectGameDirectory.errors.invalidDirectory', { path }))
+            return
+        }
+        if (settings.value.isFirstLaunch) await router.push({ name: 'mod-loader' })
+        closeModal()
+    } catch (err) {
+        setError(t('app.modals.welcome.selectGameDirectory.errors.unknownError', { error: err }))
+    } finally {
+        pathBusy.value = false
     }
-})
+}
 
-watch(isOpen, async (isVisible) => {
+watch(isOpen, (isVisible) => {
     if (isVisible) {
-        await findGamePaths()
+        validatedPath.value = null
+        setError(null)
+        void findGamePaths()
     }
-})
+}, { immediate: true })
 
 const GITHUB_URL = 'https://github.com/LLsetnow/BD2ModManager'
 const DISCORD_URL = 'https://discord.gg/B3Aqz6tDG2'
@@ -114,7 +139,8 @@ const KOFI_URL = 'https://ko-fi.com/bruhnn'
 
 <template>
     <Modal :show="isOpen" size="lg" @close="closeModal" :close-on-escape="false"
-        :title="$t('app.modals.welcome.title')" :subtitle="$t('app.modals.welcome.subtitle')">
+        :title="$t(settings.isFirstLaunch ? 'app.modals.welcome.setup.title' : 'app.modals.welcome.title')"
+        :subtitle="$t(settings.isFirstLaunch ? 'app.modals.welcome.setup.description' : 'app.modals.welcome.subtitle')">
         <div class="w-full h-full flex flex-col gap-4 p-4">
             <div v-if="!isChineseLanguage"
                 class="flex items-center gap-3 p-3 rounded-md border border-orange-500/30 bg-orange-500/10 cursor-pointer hover:bg-orange-500/20 transition-colors"
@@ -150,7 +176,7 @@ const KOFI_URL = 'https://ko-fi.com/bruhnn'
                 <div class="flex gap-2">
                     <Input readonly :model-value="settings.gameDirectory ?? ''"
                         :placeholder="$t('app.modals.welcome.selectGameDirectory.placeholders.gamePath')" @click="handleDirectoryBrowse" />
-                    <Button :label="$t('common.actions.browse')" @click="handleDirectoryBrowse" />
+                    <Button :label="$t('common.actions.browse')" :disabled="pathBusy" @click="handleDirectoryBrowse" />
                 </div>
 
                 <div v-if="gamePathsFound.length > 0" class="flex flex-col gap-2">
@@ -162,13 +188,13 @@ const KOFI_URL = 'https://ko-fi.com/bruhnn'
                     </div>
                     <div
                         class="w-full border rounded border-border-default bg-surface-card flex flex-col max-h-48 overflow-y-auto">
-                        <div v-for="path in gamePathsFound" :key="path"
-                            class="px-3 py-2 hover:bg-state-hover! active:bg-state-active! cursor-pointer flex items-center gap-2 rounded border border-transparent transition-colors"
+                        <button v-for="path in gamePathsFound" :key="path" type="button" :disabled="pathBusy"
+                            class="px-3 py-2 hover:bg-state-hover! active:bg-state-active! cursor-pointer flex items-center gap-2 rounded border border-transparent transition-colors text-left"
                             @click="handlePathSelected(path)">
-                            <Check v-if="path === settings.gameDirectory"
+                            <Check v-if="path === validatedPath"
                                 class="text-accent w-4 h-4 shrink-0" />
                             <span class="text-text-primary text-sm font-mono truncate">{{ path }}</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -176,7 +202,7 @@ const KOFI_URL = 'https://ko-fi.com/bruhnn'
 
         <template #footer>
             <div class="flex justify-between shrink-0 p-2 px-4">
-                <div v-if="settings.gameDirectory && !errorMessage" class="flex items-center gap-2">
+                <div v-if="canContinue && !errorMessage" class="flex items-center gap-2">
                     <Check class="text-success w-4 h-4 shrink-0" />
                     <span class="text-success text-sm">
                         {{ $t('app.modals.welcome.selectGameDirectory.validPath') }}
@@ -187,7 +213,8 @@ const KOFI_URL = 'https://ko-fi.com/bruhnn'
                     <AlertOctagon class="text-error w-4 h-4 shrink-0" />
                     <span class="text-error text-xs">{{ errorMessage }}</span>
                 </div>
-                <Button @click="closeModal" variant="primary" :label="$t('common.actions.continue')" />
+                <Button @click="continueSetup" variant="primary" :disabled="!canContinue"
+                    :label="$t(settings.isFirstLaunch ? 'app.modals.welcome.setup.next' : 'common.actions.continue')" />
             </div>
         </template>
     </Modal>

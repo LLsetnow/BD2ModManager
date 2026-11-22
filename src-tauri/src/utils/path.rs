@@ -43,6 +43,10 @@ pub fn get_default_staging_dir() -> PathBuf {
     exec_dir.join("mods").to_path_buf()
 }
 
+pub fn get_default_asset_library_dir() -> PathBuf {
+    get_executable_dir().join("asset")
+}
+
 pub fn get_staging_dir(config: &BD2Config) -> PathBuf {
     match &config.staging_directory {
         Some(path) => return PathBuf::from(path),

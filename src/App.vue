@@ -67,7 +67,7 @@ watch(
 
 watch(
   () => settings.value.language,
-  (newLanguage) => (locale.value = newLanguage || "en_US"),
+  (newLanguage) => (locale.value = newLanguage || "zh_CN"),
   { immediate: true }
 )
 

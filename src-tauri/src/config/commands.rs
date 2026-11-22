@@ -6,7 +6,9 @@ use crate::{AppState, config::{AppConfig, PartialAppConfig}};
 #[tauri::command]
 pub fn get_settings(state: tauri::State<AppState>) -> AppConfig {
     let config = state.config.lock().unwrap();
-    config.get_config().clone()
+    let mut settings = config.get_config().clone();
+    settings.asset_library_directory = Some(settings.asset_library_path().to_string_lossy().into_owned());
+    settings
 }
 
 #[tauri::command]

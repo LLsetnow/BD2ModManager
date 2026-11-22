@@ -23,9 +23,10 @@ If you have suggestions or run into any problems with the app, feel free to open
 
 ## 🛠️ How to Use
 1. **Download** the app from [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases).
-2. **Select your Brown Dust 2 directory** (where `BrownDust II.exe` is located)
+2. On first launch, confirm the detected game directory or select the folder containing `BrownDust II.exe`.
    - Example: F:\Neowiz\Browndust2\Browndust2_10000001
-3. **Install BepInEx and BrownDustX**
+3. Continue to **Mod Loader**. Install BepInEx first, then BrownDustX and Configuration Manager. Select **Finish Setup** when all three are installed.
+   - Install BepInEx from GitHub or select a local archive on the Mod Loader page.
    - Download both from the BrownDustX Discord:
      [discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
 
@@ -136,7 +137,7 @@ Each plugin's `settings.json` controls that plugin. The `illust_dating*.json` fi
 
 ## Asset Library
 
-Select a local root folder under **Settings → General → Directories → Art Asset Library Directory**. When you open Dating Interactions, the manager checks for scene JSON under `audio/dating` and downloads missing files. ModPreview also saves assets it downloads to this library root. [Brown Dust 2 dating scene assets](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating)
+The asset library defaults to the `asset` folder next to `BD2ModManager.exe`. Choose a different folder under **Settings → General → Directories → Art Asset Library Directory**. The manager downloads missing Dating Interactions scenes to `audio/dating` within the library. ModPreview also saves its downloads to this library. [Brown Dust 2 dating scene assets](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating)
 
 ---
 

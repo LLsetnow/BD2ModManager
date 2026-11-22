@@ -84,7 +84,7 @@ const cantRemoveReason = computed(() =>
         <div class="flex gap-1 justify-end items-center">
             <template v-if="label == 'BrownDustX'">
                 <Button variant="text" label="Wiki" :icon="BookOpen" label-class="hidden lg:inline"
-                    @click="openUrl('https://www.gamekee.com/zsca2/727450.html')" />
+                    @click="openUrl('https://www.gamekee.com/zsca2/640938.html')" />
                 <Button variant="text" label="Discord" :icon="DiscordIcon" label-class="hidden lg:inline" @click="openUrl('https://discord.gg/B3Aqz6tDG2')"></Button>
             </template>
             <template v-if="canInstall">

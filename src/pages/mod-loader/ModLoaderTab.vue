@@ -2,6 +2,7 @@
 import { RefreshCcw, AlertTriangle, TriangleAlert } from '@lucide/vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { listen } from '@tauri-apps/api/event';
@@ -11,11 +12,14 @@ import { LogMessage, useModLoaderLogsStore } from '../../stores/modLoaderLogs';
 import { useHeader } from '../../composables/useHeader';
 import { useConfirm } from '../../plugins/ConfirmService';
 import { useLoggingStore } from '../../stores/logging';
+import { globalModals } from '../../composables/useGlobalModals';
+import Button from '../../components/common/Button.vue';
 import GithubInstallModal from './modals/GithubInstallModal.vue';
 import ComponentRow from './ComponentRow.vue';
 import { PluginState, Status } from './types';
 
 const { t } = useI18n()
+const router = useRouter()
 const confirm = useConfirm()
 const settingsStore = useSettingsStore()
 const { logs } = useModLoaderLogsStore()
@@ -32,6 +36,16 @@ const isConfigManagerDialogOpen = ref(false)
 
 const gameDirectorySet = computed(() => !!settingsStore.settings.gameDirectory)
 const bepInExInstalled = computed(() => bepInExState.value.status === Status.Installed)
+const isRefreshing = ref(false)
+const isChangingComponents = ref(false)
+const isFinishingSetup = ref(false)
+const setupError = ref<string | null>(null)
+let refreshRequest = 0
+
+const installedCount = computed(() => [bepInExState, brownDustXState, configurationManagerState]
+    .filter(({ value }) => value.status === Status.Installed || value.status === Status.InstalledButOutdated).length)
+const componentActionsDisabled = computed(() => !gameDirectorySet.value || isChangingComponents.value || isFinishingSetup.value)
+const canFinishSetup = computed(() => !isRefreshing.value && !componentActionsDisabled.value && installedCount.value === 3)
 
 function pushLog(level: LogMessage['level'], scope: LogMessage['scope'], message: string) {
     logs.push({ level, scope, message, timestamp: new Date().toISOString() })
@@ -64,7 +78,7 @@ async function getComponentState(
     log: boolean
 ): Promise<PluginState> {
     try {
-        const result = await invoke<PluginState>(command)
+        const result = await invoke<PluginState | null>(command) ?? defaultState()
         if (log) {
             const installed = installedStatuses.includes(result.status)
             pushLog('info', scope,
@@ -82,37 +96,68 @@ async function getComponentState(
 }
 
 async function initialize(log = true) {
+    const request = ++refreshRequest
+    const directory = settingsStore.settings.gameDirectory
+    if (!directory) {
+        bepInExState.value = defaultState()
+        brownDustXState.value = defaultState()
+        configurationManagerState.value = defaultState()
+        isRefreshing.value = false
+        return false
+    }
+
+    isRefreshing.value = true
     const [bdx, bepinex, configManager] = await Promise.all([
         getComponentState('get_browndustx_version', 'BrownDustX', [Status.Installed, Status.InstalledButOutdated], log),
         getComponentState('get_bepinex_version', 'BepInEx', [Status.Installed], log),
         getComponentState('get_configmanager_version', 'Configuration Manager', [Status.Installed], log),
     ])
+    if (request !== refreshRequest || directory !== settingsStore.settings.gameDirectory) return false
     brownDustXState.value = bdx
     bepInExState.value = bepinex
     configurationManagerState.value = configManager
+    isRefreshing.value = false
+    return true
 }
 
-async function installFromArchive(command: string, scope: LogMessage['scope'], path: string) {
+async function finishSetup() {
+    const path = settingsStore.settings.gameDirectory
+    if (!path || !canFinishSetup.value) return
+    isFinishingSetup.value = true
+    setupError.value = null
     try {
-        pushLog('info', scope, t('modLoaderTab.logs.installingFromArchive', { scope, path }))
-        await invoke(command, { path })
+        if (!await settingsStore.validateGamePath(path) || path !== settingsStore.settings.gameDirectory) {
+            globalModals.welcome.showModal()
+            return
+        }
+        if (!await initialize(false) || installedCount.value !== 3) return
+        await settingsStore.saveSettings({ isFirstLaunch: false })
+        await router.push({ name: 'mods' })
+    } catch (error) {
+        setupError.value = mapInstallError(error)
+    } finally {
+        isFinishingSetup.value = false
+    }
+}
+
+async function installComponent(command: string, scope: LogMessage['scope'], source: { path: string } | { url: string }) {
+    if (componentActionsDisabled.value) return
+    isChangingComponents.value = true
+    try {
+        const message = 'path' in source ? 'installingFromArchive' : 'installingFromUrl'
+        pushLog('info', scope, t(`modLoaderTab.logs.${message}`, { scope, ...source }))
+        await invoke(command, source)
         pushLog('success', scope, t('modLoaderTab.logs.installedSuccess', { scope }))
         await initialize()
     } catch (error) {
         pushLog('error', scope, t('modLoaderTab.logs.installError', { scope, error: mapInstallError(error) }))
+    } finally {
+        isChangingComponents.value = false
     }
 }
 
-async function installFromUrl(command: string, scope: LogMessage['scope'], url: string) {
-    try {
-        pushLog('info', scope, t('modLoaderTab.logs.installingFromUrl', { scope, url }))
-        await invoke(command, {url})
-        pushLog('success', scope, t('modLoaderTab.logs.installedSuccess', { scope }))
-        await initialize()
-    } catch (error) {
-        pushLog('error', scope, t('modLoaderTab.logs.installError', { scope, error: mapInstallError(error) }))
-    }
-}
+const installFromArchive = (command: string, scope: LogMessage['scope'], path: string) => installComponent(command, scope, { path })
+const installFromUrl = (command: string, scope: LogMessage['scope'], url: string) => installComponent(command, scope, { url })
 
 async function promptForArchive(title: string, command: string, scope: LogMessage['scope']) {
     const selected = await open({
@@ -126,13 +171,15 @@ async function promptForArchive(title: string, command: string, scope: LogMessag
 }
 
 async function uninstallComponent(command: string, confirmKey: string, scope: LogMessage['scope']) {
+    if (componentActionsDisabled.value) return
     const result = await confirm.confirm({
         title: t(`modLoaderTab.confirmations.${confirmKey}.title`),
         message: t(`modLoaderTab.confirmations.${confirmKey}.message`),
         acceptButton: { label: t(`modLoaderTab.confirmations.${confirmKey}.actions.confirm`) },
         rejectButton: { label: t('common.actions.cancel') },
     })
-    if (result.confirmed) {
+    if (result.confirmed && !componentActionsDisabled.value) {
+        isChangingComponents.value = true
         try {
             pushLog('info', scope, t('modLoaderTab.logs.uninstalling', { scope }))
             await invoke(command)
@@ -140,6 +187,8 @@ async function uninstallComponent(command: string, confirmKey: string, scope: Lo
             await initialize()
         } catch (error) {
             pushLog('error', scope, t('modLoaderTab.logs.uninstallError', { scope, error: mapInstallError(error) }))
+        } finally {
+            isChangingComponents.value = false
         }
     }
 }
@@ -186,9 +235,7 @@ watch(() => settingsStore.settings.gameDirectory, async (newPath) => {
         await initialize()
     } else {
         pushLog('warn', 'All', t('modLoaderTab.logs.gameDirectoryUnset'))
-        bepInExState.value = defaultState()
-        brownDustXState.value = defaultState()
-        configurationManagerState.value = defaultState()
+        await initialize(false)
     }
 })
 
@@ -199,7 +246,7 @@ useHeader({
         label: computed(() => t('common.actions.refresh')),
         icon: RefreshCcw,
         class: "flex justify-center items-center gap-1 mt-1 px-4 py-1 rounded-sm transition-colors duration-200 border border-border-default cursor-pointer",
-        action: () => initialize(true)
+        action: () => { if (!isFinishingSetup.value) void initialize(true) }
     }]
 })
 
@@ -233,6 +280,25 @@ const CONFIGMANAGER_ASSETS_FILTER_REGEX = /BepInEx/i
 
         <div class="flex flex-col flex-1 p-4 min-h-0 gap-2">
 
+            <section v-if="settingsStore.settings.isFirstLaunch"
+                class="rounded-md border border-border-default bg-surface-card p-3 flex flex-col gap-2"
+                aria-labelledby="plugin-setup-title">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 id="plugin-setup-title" class="text-sm font-semibold text-text-primary">{{ $t('modLoaderTab.setup.title') }}</h3>
+                    <p aria-live="polite" class="text-xs text-text-secondary">
+                        {{ $t('modLoaderTab.setup.progress', { count: installedCount }) }}
+                    </p>
+                </div>
+                <p class="text-xs text-text-secondary">{{ $t('modLoaderTab.setup.description') }}</p>
+                <p v-if="setupError" role="alert" class="text-xs text-error">{{ setupError }}</p>
+                <div class="flex flex-wrap items-center justify-end gap-2">
+                    <Button variant="text" size="sm" :label="$t('modLoaderTab.setup.back')"
+                        :disabled="isChangingComponents || isFinishingSetup" @click="globalModals.welcome.showModal()" />
+                    <Button variant="primary" size="sm" :label="$t('modLoaderTab.setup.finish')"
+                        :disabled="!canFinishSetup" @click="finishSetup" />
+                </div>
+            </section>
+
             <div class="flex gap-2.5 p-3 rounded bg-error-bg text-sm">
                 <TriangleAlert class="w-4 h-4 shrink-0 mt-0.5 text-error" />
                 <div class="flex flex-col gap-0.5">
@@ -258,18 +324,18 @@ const CONFIGMANAGER_ASSETS_FILTER_REGEX = /BepInEx/i
 
                 <div class="flex flex-col">
                     <ComponentRow label="BepInEx" :description="$t('modLoaderTab.descriptions.bepinex')"
-                        :state="bepInExState" :disabled="!gameDirectorySet" :show-github="true" 
+                        :state="bepInExState" :disabled="componentActionsDisabled || isRefreshing" :show-github="true"
                         @install-from-github="isBepInExDialogOpen = true"
                         @install="promptForArchive($t('modLoaderTab.fileDialog.bepinexTitle'), 'install_bepinex', 'BepInEx')"
                         @remove="uninstallComponent('uninstall_bepinex', 'removeBepInEx', 'BepInEx')" />
                     <ComponentRow label="BrownDustX" :description="$t('modLoaderTab.descriptions.browndustx')"
-                        :state="brownDustXState" :disabled="!gameDirectorySet" :requires-bep-in-ex="true"
+                        :state="brownDustXState" :disabled="componentActionsDisabled || isRefreshing" :requires-bep-in-ex="true"
                         :bep-in-ex-installed="bepInExInstalled"
                         @install="promptForArchive($t('modLoaderTab.fileDialog.browndustxTitle'), 'install_browndustx', 'BrownDustX')"
                         @remove="uninstallComponent('uninstall_browndustx', 'removeBrownDustX', 'BrownDustX')" />
                     <ComponentRow label="Configuration Manager"
                         :description="$t('modLoaderTab.descriptions.configurationManager')"
-                        :state="configurationManagerState" :disabled="!gameDirectorySet" :show-github="true"
+                        :state="configurationManagerState" :disabled="componentActionsDisabled || isRefreshing" :show-github="true"
                         :requires-bep-in-ex="true" :bep-in-ex-installed="bepInExInstalled"
                         @install-from-github="isConfigManagerDialogOpen = true"
                         @install="promptForArchive($t('modLoaderTab.fileDialog.configManagerTitle'), 'install_configmanager', 'Configuration Manager')"

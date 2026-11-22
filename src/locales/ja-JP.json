@@ -219,6 +219,11 @@
                 }
             },
             "welcome": {
+                "setup": {
+                    "title": "初回セットアップ · 1/2",
+                    "description": "ゲームのフォルダーを確認してから、MOD のフレームワークとプラグインをインストールします。",
+                    "next": "フレームワークとプラグインを設定"
+                },
                 "title": "BD2ModManagerへようこそ！",
                 "subtitle": "初めてアプリを起動したようです。今すぐゲームディレクトリを設定するか、スキップして後から設定することもできます。",
                 "chips": {
@@ -290,6 +295,7 @@
             "currentProfilePlaceholder": "プロファイルを選択"
         },
         "tabs": {
+            "officialResources": "公式素材",
             "mods": "MOD",
             "characters": "キャラクター",
             "profiles": "プロファイル",
@@ -875,6 +881,13 @@
         }
     },
     "modLoaderTab": {
+        "setup": {
+            "title": "初回セットアップ · 2/2",
+            "description": "BepInEx を先にインストールし、その後 BrownDustX と Configuration Manager をインストールしてください。BrownDustX のアーカイブは Wiki または Discord から入手できます。",
+            "progress": "3 件中 {count} 件をインストール済み",
+            "back": "ゲームフォルダーに戻る",
+            "finish": "セットアップを完了"
+        },
         "title": "Modローダー",
         "subtitle": "BepInEx、BrownDustX、Configuration Managerをインストール・管理します。",
         "status": {

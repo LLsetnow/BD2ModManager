@@ -219,6 +219,11 @@
                 }
             },
             "welcome": {
+                "setup": {
+                    "title": "First-time setup · 1 of 2",
+                    "description": "Confirm the game folder before installing the mod framework and plugins.",
+                    "next": "Set up framework and plugins"
+                },
                 "title": "Welcome to BD2ModManager!",
                 "subtitle": "It looks like this is your first time launching the app. You can set up your game directory now or skip and do it later in the settings.",
                 "chips": {
@@ -290,6 +295,7 @@
             "currentProfilePlaceholder": "Select a profile"
         },
         "tabs": {
+            "officialResources": "Official Resources",
             "mods": "Mods",
             "characters": "Characters",
             "profiles": "Profiles",
@@ -875,6 +881,13 @@
         }
     },
     "modLoaderTab": {
+        "setup": {
+            "title": "First-time setup · 2 of 2",
+            "description": "Install BepInEx first, then BrownDustX and Configuration Manager. Use the Wiki or Discord link to find the BrownDustX archive.",
+            "progress": "{count} of 3 components installed",
+            "back": "Back to game folder",
+            "finish": "Finish setup"
+        },
         "title": "Mod Loader",
         "subtitle": "Install and manage BepInEx, BrownDustX and the Configuration Manager.",
         "status": {

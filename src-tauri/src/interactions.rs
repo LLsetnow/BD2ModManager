@@ -156,10 +156,11 @@ fn read_settings(app: &tauri::AppHandle, state: &AppState) -> Result<Interaction
 }
 
 fn asset_library_root(state: &AppState) -> Result<PathBuf, String> {
-    let root = state.config.lock().map_err(|e| e.to_string())?.asset_library_directory.clone()
-        .filter(|root| !root.trim().is_empty())
-        .ok_or_else(|| "请先在 BD2ModManager 设置中选择美术素材库根目录".to_string())?;
-    let path = PathBuf::from(root.trim());
+    let path = {
+        let config = state.config.lock().map_err(|e| e.to_string())?;
+        config.ensure_default_asset_library().map_err(|e| format!("无法创建默认美术素材库目录：{e}"))?;
+        config.asset_library_path()
+    };
     if !path.is_absolute() { return Err("请选择完整的美术素材库根目录".into()); }
     if !path.is_dir() { return Err("美术素材库根目录不存在或不是文件夹".into()); }
     Ok(path)

@@ -8,7 +8,7 @@ import ko_KR from './locales/ko-KR.json'
 
 export const i18n = createI18n({
     legacy: false,
-    locale: 'en_US',
+    locale: 'zh_CN',
     fallbackLocale: 'en_US',
     messages: {
         en_US,

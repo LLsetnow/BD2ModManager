@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf};
+use std::{collections::HashSet, fs, path::{Path, PathBuf}};
 use crate::{game::{game::{self, VersionResult}, installer::{self, is_bdx_archive, is_bepinex_archive, is_configmanager_archive}}, utils::path::get_characters_path};
 use winreg::{enums::HKEY_CURRENT_USER, RegKey};
 use log::{info, warn};
@@ -22,11 +22,18 @@ pub fn locate_game() -> Option<Vec<String>> {
         return None;
     };
 
+    let mut seen = HashSet::new();
     let path_founds: Vec<String> = parent_key
         .enum_keys()
         .flatten()
         .filter_map(|subkey_name| parent_key.open_subkey(subkey_name).ok())
         .filter_map(|key| key.get_value::<String, _>("path").ok())
+        .filter(|path| {
+            let path = Path::new(path);
+            is_valid_game_path(path) && path.canonicalize().is_ok_and(|canonical| {
+                seen.insert(canonical.to_string_lossy().to_lowercase())
+            })
+        })
         .collect();
 
     info!("found {} game path(s)", path_founds.len());
@@ -41,7 +48,11 @@ pub fn locate_game() -> Option<Vec<String>> {
 
 #[tauri::command]
 pub fn validate_game_path(path: String) -> bool {
-    PathBuf::from(&path).join("BrownDust II.exe").exists() && PathBuf::from(&path).join("BrownDust II_Data").exists()
+    is_valid_game_path(Path::new(&path))
+}
+
+fn is_valid_game_path(path: &Path) -> bool {
+    path.is_absolute() && path.join("BrownDust II.exe").is_file() && path.join("BrownDust II_Data").is_dir()
 }
 
 #[tauri::command]

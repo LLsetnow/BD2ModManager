@@ -35,8 +35,10 @@ export const useGameStore = defineStore("game", () => {
     async function launchGame() {}
 
     async function refresh() {
-        if (!settingsStore.settings.gameDirectory) {
+        const gameDirectory = settingsStore.settings.gameDirectory
+        if (!gameDirectory) {
             gameVersion.value = null
+            bepinexVersion.value = null
             browndustxVersion.value = null
             configurationManagerVersion.value = null
             return
@@ -48,6 +50,7 @@ export const useGameStore = defineStore("game", () => {
             invoke<VersionInfo | null>('get_browndustx_version'),
             invoke<VersionInfo | null>('get_configmanager_version'),
         ])
+        if (settingsStore.settings.gameDirectory !== gameDirectory) return
 
         loggingStore.logDebug("Game:", game)
         loggingStore.logDebug("BepInEx:", JSON.stringify(bepinex))

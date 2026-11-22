@@ -23,9 +23,10 @@
 ## 🛠️ 使用方法
 
 1. 从 [GitHub Releases](https://github.com/LLsetnow/BD2ModManager/releases) 下载应用。
-2. 选择《棕色尘埃 2》的游戏目录（其中包含 `BrownDust II.exe`）。
+2. 首次启动时，确认引导中检测到的游戏目录，或手动选择包含 `BrownDust II.exe` 的目录。
    - 示例：`F:/Neowiz/Browndust2/Browndust2_10000001`
-3. 安装 BepInEx 和 BrownDustX。
+3. 继续前往「模组加载器」，依次安装 BepInEx、BrownDustX 和 Configuration Manager，然后点击「完成设置」。
+   - 在「模组加载器」中从 GitHub 安装 BepInEx，或手动选择本地安装包。
    - 可从 BrownDustX Discord 下载：[discord.gg/B3Aqz6tDG2](https://discord.gg/B3Aqz6tDG2)
 
    - 手动安装步骤：
@@ -131,7 +132,7 @@
 
 ## 素材库目录
 
-在 **设置 → 常规 → 目录 → 美术素材库目录** 中选择本地目录。打开约会互动设置时，管理器会检查 `audio/dating` 中的场景 JSON，并从 [LLsetnow/Brown-Dust-2-Asset/audio/dating](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating) 下载缺失文件。ModPreview 访问缺失素材时，也会从该仓库按需下载并保存到相同的素材库根目录，不使用 AppData 作为素材缓存位置。
+美术素材库默认位于 `BD2ModManager.exe` 同目录下的 `asset` 文件夹。可以在 **设置 → 常规 → 目录 → 美术素材库目录** 中选择其他目录。打开约会互动设置时，管理器会检查 `audio/dating` 中的场景 JSON 并下载缺失文件。ModPreview 也会将按需下载的素材保存到同一个素材库。 [约会互动素材](https://github.com/LLsetnow/Brown-Dust-2-Asset/tree/master/audio/dating)
 
 ---
 
