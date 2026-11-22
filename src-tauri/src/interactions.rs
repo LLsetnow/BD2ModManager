@@ -2,10 +2,11 @@ use std::{collections::HashSet, fs, path::{Path, PathBuf}, time::Duration};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::Manager;
-use crate::{AppState, game::game::BundledPluginStatus, utils::path::get_game_dir};
+use crate::{AppState, game::{bundled_plugins, game::BundledPluginStatus}, utils::path::get_game_dir};
 
 const PLUGIN: &[u8] = include_bytes!("../resources/BD2PreviewInteractions.dll");
 const PLUGIN_VERSION: &str = "0.5.1";
+const PLUGIN_DLL: &str = "BD2PreviewInteractions.dll";
 const CHARACTERS: &str = include_str!("../data/characters.json");
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -63,12 +64,20 @@ fn plugin_dir(state: &AppState) -> Result<PathBuf, String> {
     let config = state.config.lock().map_err(|e| e.to_string())?;
     let game = get_game_dir(&config).ok_or("请先在设置中选择游戏目录")?;
     if !game.join("BrownDust II.exe").exists() { return Err("游戏目录无效".into()); }
-    Ok(game.join("BepInEx/plugins/BD2PreviewInteractions"))
+    Ok(plugin_dir_for_game(&game))
+}
+
+fn plugin_dir_for_game(game: &Path) -> PathBuf {
+    game.join("BepInEx/plugins/BD2PreviewInteractions")
 }
 
 pub(crate) fn bundled_plugin_status(state: &AppState) -> BundledPluginStatus {
-    let dll = plugin_dir(state).ok().map(|dir| dir.join("BD2PreviewInteractions.dll"));
+    let dll = plugin_dir(state).ok().map(|dir| dir.join(PLUGIN_DLL));
     BundledPluginStatus::from_dll(dll, PLUGIN, PLUGIN_VERSION)
+}
+
+pub(crate) fn plugin_status_for_game(game: &Path) -> BundledPluginStatus {
+    BundledPluginStatus::from_dll(Some(plugin_dir_for_game(game).join(PLUGIN_DLL)), PLUGIN, PLUGIN_VERSION)
 }
 
 fn manager_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
@@ -113,8 +122,8 @@ fn defaults() -> InteractionSettings {
     }
 }
 
-fn legacy_native_mode(state: &AppState) -> bool {
-    let cfg = plugin_dir(state).ok().and_then(|dir| dir.ancestors().nth(2)
+fn legacy_native_mode(dir: Option<&Path>) -> bool {
+    let cfg = dir.and_then(|dir| dir.ancestors().nth(2)
         .map(|p| p.join("config/local.bd2.previewinteractions.cfg")));
     cfg.and_then(|p| fs::read_to_string(p).ok()).and_then(|text| text.lines().find_map(|line| {
         let (key, value) = line.split_once('=')?;
@@ -148,12 +157,16 @@ fn normalize(mut settings: InteractionSettings, legacy_native: bool) -> Result<I
 }
 
 fn read_settings(app: &tauri::AppHandle, state: &AppState) -> Result<InteractionSettings, String> {
+    read_settings_for_dir(app, plugin_dir(state).ok().as_deref())
+}
+
+fn read_settings_for_dir(app: &tauri::AppHandle, dir: Option<&Path>) -> Result<InteractionSettings, String> {
     // Prefer game settings so the page describes what the plugin will load.
-    let game = plugin_dir(state).ok().map(|p| p.join("settings.json"));
+    let game = dir.map(|p| p.join("settings.json"));
     for path in game.into_iter().chain(std::iter::once(manager_path(app)?)) {
         if path.exists() {
             let settings = serde_json::from_slice(&fs::read(&path).map_err(|e| e.to_string())?).map_err(|e| format!("{}: {e}", path.display()))?;
-            return normalize(settings, legacy_native_mode(state));
+            return normalize(settings, legacy_native_mode(dir));
         }
     }
     Ok(defaults())
@@ -277,22 +290,31 @@ pub fn save_local_interactions(app: tauri::AppHandle, state: tauri::State<AppSta
 pub async fn install_local_interactions(app: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<(), String> {
     let dir = plugin_dir(&state)?;
     let game = dir.ancestors().nth(3).ok_or("无效游戏路径")?;
-    if !game.join("BepInEx/core/BepInEx.dll").exists() { return Err("请先在模组加载器页面安装 BepInEx".into()); }
-    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    let target = dir.join("BD2PreviewInteractions.dll");
-    if target.exists() {
-        fs::OpenOptions::new().write(true).open(&target).map_err(|_| "插件正在使用或目录不可写，请退出游戏后安装".to_string())?;
+    if !bundled_plugins::has_bepinex(game) {
+        return Err("请先在模组加载器页面安装 BepInEx".into());
     }
-    let mut settings = read_settings(&app, &state)?;
+
+    bundled_plugins::require_game_closed()?;
     let assets_directory = asset_library_root(&state)?;
-    settings.assets_directory = assets_directory.to_string_lossy().into_owned();
-    let dating_directory = assets_directory.join("audio").join("dating");
-    ensure_dating_configs(&dating_directory).await?;
-    let temporary = dir.join("BD2PreviewInteractions.dll.tmp");
-    fs::write(&temporary, PLUGIN).map_err(|e| e.to_string())?;
-    fs::rename(&temporary, &target).map_err(|e| format!("请退出游戏后安装插件：{e}"))?;
-    write_json(&dir.join("settings.json"), &settings)?;
-    write_json(&manager_path(&app)?, &settings)
+    ensure_dating_configs(&assets_directory.join("audio").join("dating")).await?;
+
+    let _operation = bundled_plugins::lock_installation()?;
+    if plugin_dir(&state)? != dir || !bundled_plugins::has_bepinex(game) {
+        return Err("游戏目录或模组框架已改变，请重新安装".into());
+    }
+    bundled_plugins::require_game_closed()?;
+    deploy_bundled_plugin(&app, game, &assets_directory, true).map(|_| ())
+}
+
+pub(crate) fn deploy_bundled_plugin(
+    app: &tauri::AppHandle, game: &Path, assets: &Path, force: bool,
+) -> Result<bool, String> {
+    let dir = plugin_dir_for_game(game);
+    bundled_plugins::deploy_dll(&dir.join(PLUGIN_DLL), PLUGIN, force, |path| {
+        let mut settings = read_settings_for_dir(app, Some(&dir))?;
+        settings.assets_directory = assets.to_string_lossy().into_owned();
+        bundled_plugins::write_initial_settings(path, &settings)
+    })
 }
 
 #[cfg(test)]

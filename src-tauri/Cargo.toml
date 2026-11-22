@@ -1,6 +1,6 @@
 [package]
 name = "BD2ModManager"
-version = "4.3.2"
+version = "4.3.3"
 description = "Brown Dust 2 Mod Manager"
 authors = ["LLsetnow"]
 edition = "2021"
@@ -38,7 +38,7 @@ tauri-plugin-dialog = "2"
 pelite = "0.10.0"
 zip = "9"
 sha2 = "0.10.9"
-windows-sys = { version = "0.61.0", features = ["Win32_System_Threading", "Win32_Security", "Win32_Security_Authorization", "Win32_Storage_FileSystem"] }
+windows-sys = { version = "0.61.0", features = ["Win32_System_Threading", "Win32_System_Diagnostics_ToolHelp", "Win32_Security", "Win32_Security_Authorization", "Win32_Storage_FileSystem"] }
 tauri-plugin-shell = "2"
 anyhow = "1.0.99"
 reqwest = {version="0.12.23", features= ["json", "stream", "blocking"] }

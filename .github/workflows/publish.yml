@@ -81,5 +81,6 @@ jobs:
           releaseName: 'BD2ModManager v__VERSION__'
           releaseDraft: true
           args: ${{ steps.build_args.outputs.args }}
+          includeUpdaterJson: ${{ matrix.name == 'installer' }}
           uploadPlainBinary: ${{ matrix.uploadPlainBinary || false }}
           assetNamePattern: ${{ matrix.assetNamePattern || '' }}

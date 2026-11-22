@@ -4,6 +4,7 @@ use winreg::{enums::HKEY_CURRENT_USER, RegKey};
 use log::{info, warn};
 
 use crate::AppState;
+use super::bundled_plugins::{self, BundledPluginSync};
 
 fn get_game_path(state: &AppState) -> Option<PathBuf> {
     let config = state.config.lock().unwrap();
@@ -105,13 +106,34 @@ pub fn get_characters(app_handle: tauri::AppHandle) -> Result<serde_json::Value,
 }
 
 #[tauri::command]
-pub fn launch_game(state: tauri::State<AppState>, vanilla: bool) -> Result<(), String> {
-    let game_path = get_game_path(&state).ok_or("Game path not set")?;
+pub fn launch_game(
+    app: tauri::AppHandle,
+    state: tauri::State<AppState>,
+    vanilla: bool,
+) -> Result<(), String> {
+    let _operation = bundled_plugins::lock_installation()?;
+    let config = state.config.lock().map_err(|e| e.to_string())?.get_config().clone();
+    let game_path = config
+        .game_directory
+        .as_deref()
+        .map(PathBuf::from)
+        .ok_or("Game path not set")?;
 
     let exe_path = game_path.join("BrownDust II.exe");
 
     if !exe_path.exists() {
         return Err("Game executable not found".to_string());
+    }
+
+    if !vanilla && is_valid_game_path(&game_path) {
+        match bundled_plugins::synchronize(&app, &game_path, &config.asset_library_path()) {
+            Ok(result) => {
+                for error in result.errors {
+                    warn!("Could not update a bundled plugin before launching the game: {error}");
+                }
+            }
+            Err(error) => warn!("Could not check bundled plugins before launching the game: {error}"),
+        }
     }
 
     if vanilla {
@@ -158,6 +180,27 @@ pub fn get_bundled_game_plugins(state: tauri::State<AppState>) -> BundledGamePlu
         dating: crate::interactions::bundled_plugin_status(&state),
         skins: crate::skins::bundled_plugin_status(&state),
     }
+}
+
+#[tauri::command]
+pub async fn sync_bundled_game_plugins(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    game_directory: PathBuf,
+) -> Result<BundledPluginSync, String> {
+    let config = state.config.clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        let _operation = bundled_plugins::lock_installation()?;
+        let config = config.lock().map_err(|e| e.to_string())?.get_config().clone();
+        if config.game_directory.as_deref().map(Path::new) != Some(game_directory.as_path())
+            || !is_valid_game_path(&game_directory)
+        {
+            return Ok(BundledPluginSync::default());
+        }
+        bundled_plugins::synchronize(&app, &game_directory, &config.asset_library_path())
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]

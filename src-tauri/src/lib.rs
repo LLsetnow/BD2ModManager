@@ -254,6 +254,7 @@ pub fn run() {
             game::commands::get_bepinex_version,
             game::commands::get_configmanager_version,
             game::commands::get_bundled_game_plugins,
+            game::commands::sync_bundled_game_plugins,
             game::commands::install_bepinex,
             game::commands::install_browndustx,
             game::commands::install_configmanager,
