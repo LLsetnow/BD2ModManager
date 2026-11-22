@@ -1,4 +1,0 @@
-[source.crates-io]
-replace-with = "rsproxy"
-[http]
-proxy = ""
