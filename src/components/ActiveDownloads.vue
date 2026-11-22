@@ -70,10 +70,13 @@ const liveDownloads = computed(() => {
       const download = resource.progress.download
       if (!download) continue
 
-      if (resource.resource === 'characters') {
+      if (resource.resource === 'catalogs') {
         items.push({
-          id: 'game-data-characters',
-          name: 'characters.json',
+          id: 'game-data-catalogs',
+          name: resource.progress.label ?? 'catalog-manifest.json',
+          detail: download.current !== undefined && download.total !== undefined
+            ? `${download.current} / ${download.total}`
+            : undefined,
           progress: download.percentage,
         })
       }

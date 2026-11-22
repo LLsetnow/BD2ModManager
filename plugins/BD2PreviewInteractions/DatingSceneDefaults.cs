@@ -1,19 +1,67 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BD2PreviewInteractions;
 
 internal static class DatingSceneDefaults
 {
-    internal static bool WasNativeDefault(int number) => number == 7 || number == 9 || number == 12 || number == 18 || number == 19 || number == 21;
-    internal static Dictionary<int, SceneSpec> Create() => new()
+    internal static HashSet<int> NativeDefaultNumbers(string assetsDirectory)
     {
-        [1_900_000_018] = new(1_900_000_018, "illust_dating18", 396, "", "IllustInventory_1/illust_inven_char000396_202.png", "莎赫拉查德 · 从容的王牌"),
-        [1_900_000_021] = new(1_900_000_021, "illust_dating21", 65193, "", "IllustInventory_1/illust_inven_char065193_224.png", "尤里 · 永远的吉祥物"),
-        [1_900_000_019] = new(1_900_000_019, "illust_dating19", 67104, "", "IllustInventory_1/illust_inven_char067104_206.png", "格兰希特 · 战地医疗兵"),
-        [1_900_000_009] = new(1_900_000_009, "illust_dating9", 1197, "", "IllustInventory_1/illust_inven_char001197_179.png", "泰瑞丝 · 奶牛比基尼"),
-        [1_900_000_012] = new(1_900_000_012, "illust_dating12", 61492, "", "IllustInventory_1/illust_inven_char061492_188.png", "杰尼斯 · 神秘面纱兔女郎"),
-        [1_900_000_007] = new(1_900_000_007, "illust_dating7", 296, "", "IllustInventory_1/illust_inven_char000296_174.png", "悠丝缇亚 · 仲夏之梦"),
-    };
+        try
+        {
+            var values = ReadCatalog(assetsDirectory)["dating"]?["legacyNativeSceneIds"] as JArray ?? new JArray();
+            return values.Select(value => value.Value<int>()).ToHashSet();
+        }
+        catch { return new HashSet<int>(); }
+    }
+
+    internal static Dictionary<int, SceneSpec> Create(string assetsDirectory)
+    {
+        var result = new Dictionary<int, SceneSpec>();
+        try
+        {
+            var scenes = ReadCatalog(assetsDirectory)["dating"]?["fallbackScenes"] as JArray ?? new JArray();
+            foreach (var value in scenes.OfType<JObject>())
+            {
+                var localId = value.Value<int?>("localId") ?? 0;
+                var sceneId = value.Value<string>("sceneId") ?? "";
+                var costumeId = value.Value<int?>("costumeId") ?? 0;
+                var avatar = value.Value<string>("avatarAddress") ?? "";
+                if (localId <= 0 || costumeId <= 0 || !sceneId.StartsWith("illust_dating", StringComparison.Ordinal) ||
+                    !avatar.StartsWith("IllustInventory_1/", StringComparison.Ordinal) || avatar.Contains("..")) continue;
+                result[localId] = new SceneSpec(localId, sceneId, costumeId,
+                    value.Value<string>("iconName") ?? "", avatar,
+                    value.Value<string>("title") ?? sceneId);
+            }
+        }
+        catch { }
+        return result;
+    }
+
+    private static JObject ReadCatalog(string assetsDirectory)
+    {
+        if (Path.IsPathRooted(assetsDirectory))
+        {
+            var path = Path.Combine(assetsDirectory, "modmanager.json");
+            if (File.Exists(path))
+            {
+                try
+                {
+                    var catalog = JObject.Parse(File.ReadAllText(path));
+                    if (catalog.Value<int>("schemaVersion") == 1 && catalog["dating"] is JObject) return catalog;
+                }
+                catch (IOException) { }
+                catch (Newtonsoft.Json.JsonException) { }
+            }
+        }
+        using var stream = typeof(DatingSceneDefaults).Assembly.GetManifestResourceStream("modmanager.json")
+            ?? throw new FileNotFoundException("No dating catalog is available");
+        using var reader = new StreamReader(stream);
+        return JObject.Parse(reader.ReadToEnd());
+    }
 }
 
 internal sealed class SceneSpec

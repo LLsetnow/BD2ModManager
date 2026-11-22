@@ -157,6 +157,23 @@ pub fn get_game_asset(app_handle: &AppHandle, character_ids: &[&str], category: 
         }
     }
 
+    if let Ok(config) = app_handle.state::<crate::AppState>().config.lock() {
+        let root = config.asset_library_path();
+        drop(config);
+        use crate::updater::game_data::{character_image_path, load_characters};
+        if let Ok(catalog) = load_characters(app_handle, &root) {
+            if let Some(characters) = catalog["characters"].as_array() {
+                for id in character_ids {
+                    let path = characters.iter().find(|row| row["id"].as_str() == Some(*id))
+                        .and_then(|row| character_image_path(row, category));
+                    if let Some(bytes) = path.and_then(|path| std::fs::read(root.join(path)).ok()) {
+                        return Some(bytes);
+                    }
+                }
+            }
+        }
+    }
+
     #[cfg(debug_assertions)]
     for id in character_ids {
         let url = format!("http://localhost:1421/characters/{}/{}.png", category, id);

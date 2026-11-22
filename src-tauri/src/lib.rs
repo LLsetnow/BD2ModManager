@@ -143,6 +143,9 @@ pub fn run() {
             if let Err(error) = config.ensure_default_asset_library() {
                 log::warn!("Failed to create the default asset library directory: {error}");
             }
+            if let Err(error) = crate::utils::path::share_asset_library_root(&config.asset_library_path()) {
+                log::warn!("Failed to share the asset library directory: {error}");
+            }
 
             let profiles_dir: PathBuf = get_default_profiles_dir(app_handle, false);
             // let temp_dir = get_temp_dir();

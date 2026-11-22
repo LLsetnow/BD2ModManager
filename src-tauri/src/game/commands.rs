@@ -1,5 +1,5 @@
 use std::{collections::HashSet, fs, path::{Path, PathBuf}};
-use crate::{game::{game::{self, VersionResult}, installer::{self, is_bdx_archive, is_bepinex_archive, is_configmanager_archive}}, utils::path::get_characters_path};
+use crate::game::{game::{self, VersionResult}, installer::{self, is_bdx_archive, is_bepinex_archive, is_configmanager_archive}};
 use winreg::{enums::HKEY_CURRENT_USER, RegKey};
 use log::{info, warn};
 
@@ -97,12 +97,9 @@ pub fn get_game_version(state: tauri::State<AppState>) -> Option<String> {
 }
 
 #[tauri::command]
-pub fn get_characters(app_handle: tauri::AppHandle) -> Result<serde_json::Value, String> {
-    let chars_path = get_characters_path(&app_handle).ok_or("failed to get characters path")?;
-
-    let content = std::fs::read_to_string(&chars_path).map_err(|e| e.to_string())?;
-
-    serde_json::from_str(&content).map_err(|e| e.to_string())
+pub fn get_characters(app_handle: tauri::AppHandle, state: tauri::State<AppState>) -> Result<serde_json::Value, String> {
+    let asset_root = state.config.lock().map_err(|e| e.to_string())?.asset_library_path();
+    crate::updater::game_data::load_characters(&app_handle, &asset_root).map_err(|e| e.to_string())
 }
 
 #[tauri::command]

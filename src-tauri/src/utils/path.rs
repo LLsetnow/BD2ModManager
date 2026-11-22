@@ -47,6 +47,15 @@ pub fn get_default_asset_library_dir() -> PathBuf {
     get_executable_dir().join("asset")
 }
 
+pub fn share_asset_library_root(root: &std::path::Path) -> std::io::Result<()> {
+    let Some(directory) = env::var_os("APPDATA") else { return Ok(()); };
+    let directory = PathBuf::from(directory).join("LLsetnow").join("BD2AssetLibrary");
+    std::fs::create_dir_all(&directory)?;
+    let temporary = directory.join("root.txt.tmp");
+    std::fs::write(&temporary, root.to_string_lossy().as_bytes())?;
+    std::fs::rename(temporary, directory.join("root.txt"))
+}
+
 pub fn get_staging_dir(config: &BD2Config) -> PathBuf {
     match &config.staging_directory {
         Some(path) => return PathBuf::from(path),

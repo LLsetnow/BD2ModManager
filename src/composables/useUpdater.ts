@@ -4,7 +4,6 @@ import { Channel, invoke } from "@tauri-apps/api/core"
 import { useNotificationStore } from "../stores/notification"
 import { useLoggingStore } from "../stores/logging"
 import { getErrorMessage } from "../utils/errors"
-import { useCharactersStore } from "../stores/characters"
 import { useModsStore } from "../stores/mods"
 import { useSettingsStore } from "../stores/settings"
 
@@ -39,10 +38,9 @@ export type DownloadEvent =
         event: "Finished"
     }
 
-// characters.json (for now), assets, etc.
 type GameDataResources =
-    | "characters" // cahracters database
-    | "char_assets" // assets for these characters, if any character asset is missing bundled or in appdata
+    | "catalogs"
+    | "char_assets"
 
 interface GameDataDownloadProgress {
     percentage: number | null
@@ -144,7 +142,6 @@ export function useUpdater() {
     const { t } = useI18n()
     const loggingStore = useLoggingStore()
     const notificationStore = useNotificationStore()
-    const charactersStore = useCharactersStore()
     const settingsStore = useSettingsStore()
 
 
@@ -529,8 +526,6 @@ export function useUpdater() {
         try {
             const updated = await invoke<boolean>("update_game_data", { onEvent })
             if (!updated) return
-
-            await charactersStore.loadCharacters()
 
             notificationStore.add({
                 type: "success",

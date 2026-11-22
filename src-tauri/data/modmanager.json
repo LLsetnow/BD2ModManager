@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "2.39.10",
+  "catalogVersion": "2026.11.22.1",
+  "dating": {
+    "legacyNativeSceneIds": [
+      7,
+      9,
+      12,
+      18,
+      19,
+      21
+    ],
+    "fallbackScenes": [
+      {
+        "localId": 190000018,
+        "sceneId": "illust_dating18",
+        "costumeId": 396,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char000396_202.png",
+        "title": "莎赫拉查德 · 从容的王牌"
+      },
+      {
+        "localId": 190000021,
+        "sceneId": "illust_dating21",
+        "costumeId": 65193,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char065193_224.png",
+        "title": "尤里 · 永远的吉祥物"
+      },
+      {
+        "localId": 190000019,
+        "sceneId": "illust_dating19",
+        "costumeId": 67104,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char067104_206.png",
+        "title": "格兰希特 · 战地医疗兵"
+      },
+      {
+        "localId": 190000009,
+        "sceneId": "illust_dating9",
+        "costumeId": 1197,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char001197_179.png",
+        "title": "泰瑞丝 · 奶牛比基尼"
+      },
+      {
+        "localId": 190000012,
+        "sceneId": "illust_dating12",
+        "costumeId": 61492,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char061492_188.png",
+        "title": "杰尼斯 · 神秘面纱兔女郎"
+      },
+      {
+        "localId": 190000007,
+        "sceneId": "illust_dating7",
+        "costumeId": 296,
+        "iconName": "",
+        "avatarAddress": "IllustInventory_1/illust_inven_char000296_174.png",
+        "title": "悠丝缇雅 · 仲夏之梦"
+      }
+    ]
+  }
+}

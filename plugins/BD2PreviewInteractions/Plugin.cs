@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace BD2PreviewInteractions;
 
-[BepInPlugin(PluginId, "BD2 Preview Interactions", "0.5.1")]
+[BepInPlugin(PluginId, "BD2 Preview Interactions", "0.5.2")]
 [BepInDependency("lynesth.bd2.browndustx", BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Plugin : BaseUnityPlugin
 {
