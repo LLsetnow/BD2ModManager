@@ -2,7 +2,7 @@ import { createWriteStream, mkdirSync } from 'fs'
 import { pipeline } from 'stream/promises'
 import { get } from 'https'
 
-const URL = 'https://github.com/bruhnn/bd2modpreview/releases/latest/download/BD2ModPreview.exe'
+const URL = 'https://github.com/LLsetnow/BD2ModPreview/releases/latest/download/BD2ModPreview.exe'
 const OUT = 'src-tauri/resources/BD2ModPreview.exe'
 
 mkdirSync('src-tauri/resources', { recursive: true })
